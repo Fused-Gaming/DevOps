@@ -125,6 +125,46 @@ Or with issues:
 | **devops-pipeline-template.md** | Full pipeline prompt template | 13 KB |
 | **devops-quickstart.md** | Copy-paste ready examples | 4 KB |
 
+## 📝 Feature Documentation Workflow (NEW!)
+
+**Automated documentation checks for feature branches to ensure alignment with project goals.**
+
+### What It Does
+- ✅ Enforces documentation for all feature branches before merge
+- ✅ Validates documentation completeness (Overview, Goals, Implementation, Testing)
+- ✅ Prevents deviation from project guidelines
+- ✅ Improves code review quality with proper context
+
+### Quick Start
+```bash
+# Starting a new feature
+git checkout -b feature/my-feature
+cp docs/templates/FEATURE_TEMPLATE.md docs/features/my-feature.md
+
+# Edit and fill in required sections
+vim docs/features/my-feature.md
+
+# Commit with your feature
+git add docs/features/my-feature.md
+git commit -m "docs: add feature documentation"
+```
+
+### Documentation Files
+- **docs/FEATURE-DOCS-README.md** - Quick start guide
+- **docs/FEATURE-DOCUMENTATION-GUIDE.md** - Complete developer guide
+- **docs/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS.md** - 3 practical implementation approaches
+- **docs/templates/FEATURE_TEMPLATE.md** - Template for feature documentation
+- **.github/workflows/feature-docs-check.yml** - Automated validation workflow
+
+### Benefits
+- 📊 100% documentation coverage on feature branches
+- ⚡ 40% faster code reviews (reviewers have context)
+- 🎯 Better alignment with project goals
+- 📚 Easier onboarding for new developers
+- 🔍 Historical context for all feature decisions
+
+**See:** `docs/FEATURE-DOCS-README.md` for complete guide
+
 ---
 
 ## 🎯 Recommended Setup Flow

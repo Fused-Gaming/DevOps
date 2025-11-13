@@ -1,0 +1,221 @@
+name: Feature Documentation Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    branches: [main, develop]
+
+jobs:
+  feature-docs-validation:
+    name: Validate Feature Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if feature branch
+        id: check_branch
+        run: |
+          BRANCH="${{ github.head_ref }}"
+          if [[ "$BRANCH" =~ ^(feature|feat)/ ]]; then
+            echo "is_feature=true" >> $GITHUB_OUTPUT
+            FEATURE_NAME="${BRANCH#*/}"
+            echo "feature_name=$FEATURE_NAME" >> $GITHUB_OUTPUT
+            echo "✓ Feature branch detected: $BRANCH"
+          else
+            echo "is_feature=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ Not a feature branch, skipping feature documentation check"
+          fi
+
+      - name: Check for feature documentation file
+        if: steps.check_branch.outputs.is_feature == 'true'
+        id: check_docs
+        run: |
+          FEATURE_NAME="${{ steps.check_branch.outputs.feature_name }}"
+          DOCS_PATHS=(
+            "docs/features/${FEATURE_NAME}.md"
+            "docs/features/${FEATURE_NAME}/README.md"
+            ".devops/features/${FEATURE_NAME}.md"
+            "FEATURES/${FEATURE_NAME}.md"
+          )
+
+          FOUND=false
+          for path in "${DOCS_PATHS[@]}"; do
+            if [ -f "$path" ]; then
+              echo "✓ Feature documentation found at: $path"
+              echo "docs_path=$path" >> $GITHUB_OUTPUT
+              FOUND=true
+              break
+            fi
+          done
+
+          if [ "$FOUND" = false ]; then
+            echo "❌ Feature documentation not found!"
+            echo "Expected documentation at one of:"
+            for path in "${DOCS_PATHS[@]}"; do
+              echo "  - $path"
+            done
+            exit 1
+          fi
+
+      - name: Validate documentation content
+        if: steps.check_branch.outputs.is_feature == 'true'
+        run: |
+          DOCS_PATH="${{ steps.check_docs.outputs.docs_path }}"
+
+          echo "📝 Validating content of $DOCS_PATH"
+
+          # Check minimum required sections
+          REQUIRED_SECTIONS=(
+            "## Overview"
+            "## Goals"
+            "## Implementation"
+            "## Testing"
+          )
+
+          MISSING_SECTIONS=()
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if ! grep -q "$section" "$DOCS_PATH"; then
+              MISSING_SECTIONS+=("$section")
+            fi
+          done
+
+          if [ ${#MISSING_SECTIONS[@]} -gt 0 ]; then
+            echo "❌ Missing required sections:"
+            for section in "${MISSING_SECTIONS[@]}"; do
+              echo "  - $section"
+            done
+            echo ""
+            echo "Please ensure your feature documentation includes all required sections."
+            echo "See docs/templates/FEATURE_TEMPLATE.md for guidance."
+            exit 1
+          fi
+
+          # Check minimum word count (at least 100 words)
+          WORD_COUNT=$(wc -w < "$DOCS_PATH")
+          if [ "$WORD_COUNT" -lt 100 ]; then
+            echo "❌ Documentation is too brief ($WORD_COUNT words)"
+            echo "Please provide more detailed documentation (minimum 100 words)"
+            exit 1
+          fi
+
+          echo "✅ Feature documentation validation passed!"
+          echo "  - All required sections present"
+          echo "  - Word count: $WORD_COUNT words"
+
+      - name: Check if docs were updated in this PR
+        if: steps.check_branch.outputs.is_feature == 'true'
+        run: |
+          DOCS_PATH="${{ steps.check_docs.outputs.docs_path }}"
+
+          # Check if documentation was modified in this PR
+          git fetch origin ${{ github.base_ref }}
+
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD | grep -q "$DOCS_PATH"; then
+            echo "✅ Feature documentation was updated in this PR"
+          else
+            echo "⚠️ Warning: Feature documentation exists but wasn't updated in this PR"
+            echo "If this feature branch includes new changes, please update the documentation."
+          fi
+
+      - name: Check for project goals alignment
+        if: steps.check_branch.outputs.is_feature == 'true'
+        run: |
+          DOCS_PATH="${{ steps.check_docs.outputs.docs_path }}"
+
+          # Check for alignment keywords
+          ALIGNMENT_KEYWORDS=("project goal" "roadmap" "requirement" "objective" "guideline")
+
+          FOUND_ALIGNMENT=false
+          for keyword in "${ALIGNMENT_KEYWORDS[@]}"; do
+            if grep -qi "$keyword" "$DOCS_PATH"; then
+              FOUND_ALIGNMENT=true
+              break
+            fi
+          done
+
+          if [ "$FOUND_ALIGNMENT" = false ]; then
+            echo "⚠️ Warning: Documentation should reference project goals/requirements"
+            echo "Consider adding context about how this feature aligns with project objectives."
+          else
+            echo "✅ Documentation references project alignment"
+          fi
+
+      - name: Generate documentation report
+        if: always() && steps.check_branch.outputs.is_feature == 'true'
+        run: |
+          echo "## 📋 Feature Documentation Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Feature:** ${{ steps.check_branch.outputs.feature_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.head_ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.check_docs.outcome }}" = "success" ]; then
+            echo "✅ Feature documentation exists" >> $GITHUB_STEP_SUMMARY
+            echo "📄 Location: \`${{ steps.check_docs.outputs.docs_path }}\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Feature documentation missing" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please create documentation at one of these locations:" >> $GITHUB_STEP_SUMMARY
+            echo "- \`docs/features/${{ steps.check_branch.outputs.feature_name }}.md\`" >> $GITHUB_STEP_SUMMARY
+            echo "- \`docs/features/${{ steps.check_branch.outputs.feature_name }}/README.md\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Comment on PR
+        if: failure() && steps.check_branch.outputs.is_feature == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const featureName = '${{ steps.check_branch.outputs.feature_name }}';
+            const comment = `## ⚠️ Feature Documentation Required
+
+            This PR is for feature branch \`${{ github.head_ref }}\` but is missing proper feature documentation.
+
+            ### Why is this required?
+            Feature documentation helps:
+            - Keep the team aligned with project goals
+            - Prevent deviation from planned objectives
+            - Provide context for future maintenance
+            - Enable better code reviews
+
+            ### What you need to do:
+            1. Create a documentation file at one of these locations:
+               - \`docs/features/${featureName}.md\` (recommended)
+               - \`docs/features/${featureName}/README.md\`
+               - \`.devops/features/${featureName}.md\`
+
+            2. Use the template: \`docs/templates/FEATURE_TEMPLATE.md\`
+
+            3. Include these required sections:
+               - **Overview**: What does this feature do?
+               - **Goals**: What project objectives does it fulfill?
+               - **Implementation**: How is it implemented?
+               - **Testing**: How was it tested?
+
+            4. Commit and push the documentation
+
+            The workflow will automatically re-check once you push the documentation.`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  summary:
+    name: Documentation Check Summary
+    runs-on: ubuntu-latest
+    needs: feature-docs-validation
+    if: always()
+    steps:
+      - name: Check result
+        run: |
+          if [ "${{ needs.feature-docs-validation.result }}" = "success" ]; then
+            echo "✅ All documentation checks passed!"
+          else
+            echo "❌ Documentation checks failed - please review requirements above"
+            exit 1
+          fi
