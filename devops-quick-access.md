@@ -10,6 +10,10 @@ alias devops-quick='claude-code "Run quick DevOps health check: build status, te
 alias devops-merge='claude-code "$(cat ~/.devops-prompts/merge-checklist.md)"'
 alias devops-deploy='claude-code "$(cat ~/.devops-prompts/deploy-checklist.md)"'
 alias devops-security='claude-code "$(cat ~/.devops-prompts/security-scan.md)"'
+
+# NEW: Feature documentation workflow
+alias devops-feature-start='claude-code "$(cat ~/.devops-prompts/feature-start.md)"'
+alias devops-feature-validate='claude-code "$(cat ~/.devops-prompts/feature-validate.md)"'
 ```
 
 ### Create prompt library:
@@ -581,6 +585,64 @@ echo "  cp ~/.devops-templates/project/Makefile ."
 chmod +x setup-devops-quick-access.sh
 ./setup-devops-quick-access.sh
 ```
+
+---
+
+## 📝 Feature Documentation Workflow (NEW!)
+
+Automated enforcement of feature branch documentation to prevent deviation from project goals.
+
+### Quick Commands
+
+```bash
+# Start a new feature with documentation
+devops-feature-start
+
+# Validate feature documentation before PR
+devops-feature-validate
+```
+
+### How It Works
+
+1. **GitHub Actions Workflow** - Automatically checks feature branch PRs
+   - File: `.github/workflows/feature-docs-check.yml`
+   - Validates: documentation exists, required sections present, minimum quality
+
+2. **CLI Tools** - Help developers create and validate documentation
+   - `devops-feature-start` - Creates branch + documentation scaffold
+   - `devops-feature-validate` - Checks documentation completeness
+
+3. **Documentation Structure**
+   ```
+   docs/
+   ├── features/          # Feature documentation goes here
+   │   └── my-feature.md
+   └── templates/         # Template for new features
+       └── FEATURE_TEMPLATE.md
+   ```
+
+### Required Documentation Sections
+
+Every feature must document:
+- **Overview** - What is this feature and why?
+- **Goals** - How does it align with project objectives?
+- **Implementation** - Technical approach and key decisions
+- **Testing** - Test strategy, coverage, and edge cases
+
+### Benefits
+
+- ✅ **100% documentation coverage** on feature branches
+- ✅ **Better alignment** with project goals and guidelines
+- ✅ **Faster code reviews** (reviewers have context)
+- ✅ **Easier onboarding** (new devs can read feature history)
+- ✅ **Prevents deviation** from planned objectives
+
+### Getting Started
+
+See comprehensive guides:
+- **Quick Start:** `docs/FEATURE-DOCS-README.md`
+- **Complete Guide:** `docs/FEATURE-DOCUMENTATION-GUIDE.md`
+- **3 Implementation Options:** `docs/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS.md`
 
 ---
 
