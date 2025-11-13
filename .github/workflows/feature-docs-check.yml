@@ -29,11 +29,50 @@ jobs:
             echo "ℹ️ Not a feature branch, skipping feature documentation check"
           fi
 
+      - name: Determine feature size and enforcement tier
+        if: steps.check_branch.outputs.is_feature == 'true'
+        id: feature_size
+        run: |
+          # Calculate lines changed (additions + deletions)
+          git fetch origin ${{ github.base_ref }}
+          LINES_ADDED=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= insertion)' || echo 0)
+          LINES_DELETED=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= deletion)' || echo 0)
+          LINES_CHANGED=$((LINES_ADDED + LINES_DELETED))
+
+          echo "lines_changed=$LINES_CHANGED" >> $GITHUB_OUTPUT
+
+          # Determine tier based on size
+          # Tier 1: Small (<200 lines) - Documentation recommended but lenient
+          # Tier 2: Medium (200-1000 lines) - Documentation required, all sections
+          # Tier 3: Large (>1000 lines) - Comprehensive documentation required
+
+          if [ $LINES_CHANGED -lt 200 ]; then
+            echo "tier=1" >> $GITHUB_OUTPUT
+            echo "tier_name=Small Feature" >> $GITHUB_OUTPUT
+            echo "enforcement=lenient" >> $GITHUB_OUTPUT
+            echo "📏 Feature size: $LINES_CHANGED lines (Tier 1: Small Feature)"
+            echo "   Documentation recommended but not strictly enforced"
+          elif [ $LINES_CHANGED -lt 1000 ]; then
+            echo "tier=2" >> $GITHUB_OUTPUT
+            echo "tier_name=Medium Feature" >> $GITHUB_OUTPUT
+            echo "enforcement=standard" >> $GITHUB_OUTPUT
+            echo "📏 Feature size: $LINES_CHANGED lines (Tier 2: Medium Feature)"
+            echo "   Documentation required with all 4 sections"
+          else
+            echo "tier=3" >> $GITHUB_OUTPUT
+            echo "tier_name=Large Feature" >> $GITHUB_OUTPUT
+            echo "enforcement=strict" >> $GITHUB_OUTPUT
+            echo "📏 Feature size: $LINES_CHANGED lines (Tier 3: Large Feature)"
+            echo "   Comprehensive documentation required"
+          fi
+
       - name: Check for feature documentation file
         if: steps.check_branch.outputs.is_feature == 'true'
         id: check_docs
+        continue-on-error: ${{ steps.feature_size.outputs.tier == '1' }}
         run: |
           FEATURE_NAME="${{ steps.check_branch.outputs.feature_name }}"
+          TIER="${{ steps.feature_size.outputs.tier }}"
           DOCS_PATHS=(
             "docs/features/${FEATURE_NAME}.md"
             "docs/features/${FEATURE_NAME}/README.md"
@@ -52,20 +91,37 @@ jobs:
           done
 
           if [ "$FOUND" = false ]; then
-            echo "❌ Feature documentation not found!"
-            echo "Expected documentation at one of:"
-            for path in "${DOCS_PATHS[@]}"; do
-              echo "  - $path"
-            done
-            exit 1
+            if [ "$TIER" = "1" ]; then
+              echo "⚠️ Feature documentation not found (Tier 1: Recommended but not required)"
+              echo "While not required for small features, documentation helps with context."
+              echo ""
+              echo "Consider creating brief documentation at: docs/features/${FEATURE_NAME}.md"
+              exit 0
+            else
+              echo "❌ Feature documentation not found!"
+              echo "Expected documentation at one of:"
+              for path in "${DOCS_PATHS[@]}"; do
+                echo "  - $path"
+              done
+              echo ""
+              echo "Feature size: ${{ steps.feature_size.outputs.lines_changed }} lines (Tier $TIER)"
+              echo "Documentation is REQUIRED for medium and large features."
+              exit 1
+            fi
           fi
 
       - name: Validate documentation content
-        if: steps.check_branch.outputs.is_feature == 'true'
+        if: steps.check_branch.outputs.is_feature == 'true' && steps.check_docs.outputs.docs_path != ''
+        continue-on-error: ${{ steps.feature_size.outputs.tier == '1' }}
         run: |
           DOCS_PATH="${{ steps.check_docs.outputs.docs_path }}"
+          TIER="${{ steps.feature_size.outputs.tier }}"
+          LINES_CHANGED="${{ steps.feature_size.outputs.lines_changed }}"
 
           echo "📝 Validating content of $DOCS_PATH"
+          echo "   Feature tier: $TIER (${{ steps.feature_size.outputs.tier_name }})"
+          echo "   Lines changed: $LINES_CHANGED"
+          echo ""
 
           # Check minimum required sections
           REQUIRED_SECTIONS=(
@@ -82,28 +138,56 @@ jobs:
             fi
           done
 
+          # Tier-based validation
           if [ ${#MISSING_SECTIONS[@]} -gt 0 ]; then
-            echo "❌ Missing required sections:"
+            echo "Missing sections:"
             for section in "${MISSING_SECTIONS[@]}"; do
               echo "  - $section"
             done
             echo ""
-            echo "Please ensure your feature documentation includes all required sections."
-            echo "See docs/templates/FEATURE_TEMPLATE.md for guidance."
-            exit 1
+
+            if [ "$TIER" = "1" ]; then
+              echo "⚠️ Tier 1 (Small Feature): Missing sections noted but not blocking"
+              echo "   Recommended: Add missing sections for better context"
+            elif [ "$TIER" = "2" ]; then
+              echo "❌ Tier 2 (Medium Feature): All 4 sections REQUIRED"
+              echo "   Please add the missing sections."
+              echo "   See docs/templates/FEATURE_TEMPLATE.md for guidance."
+              exit 1
+            else
+              echo "❌ Tier 3 (Large Feature): Comprehensive documentation REQUIRED"
+              echo "   All sections must be present and detailed."
+              echo "   See docs/templates/FEATURE_TEMPLATE.md for guidance."
+              exit 1
+            fi
           fi
 
-          # Check minimum word count (at least 100 words)
+          # Check minimum word count (tier-based requirements)
           WORD_COUNT=$(wc -w < "$DOCS_PATH")
-          if [ "$WORD_COUNT" -lt 100 ]; then
-            echo "❌ Documentation is too brief ($WORD_COUNT words)"
-            echo "Please provide more detailed documentation (minimum 100 words)"
-            exit 1
+
+          if [ "$TIER" = "1" ]; then
+            MIN_WORDS=50
+          elif [ "$TIER" = "2" ]; then
+            MIN_WORDS=100
+          else
+            MIN_WORDS=200
+          fi
+
+          if [ "$WORD_COUNT" -lt "$MIN_WORDS" ]; then
+            if [ "$TIER" = "1" ]; then
+              echo "⚠️ Documentation word count: $WORD_COUNT (recommended: $MIN_WORDS+)"
+              echo "   Consider adding more detail for better context"
+            else
+              echo "❌ Documentation is too brief: $WORD_COUNT words (minimum: $MIN_WORDS)"
+              echo "   Please provide more detailed documentation"
+              echo "   Tier $TIER features require comprehensive documentation"
+              exit 1
+            fi
           fi
 
           echo "✅ Feature documentation validation passed!"
-          echo "  - All required sections present"
-          echo "  - Word count: $WORD_COUNT words"
+          echo "  - Required sections: ${#MISSING_SECTIONS[@]} missing (allowed for Tier $TIER)"
+          echo "  - Word count: $WORD_COUNT words (minimum: $MIN_WORDS)"
 
       - name: Check if docs were updated in this PR
         if: steps.check_branch.outputs.is_feature == 'true'
@@ -150,8 +234,29 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Feature:** ${{ steps.check_branch.outputs.feature_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Branch:** ${{ github.head_ref }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Size:** ${{ steps.feature_size.outputs.lines_changed }} lines changed" >> $GITHUB_STEP_SUMMARY
+          echo "**Tier:** ${{ steps.feature_size.outputs.tier_name }} (Tier ${{ steps.feature_size.outputs.tier }})" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
+          # Tier explanation
+          echo "### Enforcement Level" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.feature_size.outputs.tier }}" = "1" ]; then
+            echo "📝 **Tier 1 (Small Feature):** Documentation recommended but not strictly enforced" >> $GITHUB_STEP_SUMMARY
+            echo "- Minimum: 50 words" >> $GITHUB_STEP_SUMMARY
+            echo "- Missing sections will show warnings but won't block merge" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ steps.feature_size.outputs.tier }}" = "2" ]; then
+            echo "📋 **Tier 2 (Medium Feature):** Documentation required with all 4 sections" >> $GITHUB_STEP_SUMMARY
+            echo "- Minimum: 100 words" >> $GITHUB_STEP_SUMMARY
+            echo "- All sections (Overview, Goals, Implementation, Testing) required" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "📚 **Tier 3 (Large Feature):** Comprehensive documentation required" >> $GITHUB_STEP_SUMMARY
+            echo "- Minimum: 200 words" >> $GITHUB_STEP_SUMMARY
+            echo "- All sections must be detailed and thorough" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Documentation status
+          echo "### Documentation Status" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.check_docs.outcome }}" = "success" ]; then
             echo "✅ Feature documentation exists" >> $GITHUB_STEP_SUMMARY
             echo "📄 Location: \`${{ steps.check_docs.outputs.docs_path }}\`" >> $GITHUB_STEP_SUMMARY
@@ -164,39 +269,75 @@ jobs:
           fi
 
       - name: Comment on PR
-        if: failure() && steps.check_branch.outputs.is_feature == 'true'
+        if: failure() && steps.check_branch.outputs.is_feature == 'true' && steps.feature_size.outputs.tier != '1'
         uses: actions/github-script@v7
         with:
           script: |
             const featureName = '${{ steps.check_branch.outputs.feature_name }}';
+            const tier = '${{ steps.feature_size.outputs.tier }}';
+            const tierName = '${{ steps.feature_size.outputs.tier_name }}';
+            const linesChanged = '${{ steps.feature_size.outputs.lines_changed }}';
+
+            let tierRequirements = '';
+            if (tier === '2') {
+              tierRequirements = `**Tier 2 (Medium Feature):** ${linesChanged} lines changed
+- Minimum: 100 words
+- All 4 sections required (Overview, Goals, Implementation, Testing)
+- Each section should be substantive`;
+            } else {
+              tierRequirements = `**Tier 3 (Large Feature):** ${linesChanged} lines changed
+- Minimum: 200 words
+- All 4 sections required with detailed content
+- Comprehensive technical approach and testing documentation`;
+            }
+
             const comment = `## ⚠️ Feature Documentation Required
 
-            This PR is for feature branch \`${{ github.head_ref }}\` but is missing proper feature documentation.
+This PR is for feature branch \`${{ github.head_ref }}\` but is missing proper feature documentation.
 
-            ### Why is this required?
-            Feature documentation helps:
-            - Keep the team aligned with project goals
-            - Prevent deviation from planned objectives
-            - Provide context for future maintenance
-            - Enable better code reviews
+### Feature Size & Requirements
 
-            ### What you need to do:
-            1. Create a documentation file at one of these locations:
-               - \`docs/features/${featureName}.md\` (recommended)
-               - \`docs/features/${featureName}/README.md\`
-               - \`.devops/features/${featureName}.md\`
+${tierRequirements}
 
-            2. Use the template: \`docs/templates/FEATURE_TEMPLATE.md\`
+### Why is this required?
+Feature documentation helps:
+- Keep the team aligned with project goals
+- Prevent deviation from planned objectives
+- Provide context for future maintenance
+- Enable better code reviews
 
-            3. Include these required sections:
-               - **Overview**: What does this feature do?
-               - **Goals**: What project objectives does it fulfill?
-               - **Implementation**: How is it implemented?
-               - **Testing**: How was it tested?
+### What you need to do:
 
-            4. Commit and push the documentation
+1. **Create a documentation file** at one of these locations:
+   - \`docs/features/${featureName}.md\` (recommended)
+   - \`docs/features/${featureName}/README.md\`
+   - \`.devops/features/${featureName}.md\`
 
-            The workflow will automatically re-check once you push the documentation.`;
+2. **Use the template:** Copy from \`docs/templates/FEATURE_TEMPLATE.md\`
+
+3. **Include these required sections:**
+   - **Overview**: What does this feature do? What problem does it solve?
+   - **Goals**: How does it align with project objectives? Success criteria?
+   - **Implementation**: Technical approach, key files, design decisions
+   - **Testing**: Test strategy, coverage, edge cases
+
+4. **Quick start:**
+   \`\`\`bash
+   cp docs/templates/FEATURE_TEMPLATE.md docs/features/${featureName}.md
+   vim docs/features/${featureName}.md
+   git add docs/features/${featureName}.md
+   git commit -m "docs: add feature documentation"
+   git push
+   \`\`\`
+
+5. **Validate:** Run \`devops-feature-validate\` (if using DevOps CLI)
+
+The workflow will automatically re-check once you push the documentation.
+
+### Resources
+- **Quick Guide:** \`docs/FEATURE-DOCS-README.md\`
+- **Full Guide:** \`docs/FEATURE-DOCUMENTATION-GUIDE.md\`
+- **Template:** \`docs/templates/FEATURE_TEMPLATE.md\``;
 
             github.rest.issues.createComment({
               issue_number: context.issue.number,
