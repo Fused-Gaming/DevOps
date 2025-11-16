@@ -4,6 +4,42 @@
 
 ---
 
+## ⭐ NEW in v2.0 - Enhanced Automation Features
+
+We've added powerful new automation features to supercharge your DevOps workflow:
+
+### 🎯 What's New
+
+- **🔍 Claude Code Usage Tracking** - Automatically track AI usage, tokens, and costs on every commit
+- **🧪 Enhanced Testing** - Comprehensive diagnostics with beautiful progress indicators
+- **📊 Interactive Makefile** - Progress bars, colored output, and clear status updates
+- **🚀 Enhanced CI/CD** - Better feedback in GitHub Actions workflows
+- **🎨 SEO & Marketing Automation** - Auto-generate sitemap, robots.txt, schema.json, and more
+- **📱 Social Media Ready** - Meta tags and graphics templates for all platforms
+
+### 🚀 Quick Start with New Features
+
+```bash
+# Complete setup (includes new features)
+make setup
+
+# Run enhanced tests with diagnostics
+make test
+
+# Generate all SEO files
+make seo-optimize
+
+# View project status
+make status
+
+# See all available commands
+make help
+```
+
+📚 **[Read the Complete Features Guide →](NEW-FEATURES-GUIDE.md)**
+
+---
+
 ## 🚀 Quick Start (Choose Your Path)
 
 ### Path 1: Instant Setup (Recommended)
