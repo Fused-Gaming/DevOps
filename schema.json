@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "DevOps Repository Schema",
+  "description": "Structured data for DevOps repository",
+  "metadata": {
+    "author": "Unknown",
+    "email": "unknown@example.com",
+    "generated": "2025-11-16",
+    "version": "1.0.0",
+    "repository": "https://github.com/Fused-Gaming/DevOps",
+    "codeSignedBy": "Unknown"
+  },
+  "schemaOrg": {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "DevOps",
+    "description": "DevOps tools, scripts, and automation workflows",
+    "author": {
+      "@type": "Person",
+      "name": "Unknown",
+      "email": "unknown@example.com"
+    },
+    "dateCreated": "2025-11-16",
+    "dateModified": "2025-11-16",
+    "codeRepository": "https://github.com/Fused-Gaming/DevOps",
+    "programmingLanguage": [
+      "Bash",
+      "JavaScript",
+      "YAML",
+      "Markdown"
+    ],
+    "keywords": [
+      "devops",
+      "automation",
+      "ci-cd",
+      "github-actions",
+      "deployment",
+      "testing",
+      "security",
+      "seo",
+      "claude-code"
+    ],
+    "license": "MIT",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  },
+  "openGraph": {
+    "og:type": "website",
+    "og:title": "DevOps - DevOps Automation",
+    "og:description": "Professional DevOps tools and automation workflows",
+    "og:url": "https://github.com/Fused-Gaming/DevOps",
+    "og:site_name": "DevOps",
+    "og:locale": "en_US",
+    "article:author": "Unknown"
+  },
+  "twitter": {
+    "twitter:card": "summary_large_image",
+    "twitter:title": "DevOps - DevOps Automation",
+    "twitter:description": "Professional DevOps tools and automation workflows",
+    "twitter:creator": "@Unknown"
+  },
+  "features": [
+    {
+      "name": "Claude Code Usage Tracking",
+      "description": "Automatic tracking of Claude Code usage with cost estimation",
+      "author": "Unknown"
+    },
+    {
+      "name": "Enhanced Testing",
+      "description": "Comprehensive test suite with detailed diagnostics",
+      "author": "Unknown"
+    },
+    {
+      "name": "Interactive Makefile",
+      "description": "Beautiful progress bars and status updates",
+      "author": "Unknown"
+    },
+    {
+      "name": "SEO Automation",
+      "description": "Automatic generation of sitemap, robots.txt, and more",
+      "author": "Unknown"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Unknown",
+      "email": "unknown@example.com",
+      "role": "Lead Developer",
+      "contributions": "All features and workflows"
+    }
+  ]
+}
