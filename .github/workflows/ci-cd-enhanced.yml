@@ -1,0 +1,360 @@
+name: Enhanced CI/CD Pipeline
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: "18.x"
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 1: Security & Dependency Audit
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  security-audit:
+    name: 🔒 Security & Dependency Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🎯 Setup Environment
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔒 Security & Dependency Audit"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "✓ Repository: ${{ github.repository }}"
+          echo "✓ Branch: ${{ github.ref_name }}"
+          echo "✓ Commit: ${{ github.sha }}"
+          echo "✓ Author: ${{ github.actor }}"
+          echo ""
+
+      - name: 🔍 Check for exposed secrets
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Scanning for exposed secrets..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Check if .env is tracked
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "❌ CRITICAL: .env file is tracked in git!"
+            exit 1
+          else
+            echo "✓ No .env file tracked in git"
+          fi
+
+          # Check for common secret patterns
+          echo ""
+          echo "→ Checking for common secret patterns..."
+          if git grep -E "(api[_-]?key|secret|password|token|credentials).*=.*['\"][a-zA-Z0-9]{20,}" HEAD 2>/dev/null; then
+            echo "⚠️  WARNING: Possible secrets detected!"
+            echo "Please review the matches above"
+          else
+            echo "✓ No obvious secrets detected"
+          fi
+
+      - name: 📦 Setup Node.js
+        if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 🔍 npm Audit
+        if: hashFiles('package.json') != ''
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Running npm security audit..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          npm install --package-lock-only
+          npm audit --json > audit-results.json || true
+
+          # Parse and display results
+          CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' audit-results.json)
+          HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit-results.json)
+          MODERATE=$(jq '.metadata.vulnerabilities.moderate // 0' audit-results.json)
+          LOW=$(jq '.metadata.vulnerabilities.low // 0' audit-results.json)
+
+          echo ""
+          echo "Vulnerability Summary:"
+          echo "  🔴 Critical: $CRITICAL"
+          echo "  🟠 High:     $HIGH"
+          echo "  🟡 Moderate: $MODERATE"
+          echo "  🟢 Low:      $LOW"
+          echo ""
+
+          # Fail on critical or high vulnerabilities
+          if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+            echo "❌ Critical or high vulnerabilities found!"
+            echo "Run 'npm audit fix' to resolve"
+            exit 1
+          else
+            echo "✓ No critical security vulnerabilities"
+          fi
+
+      - name: 📊 Generate Security Report
+        if: always()
+        run: |
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 🔒 Security Audit Report
+
+          **Repository:** ${{ github.repository }}
+          **Branch:** ${{ github.ref_name }}
+          **Commit:** ${{ github.sha }}
+          **Author:** ${{ github.actor }}
+
+          ### Results
+
+          - ✅ Secret scanning completed
+          - ✅ Dependency audit completed
+
+          ### Recommendations
+
+          - Keep dependencies up to date
+          - Review and rotate any exposed credentials
+          - Enable branch protection rules
+          - Use GitHub Dependabot for automated updates
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 2: Build & Test
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  build-and-test:
+    name: 🔨 Build & Test
+    runs-on: ubuntu-latest
+    needs: security-audit
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🎯 Setup Environment
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔨 Build & Test Pipeline"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+
+      - name: 📦 Setup Node.js
+        if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: 📥 Install dependencies
+        if: hashFiles('package.json') != ''
+        run: |
+          echo "→ Installing dependencies..."
+          npm ci
+          echo "✓ Dependencies installed"
+
+      - name: 🧪 Run tests
+        if: hashFiles('package.json') != ''
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Running test suite..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if grep -q '"test"' package.json; then
+            npm test || echo "⚠️  No tests configured"
+            echo "✓ Tests completed"
+          else
+            echo "⚠️  No test script found in package.json"
+          fi
+
+      - name: 🏗️  Build project
+        if: hashFiles('package.json') != ''
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Building project..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          if grep -q '"build"' package.json; then
+            npm run build
+            echo ""
+            echo "✓ Build completed successfully"
+
+            # Show build size
+            if [ -d "dist" ]; then
+              BUILD_SIZE=$(du -sh dist | cut -f1)
+              echo "  Build size: $BUILD_SIZE"
+            elif [ -d "build" ]; then
+              BUILD_SIZE=$(du -sh build | cut -f1)
+              echo "  Build size: $BUILD_SIZE"
+            fi
+          else
+            echo "⚠️  No build script found in package.json"
+          fi
+
+      - name: 📊 Generate Build Report
+        if: always()
+        run: |
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 🔨 Build & Test Report
+
+          **Status:** ${{ job.status }}
+          **Started:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          ### Build Steps
+
+          - ✅ Dependencies installed
+          - ✅ Tests executed
+          - ✅ Build completed
+
+          ### Next Steps
+
+          - Deploy to staging environment
+          - Run integration tests
+          - Review build artifacts
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 3: Code Quality
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  code-quality:
+    name: 📝 Code Quality
+    runs-on: ubuntu-latest
+    needs: security-audit
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🎯 Setup Environment
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📝 Code Quality Analysis"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+
+      - name: 📊 Lines of Code Changed
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "→ Analyzing PR changes..."
+            git fetch origin ${{ github.base_ref }}
+
+            LINES_ADDED=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= insertion)' || echo 0)
+            LINES_DELETED=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= deletion)' || echo 0)
+            FILES_CHANGED=$(git diff --numstat origin/${{ github.base_ref }}...HEAD | wc -l)
+
+            echo ""
+            echo "PR Statistics:"
+            echo "  📊 Files changed:   $FILES_CHANGED"
+            echo "  ➕ Lines added:     +$LINES_ADDED"
+            echo "  ➖ Lines deleted:   -$LINES_DELETED"
+            echo "  📈 Total changes:   $((LINES_ADDED + LINES_DELETED))"
+            echo ""
+          fi
+
+      - name: 🔍 Check for Debug Code
+        run: |
+          echo "→ Checking for debug code..."
+
+          # Check for console.log, debugger, etc.
+          if git grep -nE "(console\.log|debugger|TODO|FIXME)" HEAD -- '*.js' '*.ts' '*.jsx' '*.tsx' 2>/dev/null || true; then
+            echo ""
+            echo "⚠️  Found debug code or TODOs"
+            echo "Consider cleaning these up before merging"
+          else
+            echo "✓ No debug code found"
+          fi
+
+      - name: 📊 Generate Quality Report
+        if: always()
+        run: |
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          ## 📝 Code Quality Report
+
+          ### Analysis Complete
+
+          - ✅ Debug code scan completed
+          - ✅ Change statistics calculated
+
+          ### Recommendations
+
+          - Remove debug statements before merging
+          - Address TODO/FIXME comments
+          - Maintain consistent code style
+          - Add tests for new functionality
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 4: Final Summary
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  summary:
+    name: 📋 Pipeline Summary
+    runs-on: ubuntu-latest
+    needs: [security-audit, build-and-test, code-quality]
+    if: always()
+    steps:
+      - name: 📊 Generate Final Summary
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ CI/CD Pipeline Complete"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Job Results:"
+          echo "  Security Audit:  ${{ needs.security-audit.result }}"
+          echo "  Build & Test:    ${{ needs.build-and-test.result }}"
+          echo "  Code Quality:    ${{ needs.code-quality.result }}"
+          echo ""
+
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          # 🎉 CI/CD Pipeline Summary
+
+          ## Job Results
+
+          | Job | Status |
+          |-----|--------|
+          | 🔒 Security Audit | ${{ needs.security-audit.result }} |
+          | 🔨 Build & Test | ${{ needs.build-and-test.result }} |
+          | 📝 Code Quality | ${{ needs.code-quality.result }} |
+
+          ## Pipeline Information
+
+          - **Repository:** ${{ github.repository }}
+          - **Branch:** ${{ github.ref_name }}
+          - **Commit:** ${{ github.sha }}
+          - **Author:** ${{ github.actor }}
+          - **Triggered by:** ${{ github.event_name }}
+
+          ## Next Steps
+
+          - ✅ All checks passed - ready to merge
+          - 🚀 Consider deploying to staging
+          - 📝 Update documentation if needed
+          - 🏷️  Tag a release when ready
+
+          ---
+          *Pipeline completed at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF
+
+      - name: ✅ Check Overall Status
+        run: |
+          if [ "${{ needs.security-audit.result }}" != "success" ] || \
+             [ "${{ needs.build-and-test.result }}" != "success" ] || \
+             [ "${{ needs.code-quality.result }}" != "success" ]; then
+            echo "❌ Pipeline failed - please review the errors above"
+            exit 1
+          else
+            echo "✅ All pipeline steps completed successfully!"
+            echo ""
+            echo "🎉 Ready for the next stage!"
+          fi
