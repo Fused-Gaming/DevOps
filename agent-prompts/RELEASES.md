@@ -11,88 +11,101 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ## Latest Release
 
-### [v1.0.0](https://github.com/Fused-Gaming/DevOps/releases/tag/agent-prompts-v1.0.0) - 2025-11-17
+### [v1.1.0](https://github.com/Fused-Gaming/DevOps/releases/tag/agent-prompts-v1.1.0) - 2025-11-17
 
-🎉 **Initial Public Release**
+🚀 **Major Feature Release: Adaptive Automation**
 
-The first official release of the Claude Agent Prompts Library!
+Added comprehensive automation system with three distinct levels to match any DevOps workflow!
 
 #### Highlights
 
-- **76+ Specialized Agent Prompts** across 9 main categories
-- **Interactive CLI Tool** with beautiful UI and search
-- **Quick Integration Script** with 7 pre-configured presets
-- **Comprehensive Documentation** including README, Quick Start, and Integration Guide
-- **Easy Integration** into any new or existing project
-- **MIT Licensed** with attribution to original claude-flow project
+- 🤖 **Adaptive Setup Wizard** - Auto-detects environment and recommends best automation
+- ⚡ **3 Automation Levels** - Choose Full, Smart, or Lite based on your workflow
+- 🔄 **GitHub Actions Workflows** - Auto version bumping, changelog, PR comments, issue creation
+- 🛠️ **Smart Wizard Tools** - Platform-agnostic diagnostics, health monitoring, upgrades
+- 📋 **CI/CD Templates** - For GitHub Actions, GitLab CI, Jenkins, CircleCI
+- 📚 **Comprehensive Guide** - New AUTOMATION.md with comparison matrix and decision tree
+- ♻️ **Backwards Compatible** - All v1.0.0 features remain fully functional
 
-#### What's Included
+#### What's New
 
-##### Agent Categories
-- **Core Development** (5 agents) - coder, planner, researcher, reviewer, tester
-- **GitHub Integration** (13 agents) - PR management, code review, issues, releases
-- **Hive-Mind Intelligence** (5 agents) - swarm coordination and collective intelligence
-- **Swarm Coordination** (3 agents) - hierarchical, mesh, adaptive topologies
-- **SPARC Methodology** (4 agents) - 5-phase structured development
-- **Optimization** (5 agents) - performance monitoring and benchmarking
-- **Testing** (2 agents) - TDD and production validation
-- **DevOps** (1 agent) - CI/CD automation
-- **Analysis** (2 agents) - code quality and complexity
+##### Adaptive Setup Wizard
+- Interactive environment detection
+- Auto-detects CI/CD platform (GitHub Actions, GitLab CI, Jenkins, CircleCI)
+- Identifies project type and existing tools
+- Recommends best automation level
+- Configures everything automatically
 
-##### Integration Tools
-- `integrate.js` - Interactive CLI with browse, search, and multi-select
-- `quick-integrate.sh` - Fast preset-based integration
-- 7 quick presets: fullstack, github, quality, sparc, swarm, minimal, all
+##### Option 1: Full Automation (GitHub Actions)
+- Automatic version bumping (semantic versioning from commits)
+- Automated changelog generation
+- PR test result comments
+- Auto-create issues for failed builds
+- Diagnostic collection and health monitoring
+- 6 pre-configured GitHub Actions workflows
+
+##### Option 2: Smart Wizard (Platform Agnostic)
+- Works with ANY CI/CD platform
+- Diagnostic tools (`tools/diagnostic.js`)
+- Health check system (`tools/health-check.js`)
+- Smart upgrade tool (`tools/upgrade.js`)
+- CI/CD template generator for your platform
+
+##### Option 3: Lite Templates (Manual Control)
+- NPM scripts for manual workflows
+- CI/CD templates for all major platforms
+- Release management helpers
+- Maximum flexibility and customization
 
 ##### Documentation
-- README.md - Complete library documentation
-- QUICKSTART.md - 5-minute getting started guide
-- INTEGRATION_GUIDE.md - Developer integration guide
-- CHANGELOG.md - Detailed version history
-
-#### Installation
-
-```bash
-# Interactive CLI
-cd agent-prompts
-./integrate.js
-
-# Quick integration
-./quick-integrate.sh fullstack
-
-# NPM installation
-npm install
-npm run integrate
-```
+- AUTOMATION.md - Complete automation guide (24KB)
+- Comparison matrix for all 3 options
+- Decision tree to choose the right level
+- Use case examples and recommendations
+- Migration guide between options
 
 #### Quick Start
 
-Three ways to integrate:
+```bash
+# Run setup wizard (recommended)
+cd agent-prompts
+./setup-wizard.js
 
-1. **Interactive CLI** - Browse and select agents visually
-   ```bash
-   ./integrate.js
-   ```
+# Or choose automation level directly
+npm run setup:full     # Full automation
+npm run setup:smart    # Smart wizard
+npm run setup:lite     # Lite templates
 
-2. **Quick Script** - Use pre-configured presets
-   ```bash
-   ./quick-integrate.sh fullstack
-   ```
+# Then integrate agents
+./integrate.js
+```
 
-3. **Manual** - Copy specific agents
-   ```bash
-   cp -r agent-prompts/core .claude/agents/
-   ```
+#### Installation
+
+See [AUTOMATION.md](AUTOMATION.md) for detailed setup instructions for each automation level.
+
+#### Migration from v1.0.0
+
+All v1.0.0 users can upgrade seamlessly:
+
+```bash
+cd agent-prompts
+git pull  # Get latest version
+./setup-wizard.js  # Add automation
+```
+
+Your existing integrations are preserved!
 
 #### Statistics
-- **Files:** 83
-- **Lines of Code:** 26,957+
-- **Agent Prompts:** 76+
-- **Categories:** 9 main + additional specialized
-- **Documentation Pages:** 4
+- **New Files:** 2 (setup-wizard.js, AUTOMATION.md)
+- **New Features:** 3 automation levels
+- **GitHub Actions Workflows:** 6 (when Option 1 selected)
+- **Smart Tools:** 3 (when Option 2 selected)
+- **Total Documentation:** 5 pages (added AUTOMATION.md)
 
 #### Links
-- [Full Changelog](CHANGELOG.md#100---2025-11-17)
+- [Full Changelog](CHANGELOG.md#110---2025-11-17)
+- [Automation Guide](AUTOMATION.md) - **NEW!**
 - [README](README.md)
 - [Quick Start Guide](QUICKSTART.md)
 - [Integration Guide](INTEGRATION_GUIDE.md)
@@ -105,7 +118,33 @@ Three ways to integrate:
 
 ## Previous Releases
 
-This is the initial release. No previous versions exist.
+### [v1.0.0](https://github.com/Fused-Gaming/DevOps/releases/tag/agent-prompts-v1.0.0) - 2025-11-17
+
+🎉 **Initial Public Release**
+
+The first official release of the Claude Agent Prompts Library!
+
+#### Highlights
+- 76+ Specialized Agent Prompts across 9 main categories
+- Interactive CLI Tool with beautiful UI and search
+- Quick Integration Script with 7 pre-configured presets
+- Comprehensive Documentation including README, Quick Start, and Integration Guide
+- Easy Integration into any new or existing project
+
+#### Agent Categories
+- Core Development (5 agents)
+- GitHub Integration (13 agents)
+- Hive-Mind Intelligence (5 agents)
+- Swarm Coordination (3 agents)
+- SPARC Methodology (4 agents)
+- Optimization (5 agents)
+- Testing (2 agents)
+- DevOps (1 agent)
+- Analysis (2 agents)
+
+#### Links
+- [Full Changelog](CHANGELOG.md#100---2025-11-17)
+- [README](README.md)
 
 ---
 
@@ -126,11 +165,42 @@ Each release includes:
 
 ## Upgrade Guide
 
+### From v1.0.0 to v1.1.0
+
+**Upgrade is seamless and backwards compatible!**
+
+```bash
+# 1. Pull latest version
+cd agent-prompts
+git pull origin main
+
+# 2. Run setup wizard to add automation (optional)
+./setup-wizard.js
+
+# 3. Continue using existing integration
+# All your v1.0.0 features still work!
+```
+
+**What's preserved:**
+- All integrated agents
+- Your custom configurations
+- Integration preferences
+- Existing workflows
+
+**What's new:**
+- Adaptive setup wizard
+- 3 automation levels to choose from
+- AUTOMATION.md documentation
+
 ### From No Version (Fresh Install)
 This is a fresh installation. Simply follow the installation instructions above.
 
 ### Future Upgrades
-Upgrade instructions will be provided in future releases.
+Version upgrade tools are available in Option 2 (Smart Wizard):
+```bash
+npm run upgrade -- --check  # Check for updates
+npm run upgrade -- --upgrade  # Perform upgrade
+```
 
 ---
 
@@ -142,6 +212,6 @@ Upgrade instructions will be provided in future releases.
 
 ---
 
-**Latest Version:** 1.0.0
+**Latest Version:** 1.1.0
 **Release Date:** November 17, 2025
 **Status:** Stable

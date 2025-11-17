@@ -5,6 +5,166 @@ All notable changes to the Claude Agent Prompts Library will be documented in th
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-11-17
+
+### 🚀 Major Feature Release: Adaptive Automation
+
+Added comprehensive automation system with three distinct levels to match any DevOps workflow.
+
+### Added
+
+#### Setup Wizard & Automation
+- **Adaptive Setup Wizard** (`setup-wizard.js`)
+  - Interactive environment detection
+  - Auto-detects CI/CD platform (GitHub Actions, GitLab CI, Jenkins, CircleCI)
+  - Identifies project type and existing tools
+  - Recommends best automation level based on environment
+  - Configures automation automatically based on user choice
+  - Three distinct automation levels to choose from
+
+#### Option 1: Full Automation (GitHub Actions)
+- **Automatic Version Bumping**
+  - Semantic versioning from commit messages (MAJOR/MINOR/PATCH)
+  - Auto-update VERSION file and package.json
+  - Create git tags on release
+  - GitHub Actions workflow: `version-bump.yml`
+- **Automated Changelog Generation**
+  - Generate from commit history
+  - Update CHANGELOG.md on every release
+  - Organize by change type
+  - GitHub Actions workflow: `changelog.yml`
+- **PR Integration & Comments**
+  - Post test results as PR comments
+  - Show detailed test output
+  - Automatic status indicators
+  - GitHub Actions workflow: `pr-comment.yml`
+- **Intelligent Issue Creation**
+  - Auto-create issues for failed builds
+  - Include diagnostic information and workflow links
+  - Tag with appropriate labels
+  - GitHub Actions workflow: `issue-on-failure.yml`
+- **Diagnostic Collection**
+  - Automated integration health data collection
+  - Track agent file integrity and catalog validity
+  - Export diagnostic reports as artifacts
+  - GitHub Actions workflow: `diagnostics.yml`
+- **Health Monitoring**
+  - Scheduled health checks every 6 hours
+  - Verify all agent files and catalog integrity
+  - Alert on detected issues
+  - GitHub Actions workflow: `health-monitor.yml`
+
+#### Option 2: Smart Wizard (Platform Agnostic)
+- **Auto-Detection System**
+  - Detect CI/CD platform, project type, and tools
+  - Generate custom integration scripts for any platform
+  - Recommend best agent prompts for detected stack
+- **Diagnostic Tools** (`tools/diagnostic.js`)
+  - Comprehensive diagnostic collection
+  - Export diagnostics as JSON
+  - Environment and integration analysis
+- **Health Monitoring** (`tools/health-check.js`)
+  - Manual and scheduled health checks
+  - Catalog integrity verification
+  - Version consistency validation
+- **Smart Upgrade System** (`tools/upgrade.js`)
+  - Check for new versions
+  - Automatic backup before upgrade
+  - Conflict resolution and configuration migration
+- **CI/CD Template Generation**
+  - Generate platform-specific templates
+  - Support for GitHub Actions, GitLab CI, Jenkins, CircleCI
+  - Custom scripts for detected stack
+
+#### Option 3: Lite Templates (Manual Control)
+- **NPM Scripts Collection**
+  - `npm run release` - Manual version management
+  - `npm run diagnose` - Export diagnostic data
+  - `npm run health` - Run health checks
+  - `npm run upgrade-check` - Check for updates
+- **CI/CD Templates**
+  - Templates for GitHub Actions, GitLab CI, Jenkins, CircleCI
+  - Generic shell script templates
+  - Release management helpers
+- **Documentation Templates**
+  - PR and issue templates with pre-filled diagnostics
+  - Release notes and migration guide templates
+
+### Documentation
+
+- **AUTOMATION.md** - Comprehensive automation guide
+  - Detailed explanation of all three options
+  - What each option includes (features, files, usage)
+  - Comparison matrix
+  - Decision tree for choosing the right option
+  - Use case examples and recommendations
+  - Migration guide between options
+
+### Enhanced
+
+- **package.json** - Updated with new scripts
+  - `npm run setup` - Launch setup wizard
+  - `npm run setup:full` - Direct full automation setup
+  - `npm run setup:smart` - Direct smart wizard setup
+  - `npm run setup:lite` - Direct lite templates setup
+  - Updated docs script to include AUTOMATION.md
+
+- **README.md** - Enhanced with automation features
+  - Links to automation documentation
+  - Quick setup instructions
+  - Version bumped to 1.1.0
+
+### Technical Details
+
+#### New Files
+- `setup-wizard.js` (27KB) - Adaptive setup wizard
+- `AUTOMATION.md` (24KB) - Automation documentation
+- `.github/workflows/` (when Option 1 selected)
+  - `version-bump.yml` - Auto version bumping
+  - `changelog.yml` - Changelog generation
+  - `pr-comment.yml` - PR test result comments
+  - `issue-on-failure.yml` - Auto issue creation
+  - `diagnostics.yml` - Diagnostic collection
+  - `health-monitor.yml` - Health monitoring
+- `tools/` (when Option 2 selected)
+  - `diagnostic.js` - Diagnostic tool
+  - `health-check.js` - Health check tool
+  - `upgrade.js` - Upgrade system
+
+#### Configuration
+- Version bumped: `1.0.0` → `1.1.0`
+- Added setup wizard to npm scripts
+- Added automation documentation to files array
+
+### Use Cases
+
+**For GitHub Teams:**
+- Choose Option 1 for zero-effort full automation
+- Automatic version management, changelogs, PR comments
+
+**For Multi-Platform Teams:**
+- Choose Option 2 for smart platform-agnostic tools
+- Works with any CI/CD system
+- Intelligent recommendations and templates
+
+**For Manual Control:**
+- Choose Option 3 for lightweight templates
+- Maximum flexibility and customization
+- Learn DevOps at your own pace
+
+### Migration from 1.0.0
+
+Users on v1.0.0 can run the setup wizard to add automation:
+
+```bash
+cd agent-prompts
+./setup-wizard.js
+```
+
+All existing integrations and customizations are preserved.
+
+---
+
 ## [1.0.0] - 2025-11-17
 
 ### 🎉 Initial Release
