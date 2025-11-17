@@ -40,6 +40,53 @@ make help
 
 ---
 
+## 🤖 NEW: Automatic PR & Commit Message Generation
+
+Automatically generate professional commit messages and PR descriptions!
+
+### Features
+
+- **🤖 Auto PR Descriptions** - GitHub Actions automatically generates comprehensive PR descriptions when you create a PR
+- **✍️ Commit Message Generator** - Interactive script analyzes your changes and suggests commit messages
+- **🔍 Commit Linting** - Validates all commit messages follow conventional commits format
+- **📊 Statistics** - Automatic analysis of files changed, insertions, deletions, and commit types
+
+### Quick Usage
+
+```bash
+# Generate commit message (interactive)
+./scripts/generate-commit-message.sh
+
+# Generate PR description
+./scripts/generate-pr-description.sh
+
+# Or use NPM scripts
+npm run commit
+npm run pr
+```
+
+### Automatic Features
+
+When you create a PR, the system automatically:
+- ✅ Analyzes all commits
+- ✅ Categorizes by type (feat, fix, docs, etc.)
+- ✅ Generates comprehensive description
+- ✅ Adds statistics and commit history
+- ✅ Posts summary comment
+
+### Commit Format
+
+All commits must follow:
+```
+<type>: <description>
+```
+
+Valid types: `feat`, `fix`, `docs`, `chore`, `test`, `refactor`, `perf`, `style`, `build`, `ci`
+
+📚 **[Complete Guide →](docs/AUTO-PR-COMMIT-GUIDE.md)** | **[Quick Reference →](docs/PR-COMMIT-QUICKREF.md)**
+
+---
+
 ## 🚀 Quick Start (Choose Your Path)
 
 ### Path 1: Instant Setup (Recommended)
