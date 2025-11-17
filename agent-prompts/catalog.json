@@ -1,0 +1,300 @@
+{
+  "version": "1.0.0",
+  "name": "Claude Agent Prompts Library",
+  "description": "Comprehensive collection of 76+ specialized agent prompts from claude-flow, organized by category for easy integration",
+  "categories": {
+    "core": {
+      "name": "Core Development Agents",
+      "description": "Essential development agents for coding, planning, testing, and reviewing",
+      "color": "#FF6B35",
+      "icon": "💻",
+      "agents": [
+        {
+          "name": "coder",
+          "file": "core/coder.md",
+          "description": "Implementation specialist for writing clean, efficient code",
+          "capabilities": ["code_generation", "refactoring", "optimization", "api_design", "error_handling"],
+          "priority": "high",
+          "useCase": "When you need to implement features, write production code, or refactor existing code"
+        },
+        {
+          "name": "planner",
+          "file": "core/planner.md",
+          "description": "Task planning and workflow orchestration",
+          "capabilities": ["task_breakdown", "workflow_design", "resource_planning"],
+          "priority": "high",
+          "useCase": "When you need to plan complex tasks, break down requirements, or design workflows"
+        },
+        {
+          "name": "researcher",
+          "file": "core/researcher.md",
+          "description": "Requirements analysis and pattern investigation",
+          "capabilities": ["research", "analysis", "pattern_recognition"],
+          "priority": "medium",
+          "useCase": "When you need to understand requirements, research best practices, or analyze patterns"
+        },
+        {
+          "name": "reviewer",
+          "file": "core/reviewer.md",
+          "description": "Code quality and security review",
+          "capabilities": ["code_review", "security_audit", "quality_assurance"],
+          "priority": "high",
+          "useCase": "When you need code review, security audits, or quality assurance"
+        },
+        {
+          "name": "tester",
+          "file": "core/tester.md",
+          "description": "Test generation and validation",
+          "capabilities": ["test_generation", "validation", "tdd"],
+          "priority": "high",
+          "useCase": "When you need to write tests, validate functionality, or practice TDD"
+        }
+      ]
+    },
+    "github": {
+      "name": "GitHub Integration Agents",
+      "description": "Specialized agents for GitHub operations, PR management, and automation",
+      "color": "#4ECDC4",
+      "icon": "🐙",
+      "agents": [
+        {
+          "name": "pr-manager",
+          "file": "github/pr-manager.md",
+          "description": "Comprehensive PR management with swarm coordination",
+          "capabilities": ["pr_management", "code_review", "merge_automation"],
+          "priority": "high",
+          "useCase": "When managing pull requests, coordinating reviews, or automating merges"
+        },
+        {
+          "name": "code-review-swarm",
+          "file": "github/code-review-swarm.md",
+          "description": "Automated multi-agent code review",
+          "capabilities": ["parallel_review", "swarm_coordination"],
+          "priority": "high",
+          "useCase": "When you need comprehensive multi-perspective code reviews"
+        },
+        {
+          "name": "issue-tracker",
+          "file": "github/issue-tracker.md",
+          "description": "GitHub issue management and triage",
+          "capabilities": ["issue_management", "triage", "labeling"],
+          "priority": "medium",
+          "useCase": "When managing GitHub issues, triaging bugs, or organizing work"
+        },
+        {
+          "name": "release-manager",
+          "file": "github/release-manager.md",
+          "description": "Release automation and versioning",
+          "capabilities": ["release_automation", "versioning", "changelog"],
+          "priority": "medium",
+          "useCase": "When creating releases, managing versions, or generating changelogs"
+        }
+      ]
+    },
+    "hive-mind": {
+      "name": "Hive-Mind Intelligence",
+      "description": "Distributed intelligence and swarm coordination agents",
+      "color": "#FFD700",
+      "icon": "👑",
+      "agents": [
+        {
+          "name": "queen-coordinator",
+          "file": "hive-mind/queen-coordinator.md",
+          "description": "Sovereign orchestrator with hierarchical control",
+          "capabilities": ["strategic_command", "resource_allocation", "hive_coherence"],
+          "priority": "critical",
+          "useCase": "When you need top-level coordination of multiple agents or swarm intelligence"
+        },
+        {
+          "name": "collective-intelligence-coordinator",
+          "file": "hive-mind/collective-intelligence-coordinator.md",
+          "description": "Distributed collective decision-making",
+          "capabilities": ["consensus_building", "collective_decision"],
+          "priority": "high",
+          "useCase": "When decisions need collective intelligence or distributed consensus"
+        },
+        {
+          "name": "scout-explorer",
+          "file": "hive-mind/scout-explorer.md",
+          "description": "Reconnaissance and exploration specialist",
+          "capabilities": ["exploration", "information_gathering"],
+          "priority": "medium",
+          "useCase": "When exploring codebases, gathering information, or reconnaissance"
+        },
+        {
+          "name": "worker-specialist",
+          "file": "hive-mind/worker-specialist.md",
+          "description": "Task execution specialist",
+          "capabilities": ["task_execution", "parallel_processing"],
+          "priority": "medium",
+          "useCase": "When executing specific tasks or parallel processing work"
+        }
+      ]
+    },
+    "swarm": {
+      "name": "Swarm Coordination",
+      "description": "Advanced swarm topology and coordination patterns",
+      "color": "#9B59B6",
+      "icon": "🐝",
+      "agents": [
+        {
+          "name": "hierarchical-coordinator",
+          "file": "swarm/hierarchical-coordinator.md",
+          "description": "Tiered command structure coordination",
+          "capabilities": ["hierarchical_control", "command_chain"],
+          "priority": "high",
+          "useCase": "When you need clear command hierarchies and structured coordination"
+        },
+        {
+          "name": "mesh-coordinator",
+          "file": "swarm/mesh-coordinator.md",
+          "description": "Peer-to-peer decentralized mesh network",
+          "capabilities": ["p2p_coordination", "decentralized_control"],
+          "priority": "high",
+          "useCase": "When you need decentralized, peer-to-peer coordination"
+        },
+        {
+          "name": "adaptive-coordinator",
+          "file": "swarm/adaptive-coordinator.md",
+          "description": "Self-organizing topology management",
+          "capabilities": ["adaptive_topology", "self_organization"],
+          "priority": "high",
+          "useCase": "When coordination patterns need to adapt dynamically to conditions"
+        }
+      ]
+    },
+    "sparc": {
+      "name": "SPARC Methodology",
+      "description": "5-phase development methodology: Specification, Pseudocode, Architecture, Refinement, Completion",
+      "color": "#3498DB",
+      "icon": "⚡",
+      "agents": [
+        {
+          "name": "specification",
+          "file": "sparc/specification.md",
+          "description": "Requirements specification and analysis",
+          "capabilities": ["requirements_analysis", "specification"],
+          "priority": "high",
+          "useCase": "Phase 1: When defining requirements and specifications"
+        },
+        {
+          "name": "pseudocode",
+          "file": "sparc/pseudocode.md",
+          "description": "Algorithm design and pseudocode generation",
+          "capabilities": ["algorithm_design", "pseudocode"],
+          "priority": "high",
+          "useCase": "Phase 2: When designing algorithms before implementation"
+        },
+        {
+          "name": "architecture",
+          "file": "sparc/architecture.md",
+          "description": "System architecture and design patterns",
+          "capabilities": ["system_design", "architecture"],
+          "priority": "high",
+          "useCase": "Phase 3: When designing system architecture and patterns"
+        },
+        {
+          "name": "refinement",
+          "file": "sparc/refinement.md",
+          "description": "Code refinement and optimization",
+          "capabilities": ["code_refinement", "optimization"],
+          "priority": "high",
+          "useCase": "Phase 4: When refining and optimizing implementations"
+        }
+      ]
+    },
+    "optimization": {
+      "name": "Performance & Optimization",
+      "description": "Performance monitoring, benchmarking, and optimization agents",
+      "color": "#E74C3C",
+      "icon": "🚀",
+      "agents": [
+        {
+          "name": "performance-monitor",
+          "file": "optimization/performance-monitor.md",
+          "description": "Real-time performance monitoring",
+          "capabilities": ["monitoring", "metrics", "alerting"],
+          "priority": "medium",
+          "useCase": "When monitoring performance, tracking metrics, or setting up alerts"
+        },
+        {
+          "name": "benchmark-suite",
+          "file": "optimization/benchmark-suite.md",
+          "description": "Performance benchmarking framework",
+          "capabilities": ["benchmarking", "performance_testing"],
+          "priority": "medium",
+          "useCase": "When benchmarking code, comparing performance, or load testing"
+        }
+      ]
+    },
+    "testing": {
+      "name": "Testing & Validation",
+      "description": "Comprehensive testing strategies and validation agents",
+      "color": "#2ECC71",
+      "icon": "✅",
+      "agents": [
+        {
+          "name": "tdd-london-swarm",
+          "file": "testing/tdd-london-swarm.md",
+          "description": "Test-driven development coordination",
+          "capabilities": ["tdd", "test_coordination"],
+          "priority": "high",
+          "useCase": "When practicing TDD with swarm coordination"
+        },
+        {
+          "name": "production-validator",
+          "file": "testing/production-validator.md",
+          "description": "Production environment validation",
+          "capabilities": ["production_testing", "validation"],
+          "priority": "high",
+          "useCase": "When validating production deployments or environments"
+        }
+      ]
+    },
+    "devops": {
+      "name": "DevOps & CI/CD",
+      "description": "DevOps automation and CI/CD pipeline agents",
+      "color": "#1ABC9C",
+      "icon": "⚙️",
+      "agents": [
+        {
+          "name": "ci-cd-github",
+          "file": "devops/ci-cd/ops-cicd-github.md",
+          "description": "GitHub Actions and CI/CD automation",
+          "capabilities": ["ci_cd", "github_actions", "automation"],
+          "priority": "high",
+          "useCase": "When setting up CI/CD pipelines or GitHub Actions workflows"
+        }
+      ]
+    },
+    "analysis": {
+      "name": "Code Analysis",
+      "description": "Code quality analysis and review agents",
+      "color": "#F39C12",
+      "icon": "🔍",
+      "agents": [
+        {
+          "name": "code-analyzer",
+          "file": "analysis/code-analyzer.md",
+          "description": "Code quality and complexity analysis",
+          "capabilities": ["code_analysis", "quality_metrics"],
+          "priority": "medium",
+          "useCase": "When analyzing code quality, complexity, or technical debt"
+        }
+      ]
+    }
+  },
+  "integrationModes": {
+    "single": "Integrate a single agent prompt into your project",
+    "category": "Integrate all agents from a specific category",
+    "custom": "Create a custom selection of agents",
+    "full": "Integrate the complete agent library"
+  },
+  "requirements": {
+    "node": ">=18.0.0",
+    "optional": {
+      "gh": "GitHub CLI for GitHub integration agents",
+      "git": "Git for version control operations"
+    }
+  }
+}
