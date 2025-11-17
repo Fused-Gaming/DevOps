@@ -11,7 +11,10 @@
     "start": "node integrate.js",
     "quick": "./quick-integrate.sh",
     "list": "./quick-integrate.sh --list",
-    "test": "echo 'Testing integration tool...' && node -e \"const fs = require('fs'); const catalog = JSON.parse(fs.readFileSync('./catalog.json', 'utf8')); console.log('✓ Catalog loaded:', Object.keys(catalog.categories).length, 'categories'); process.exit(0);\""
+    "test": "echo 'Testing integration tool...' && node -e \"const fs = require('fs'); const catalog = JSON.parse(fs.readFileSync('./catalog.json', 'utf8')); console.log('✓ Catalog loaded:', Object.keys(catalog.categories).length, 'categories'); process.exit(0);\"",
+    "version": "cat VERSION",
+    "changelog": "cat CHANGELOG.md",
+    "docs": "echo 'Opening documentation...' && echo 'README: README.md' && echo 'Quick Start: QUICKSTART.md' && echo 'Integration: INTEGRATION_GUIDE.md' && echo 'Changelog: CHANGELOG.md' && echo 'Releases: RELEASES.md'"
   },
   "keywords": [
     "claude",
@@ -38,6 +41,12 @@
     "integrate.js",
     "quick-integrate.sh",
     "catalog.json",
+    "VERSION",
+    "README.md",
+    "QUICKSTART.md",
+    "INTEGRATION_GUIDE.md",
+    "CHANGELOG.md",
+    "RELEASES.md",
     "core/",
     "github/",
     "hive-mind/",
@@ -47,7 +56,17 @@
     "testing/",
     "devops/",
     "analysis/",
-    "README.md"
+    "consensus/",
+    "flow-nexus/",
+    "goal/",
+    "templates/",
+    "neural/",
+    "reasoning/",
+    "development/",
+    "architecture/",
+    "data/",
+    "documentation/",
+    "specialized/"
   ],
   "config": {
     "defaultTarget": ".claude/agents"

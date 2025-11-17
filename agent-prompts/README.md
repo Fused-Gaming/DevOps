@@ -3,9 +3,15 @@
 > **Comprehensive collection of 76+ specialized agent prompts for Claude Code**
 > Organized, categorized, and ready to integrate into any project
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](RELEASES.md)
 [![Agents](https://img.shields.io/badge/agents-76+-brightgreen.svg)]()
 [![Categories](https://img.shields.io/badge/categories-9-orange.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
+[![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)]()
+
+📖 **[Quick Start](QUICKSTART.md)** | 🔧 **[Integration Guide](INTEGRATION_GUIDE.md)** | 📝 **[Changelog](CHANGELOG.md)** | 🚀 **[Releases](RELEASES.md)**
+
+---
 
 ## 📚 Overview
 
@@ -494,6 +500,31 @@ To contribute new agents or improvements:
 - **Source Project:** [claude-flow](https://github.com/ruvnet/claude-flow/)
 - **Claude Code Docs:** [docs.anthropic.com](https://docs.anthropic.com)
 - **MCP Documentation:** Model Context Protocol guides
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+- **Releases:** [RELEASES.md](RELEASES.md)
+
+## 📋 Version History
+
+### Current Version: 1.0.0
+
+**Release Date:** November 17, 2025
+
+**Status:** Stable ✅
+
+**What's New:**
+- Initial public release
+- 76+ specialized agent prompts across 9 categories
+- Interactive CLI tool with search and browse
+- Quick integration script with 7 presets
+- Comprehensive documentation
+
+**See Also:**
+- [Full Changelog](CHANGELOG.md) - Detailed version history
+- [Releases](RELEASES.md) - Official release notes
+- [Migration Guide](INTEGRATION_GUIDE.md) - Upgrade instructions
+
+### Previous Versions
+This is the initial release. No previous versions exist.
 
 ## 📄 License
 

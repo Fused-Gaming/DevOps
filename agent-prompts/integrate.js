@@ -762,7 +762,8 @@ async function showAbout() {
   breadcrumb();
 
   print(`  ${colors.bright}${catalog.name}${colors.reset}`, 'cyan');
-  print(`  Version: ${catalog.version}`, 'white');
+  print(`  Version: ${catalog.version} (Stable)`, 'white');
+  print(`  Release Date: November 17, 2025`, 'dim');
   print(`\n  ${catalog.description}`, 'white');
 
   print(`\n  📊 Library Statistics:`, 'cyan');
@@ -770,7 +771,9 @@ async function showAbout() {
   const totalCategories = Object.keys(catalog.categories).length;
   print(`    • ${totalCategories} categories`, 'white');
   print(`    • ${totalAgents} specialized agents`, 'white');
+  print(`    • 76+ agent prompts`, 'white');
   print(`    • 27,000+ lines of prompts`, 'white');
+  print(`    • 83 files total`, 'white');
 
   print(`\n  🎯 Key Features:`, 'cyan');
   print(`    • Organized by functional categories`, 'white');
@@ -784,6 +787,14 @@ async function showAbout() {
   print(`    https://github.com/ruvnet/claude-flow`, 'dim');
   print(`\n  🎮 Curated & Integrated by:`, 'cyan');
   print(`    Fused Gaming`, 'white');
+  print(`    https://github.com/Fused-Gaming/DevOps`, 'dim');
+
+  print(`\n  📚 Documentation:`, 'cyan');
+  print(`    • README.md - Complete documentation`, 'white');
+  print(`    • QUICKSTART.md - 5-minute getting started`, 'white');
+  print(`    • INTEGRATION_GUIDE.md - Developer guide`, 'white');
+  print(`    • CHANGELOG.md - Version history`, 'white');
+  print(`    • RELEASES.md - Official releases`, 'white');
 
   await prompt('\n  Press Enter to continue...');
   return mainMenu();
@@ -802,6 +813,7 @@ async function main() {
     ╔═══════════════════════════════════════════════════════════════════════════╗
     ║                                                                           ║
     ║         🤖  CLAUDE AGENT PROMPTS INTEGRATION TOOL                        ║
+    ║                          Version ${catalog.version}                                   ║
     ║                                                                           ║
     ║         Comprehensive library of 76+ specialized agent prompts           ║
     ║         Easy integration for any project                                 ║
