@@ -60,6 +60,14 @@
 
   <!-- Add more URLs dynamically from markdown files -->
 
+  <!-- docs/MILESTONE-FIX-GUIDE.md -->
+  <url>
+    <loc>https://example.com/MILESTONE-FIX-GUIDE</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- docs/FEATURE-DOCS-README.md -->
   <url>
     <loc>https://example.com/FEATURE-DOCS-README</loc>
@@ -76,10 +84,26 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- docs/FLOW-REFERENCE.md -->
+  <url>
+    <loc>https://example.com/FLOW-REFERENCE</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- docs/MVP.md -->
   <url>
     <loc>https://example.com/MVP</loc>
     <lastmod>2025-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/MVP-SUMMARY.md -->
+  <url>
+    <loc>https://example.com/MVP-SUMMARY</loc>
+    <lastmod>2025-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -120,6 +144,14 @@
   <url>
     <loc>https://example.com/templates/FEATURE_TEMPLATE</loc>
     <lastmod>2025-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/MVP-STATUS.md -->
+  <url>
+    <loc>https://example.com/MVP-STATUS</loc>
+    <lastmod>2025-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
