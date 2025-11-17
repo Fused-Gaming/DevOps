@@ -150,6 +150,12 @@ async function mainMenu() {
       icon: 'ℹ️',
       color: 'white',
       description: 'Learn more about this library'
+    },
+    {
+      label: 'Support This Project',
+      icon: '💝',
+      color: 'magenta',
+      description: 'Help support development'
     }
   ];
 
@@ -164,6 +170,7 @@ async function mainMenu() {
     case '4': return integrateAgents();
     case '5': return quickPresets();
     case '6': return showAbout();
+    case '7': return showSupport();
     case 'q':
     case 'Q':
       print('\n  👋 Goodbye!\n', 'cyan');
@@ -762,7 +769,8 @@ async function showAbout() {
   breadcrumb();
 
   print(`  ${colors.bright}${catalog.name}${colors.reset}`, 'cyan');
-  print(`  Version: ${catalog.version}`, 'white');
+  print(`  Version: ${catalog.version} (Stable)`, 'white');
+  print(`  Release Date: November 17, 2025`, 'dim');
   print(`\n  ${catalog.description}`, 'white');
 
   print(`\n  📊 Library Statistics:`, 'cyan');
@@ -770,7 +778,9 @@ async function showAbout() {
   const totalCategories = Object.keys(catalog.categories).length;
   print(`    • ${totalCategories} categories`, 'white');
   print(`    • ${totalAgents} specialized agents`, 'white');
+  print(`    • 76+ agent prompts`, 'white');
   print(`    • 27,000+ lines of prompts`, 'white');
+  print(`    • 83 files total`, 'white');
 
   print(`\n  🎯 Key Features:`, 'cyan');
   print(`    • Organized by functional categories`, 'white');
@@ -784,6 +794,48 @@ async function showAbout() {
   print(`    https://github.com/ruvnet/claude-flow`, 'dim');
   print(`\n  🎮 Curated & Integrated by:`, 'cyan');
   print(`    Fused Gaming`, 'white');
+  print(`    https://github.com/Fused-Gaming/DevOps`, 'dim');
+
+  print(`\n  📚 Documentation:`, 'cyan');
+  print(`    • README.md - Complete documentation`, 'white');
+  print(`    • QUICKSTART.md - 5-minute getting started`, 'white');
+  print(`    • INTEGRATION_GUIDE.md - Developer guide`, 'white');
+  print(`    • CHANGELOG.md - Version history`, 'white');
+  print(`    • RELEASES.md - Official releases`, 'white');
+
+  await prompt('\n  Press Enter to continue...');
+  return mainMenu();
+}
+
+async function showSupport() {
+  clear();
+  breadcrumbs = ['Home', 'Support'];
+
+  header('💝 Support This Project');
+  breadcrumb();
+
+  print(`  If you find this library helpful, consider supporting its development!\n`, 'white');
+
+  print(`  ${colors.bright}Solana Donations:${colors.reset}`, 'magenta');
+  print(`\n  Address:`, 'cyan');
+  print(`  ${colors.bright}GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN${colors.reset}`, 'green');
+
+  print(`\n  🔗 View on Solscan:`, 'cyan');
+  print(`  https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN`, 'blue');
+
+  print(`\n  💡 How to donate:`, 'cyan');
+  print(`    1. Copy the Solana address above`, 'white');
+  print(`    2. Open your Solana wallet (Phantom, Solflare, etc.)`, 'white');
+  print(`    3. Send SOL or SPL tokens to the address`, 'white');
+  print(`    4. View your transaction on Solscan!`, 'white');
+
+  print(`\n  ${colors.bright}Your support helps:${colors.reset}`, 'yellow');
+  print(`    • Maintain and improve this library`, 'white');
+  print(`    • Add new agent prompts and features`, 'white');
+  print(`    • Create better documentation`, 'white');
+  print(`    • Support the open-source community`, 'white');
+
+  print(`\n  Thank you for your support! 🙏`, 'green');
 
   await prompt('\n  Press Enter to continue...');
   return mainMenu();
@@ -802,6 +854,7 @@ async function main() {
     ╔═══════════════════════════════════════════════════════════════════════════╗
     ║                                                                           ║
     ║         🤖  CLAUDE AGENT PROMPTS INTEGRATION TOOL                        ║
+    ║                          Version ${catalog.version}                                   ║
     ║                                                                           ║
     ║         Comprehensive library of 76+ specialized agent prompts           ║
     ║         Easy integration for any project                                 ║

@@ -3,9 +3,20 @@
 > **Comprehensive collection of 76+ specialized agent prompts for Claude Code**
 > Organized, categorized, and ready to integrate into any project
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](RELEASES.md)
 [![Agents](https://img.shields.io/badge/agents-76+-brightgreen.svg)]()
 [![Categories](https://img.shields.io/badge/categories-9-orange.svg)]()
+[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
+[![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)]()
+[![Automation](https://img.shields.io/badge/automation-3_levels-purple.svg)](AUTOMATION.md)
+
+[![Donate](https://img.shields.io/badge/Donate-Solana-9945FF?logo=solana&logoColor=white)](https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN)
+
+💝 **Support this project:** `GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN` ([View on Solscan](https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN))
+
+📖 **[Quick Start](QUICKSTART.md)** | 🔧 **[Integration Guide](INTEGRATION_GUIDE.md)** | 🤖 **[Automation](AUTOMATION.md)** | 📝 **[Changelog](CHANGELOG.md)** | 🚀 **[Releases](RELEASES.md)**
+
+---
 
 ## 📚 Overview
 
@@ -16,8 +27,26 @@ This library provides a curated collection of specialized agent prompts extracte
 - **76+ Specialized Agent Prompts** - Covering all aspects of software development
 - **9 Main Categories** - Core, GitHub, Hive-Mind, Swarm, SPARC, Optimization, Testing, DevOps, Analysis
 - **Interactive CLI Tool** - Browse, search, and integrate with ease
+- **Adaptive Automation** - 3 automation levels to match your DevOps workflow ⭐ NEW
+- **Setup Wizard** - Auto-detects your environment and recommends best automation
 - **Quick Presets** - Pre-configured bundles for common workflows
 - **Complete Documentation** - Each agent includes detailed instructions
+
+### 🆕 What's New in v1.1.0
+
+**Adaptive Automation System** - Choose the perfect automation level for your workflow:
+
+1. **Full Automation** (GitHub Actions) - Zero manual work, automatic everything
+2. **Smart Wizard** (Platform Agnostic) - Intelligent tools for any CI/CD platform
+3. **Lite Templates** (Manual Control) - Lightweight templates with maximum flexibility
+
+Run the setup wizard to get started:
+```bash
+cd agent-prompts
+./setup-wizard.js
+```
+
+👉 [Read the complete automation guide](AUTOMATION.md)
 
 ## 🎯 Key Features
 
@@ -494,10 +523,51 @@ To contribute new agents or improvements:
 - **Source Project:** [claude-flow](https://github.com/ruvnet/claude-flow/)
 - **Claude Code Docs:** [docs.anthropic.com](https://docs.anthropic.com)
 - **MCP Documentation:** Model Context Protocol guides
+- **Changelog:** [CHANGELOG.md](CHANGELOG.md)
+- **Releases:** [RELEASES.md](RELEASES.md)
+
+## 📋 Version History
+
+### Current Version: 1.1.0
+
+**Release Date:** November 17, 2025
+
+**Status:** Stable ✅
+
+**What's New in 1.1.0:**
+- 🤖 **Adaptive Automation System** - 3 automation levels (Full, Smart, Lite)
+- 🧙 **Setup Wizard** - Auto-detects environment and recommends best option
+- ⚡ **Full Automation** - GitHub Actions workflows for automatic version/changelog/PR comments
+- 🛠️ **Smart Wizard** - Platform-agnostic tools with diagnostics and health monitoring
+- 📋 **Lite Templates** - CI/CD templates for GitHub, GitLab, Jenkins, CircleCI
+- 📚 **AUTOMATION.md** - Comprehensive automation guide with comparison matrix
+
+**Previous Releases:**
+- **1.0.0** (Nov 17, 2025) - Initial release with 76+ agent prompts and integration tools
+
+**See Also:**
+- [Full Changelog](CHANGELOG.md) - Detailed version history
+- [Releases](RELEASES.md) - Official release notes
+- [Automation Guide](AUTOMATION.md) - Automation options explained
+- [Migration Guide](INTEGRATION_GUIDE.md) - Upgrade instructions
 
 ## 📄 License
 
 Based on claude-flow. Please refer to the original project for licensing information.
+
+## 💝 Support This Project
+
+If you find this library helpful, consider supporting its development!
+
+**Solana Donations:**
+
+```
+GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN
+```
+
+🔗 [View on Solscan](https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN)
+
+Your support helps maintain and improve this library. Thank you! 🙏
 
 ## 🙏 Credits
 
