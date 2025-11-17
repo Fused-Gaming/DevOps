@@ -150,6 +150,12 @@ async function mainMenu() {
       icon: 'ℹ️',
       color: 'white',
       description: 'Learn more about this library'
+    },
+    {
+      label: 'Support This Project',
+      icon: '💝',
+      color: 'magenta',
+      description: 'Help support development'
     }
   ];
 
@@ -164,6 +170,7 @@ async function mainMenu() {
     case '4': return integrateAgents();
     case '5': return quickPresets();
     case '6': return showAbout();
+    case '7': return showSupport();
     case 'q':
     case 'Q':
       print('\n  👋 Goodbye!\n', 'cyan');
@@ -795,6 +802,40 @@ async function showAbout() {
   print(`    • INTEGRATION_GUIDE.md - Developer guide`, 'white');
   print(`    • CHANGELOG.md - Version history`, 'white');
   print(`    • RELEASES.md - Official releases`, 'white');
+
+  await prompt('\n  Press Enter to continue...');
+  return mainMenu();
+}
+
+async function showSupport() {
+  clear();
+  breadcrumbs = ['Home', 'Support'];
+
+  header('💝 Support This Project');
+  breadcrumb();
+
+  print(`  If you find this library helpful, consider supporting its development!\n`, 'white');
+
+  print(`  ${colors.bright}Solana Donations:${colors.reset}`, 'magenta');
+  print(`\n  Address:`, 'cyan');
+  print(`  ${colors.bright}GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN${colors.reset}`, 'green');
+
+  print(`\n  🔗 View on Solscan:`, 'cyan');
+  print(`  https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN`, 'blue');
+
+  print(`\n  💡 How to donate:`, 'cyan');
+  print(`    1. Copy the Solana address above`, 'white');
+  print(`    2. Open your Solana wallet (Phantom, Solflare, etc.)`, 'white');
+  print(`    3. Send SOL or SPL tokens to the address`, 'white');
+  print(`    4. View your transaction on Solscan!`, 'white');
+
+  print(`\n  ${colors.bright}Your support helps:${colors.reset}`, 'yellow');
+  print(`    • Maintain and improve this library`, 'white');
+  print(`    • Add new agent prompts and features`, 'white');
+  print(`    • Create better documentation`, 'white');
+  print(`    • Support the open-source community`, 'white');
+
+  print(`\n  Thank you for your support! 🙏`, 'green');
 
   await prompt('\n  Press Enter to continue...');
   return mainMenu();

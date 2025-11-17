@@ -10,6 +10,10 @@
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen.svg)]()
 [![Automation](https://img.shields.io/badge/automation-3_levels-purple.svg)](AUTOMATION.md)
 
+[![Donate](https://img.shields.io/badge/Donate-Solana-9945FF?logo=solana&logoColor=white)](https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN)
+
+💝 **Support this project:** `GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN` ([View on Solscan](https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN))
+
 📖 **[Quick Start](QUICKSTART.md)** | 🔧 **[Integration Guide](INTEGRATION_GUIDE.md)** | 🤖 **[Automation](AUTOMATION.md)** | 📝 **[Changelog](CHANGELOG.md)** | 🚀 **[Releases](RELEASES.md)**
 
 ---
@@ -550,6 +554,20 @@ To contribute new agents or improvements:
 ## 📄 License
 
 Based on claude-flow. Please refer to the original project for licensing information.
+
+## 💝 Support This Project
+
+If you find this library helpful, consider supporting its development!
+
+**Solana Donations:**
+
+```
+GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN
+```
+
+🔗 [View on Solscan](https://solscan.io/account/GMr9rXrFSt5H3xX1wi85vyCQfwwLsQpULwNEjrSghvRN)
+
+Your support helps maintain and improve this library. Thank you! 🙏
 
 ## 🙏 Credits
 
