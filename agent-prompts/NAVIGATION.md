@@ -2,101 +2,112 @@
 
 This document visualizes the complete navigation flow of the Claude Agent Prompts Integration Tool.
 
-## Main Menu Navigation Flow
+## Main Menu Navigation Flow (v1.1.0)
 
 ```mermaid
 flowchart TD
-    Start([Launch integrate.js]) --> Welcome[Welcome Screen<br/>Version 1.1.0]
-    Welcome --> MainMenu{Main Menu<br/>7 Options}
 
-    %% Option 1: Browse Categories
-    MainMenu -->|1. Browse Categories 📚| BrowseMenu[Browse Categories Menu<br/>9 Categories + Back]
-    BrowseMenu -->|Select Category| ViewCategory[View Category<br/>List All Agents]
+    Start(["Launch integrate.js"])
+        --> Welcome["Welcome Screen<br>Version 1.1.0"]
+
+    Welcome --> MainMenu{"Main Menu<br>7 Options"}
+
+    %% Option 1
+    MainMenu -->|1. Browse Categories| BrowseMenu["Browse Categories Menu<br>9 Categories + Back"]
+    BrowseMenu -->|Select Category| ViewCategory["View Category<br>List All Agents"]
     BrowseMenu -->|Back| MainMenu
-    ViewCategory -->|Select Agent| ViewAgent1[View Agent Details<br/>Metadata + Content Preview]
+    ViewCategory -->|Select Agent| ViewAgentA["Agent Details<br>Metadata + Preview"]
     ViewCategory -->|Back| BrowseMenu
-    ViewAgent1 -->|Toggle Selection| ViewAgent1
-    ViewAgent1 -->|Back| ViewCategory
-    ViewAgent1 -->|Return to Categories| BrowseMenu
-    ViewAgent1 -->|Main Menu| MainMenu
+    ViewAgentA -->|Toggle Selection| ViewAgentA
+    ViewAgentA -->|Back| ViewCategory
+    ViewAgentA -->|Return to Categories| BrowseMenu
+    ViewAgentA -->|Main Menu| MainMenu
 
-    %% Option 2: Search Agents
-    MainMenu -->|2. Search Agents 🔍| SearchPrompt[Enter Search Keyword]
-    SearchPrompt -->|Submit Query| SearchResults{Search Results}
-    SearchResults -->|Results Found| DisplayResults[Display Matching Agents<br/>With Highlights]
-    SearchResults -->|No Results| NoResults[No Matches Found]
+    %% Option 2
+    MainMenu -->|2. Search Agents| SearchPrompt["Enter Search Keyword"]
+    SearchPrompt -->|Submit| SearchResults{"Search Results"}
+    SearchResults -->|Found| DisplayResults["Matching Agents<br>Highlighted"]
+    SearchResults -->|Not Found| NoResults["No Matches"]
     NoResults -->|Try Again| SearchPrompt
     NoResults -->|Back| MainMenu
-    DisplayResults -->|Select Agent| ViewAgent2[View Agent Details]
+    DisplayResults -->|Select Agent| ViewAgentB["Agent Details"]
     DisplayResults -->|Back| MainMenu
-    ViewAgent2 -->|Toggle Selection| ViewAgent2
-    ViewAgent2 -->|Back to Results| DisplayResults
-    ViewAgent2 -->|Main Menu| MainMenu
+    ViewAgentB -->|Toggle| ViewAgentB
+    ViewAgentB -->|Back| DisplayResults
+    ViewAgentB -->|Main Menu| MainMenu
 
-    %% Option 3: View Selected
-    MainMenu -->|3. View Selected 📋| CheckSelected{Any Agents<br/>Selected?}
-    CheckSelected -->|No| EmptySelected[No Agents Selected<br/>Prompt to Browse/Search]
-    CheckSelected -->|Yes| SelectedList[List Selected Agents<br/>With Details]
+    %% Option 3
+    MainMenu -->|3. View Selected| CheckSelected{"Any Selected?"}
+    CheckSelected -->|No| EmptySelected["No Agents Selected"]
+    CheckSelected -->|Yes| SelectedList["Selected Agents"]
     EmptySelected -->|Back| MainMenu
-    SelectedList -->|View Agent Details| ViewAgent3[View Agent Details]
-    SelectedList -->|Clear All| ClearConfirm{Confirm Clear?}
-    SelectedList -->|Integrate Now| IntegrateFlow
+    SelectedList -->|View Agent| ViewAgentC["Agent Details"]
+    SelectedList -->|Clear All| ClearConfirm{"Confirm Clear?"}
+    SelectedList -->|Integrate| IntegrateFlow
     SelectedList -->|Back| MainMenu
-    ClearConfirm -->|Yes| Cleared[All Selections Cleared]
+    ClearConfirm -->|Yes| Cleared["Cleared"]
     ClearConfirm -->|No| SelectedList
     Cleared -->|Back| MainMenu
-    ViewAgent3 -->|Toggle Selection| ViewAgent3
-    ViewAgent3 -->|Back| SelectedList
+    ViewAgentC -->|Toggle| ViewAgentC
+    ViewAgentC -->|Back| SelectedList
 
-    %% Option 4: Integrate Into Project
-    MainMenu -->|4. Integrate Into Project 🚀| IntegrateFlow[Integration Workflow]
-    IntegrateFlow --> CheckSelection{Agents<br/>Selected?}
-    CheckSelection -->|No| PromptSelect[Prompt to Select Agents]
-    CheckSelection -->|Yes| ChooseMethod{Choose Integration<br/>Method}
+    %% Option 4
+    MainMenu -->|4. Integrate| IntegrateFlow["Integration Workflow"]
+    IntegrateFlow --> CheckSelection{"Agents Selected?"}
+    CheckSelection -->|No| PromptSelect["Prompt to Select Agents"]
+    CheckSelection -->|Yes| ChooseMethod{"Choose Integration Method"}
     PromptSelect -->|Browse| BrowseMenu
     PromptSelect -->|Search| SearchPrompt
     PromptSelect -->|Cancel| MainMenu
-    ChooseMethod -->|Copy Files| TargetDir[Enter Target Directory]
-    ChooseMethod -->|Generate Script| ScriptName[Enter Script Name]
+
+    ChooseMethod -->|Copy Files| TargetDir["Enter Target Directory"]
+    ChooseMethod -->|Generate Script| ScriptName["Enter Script Name"]
     ChooseMethod -->|Cancel| MainMenu
-    TargetDir -->|Confirm| ExecuteCopy[Execute File Copy<br/>With Progress]
-    ScriptName -->|Confirm| GenerateScript[Generate Shell Script]
-    ExecuteCopy -->|Success| IntegrateSuccess[Integration Successful<br/>Summary Display]
-    ExecuteCopy -->|Error| IntegrateError[Error Display<br/>Retry Options]
-    GenerateScript -->|Success| ScriptSuccess[Script Generated<br/>Usage Instructions]
+
+    TargetDir -->|Confirm| ExecuteCopy["Copying Files..."]
+    ScriptName -->|Confirm| GenerateScript["Generate Script"]
+
+    ExecuteCopy -->|Success| IntegrateSuccess["Integration Complete"]
+    ExecuteCopy -->|Error| IntegrateError["Error Display"]
+    GenerateScript -->|Success| ScriptSuccess["Script Generated"]
+
     IntegrateSuccess -->|Main Menu| MainMenu
+    ScriptSuccess -->|Main Menu| MainMenu
     IntegrateError -->|Retry| IntegrateFlow
     IntegrateError -->|Cancel| MainMenu
-    ScriptSuccess -->|Main Menu| MainMenu
 
-    %% Option 5: Quick Presets
-    MainMenu -->|5. Quick Presets ⚡| PresetsMenu{Choose Preset}
-    PresetsMenu -->|Full-Stack 🌐| PresetFullStack[4 Agents Selected<br/>coder, tester, reviewer, planner]
-    PresetsMenu -->|GitHub 🐙| PresetGitHub[4 Agents Selected<br/>pr-manager, code-review, issue-tracker, ci-cd]
-    PresetsMenu -->|Code Quality ✨| PresetQuality[4 Agents Selected<br/>tester, reviewer, analyzer, monitor]
-    PresetsMenu -->|SPARC ⚡| PresetSPARC[4 Agents Selected<br/>specification, pseudocode, architecture, refinement]
-    PresetsMenu -->|Swarm 🐝| PresetSwarm[3 Agents Selected<br/>queen, collective, hierarchical]
+    %% Option 5
+    MainMenu -->|5. Quick Presets| PresetsMenu{"Choose Preset"}
+
+    PresetsMenu -->|Full-Stack| PresetFS["4 Agents Selected"]
+    PresetsMenu -->|GitHub| PresetGH["4 Agents Selected"]
+    PresetsMenu -->|Quality| PresetQA["4 Agents Selected"]
+    PresetsMenu -->|SPARC| PresetSP["4 Agents Selected"]
+    PresetsMenu -->|Swarm| PresetSW["3 Agents Selected"]
     PresetsMenu -->|Back| MainMenu
-    PresetFullStack --> PresetConfirm{Integrate Now?}
-    PresetGitHub --> PresetConfirm
-    PresetQuality --> PresetConfirm
-    PresetSPARC --> PresetConfirm
-    PresetSwarm --> PresetConfirm
+
+    PresetFS --> PresetConfirm{"Integrate Now?"}
+    PresetGH --> PresetConfirm
+    PresetQA --> PresetConfirm
+    PresetSP --> PresetConfirm
+    PresetSW --> PresetConfirm
+
     PresetConfirm -->|Yes| IntegrateFlow
     PresetConfirm -->|View Selected| SelectedList
     PresetConfirm -->|Back| PresetsMenu
 
-    %% Option 6: About
-    MainMenu -->|6. About ℹ️| AboutScreen[About Screen<br/>Version, Stats, Links]
+    %% Option 6
+    MainMenu -->|6. About| AboutScreen["About Screen"]
     AboutScreen -->|Back| MainMenu
 
-    %% Option 7: Support (NEW)
-    MainMenu -->|7. Support This Project 💝| SupportScreen[Donation Information<br/>Solana Address<br/>Solscan Link]
+    %% Option 7
+    MainMenu -->|7. Support| SupportScreen["Support This Project"]
     SupportScreen -->|Back| MainMenu
 
     %% Exit
-    MainMenu -->|Exit/Ctrl+C| Exit([Exit Program])
+    MainMenu -->|Exit| Exit(["Exit Program"])
 
+    %% Styling
     style Start fill:#4CAF50,stroke:#2E7D32,color:#fff
     style Exit fill:#f44336,stroke:#c62828,color:#fff
     style MainMenu fill:#2196F3,stroke:#1565C0,color:#fff
