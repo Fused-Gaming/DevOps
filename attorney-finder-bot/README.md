@@ -38,7 +38,7 @@ cp .env.example .env
 
 Edit `.env` and add your Telegram bot token:
 ```env
-TELEGRAM_BOT_TOKEN=8011471379:AAGaEH6l4E3Ro66_BYuShA7IZoita1Zazpc
+TELEGRAM_BOT_TOKEN=your_bot_token_here
 DATABASE_PATH=attorneys.db
 MAX_RESULTS_PER_SEARCH=50
 SCRAPE_DELAY_SECONDS=2
