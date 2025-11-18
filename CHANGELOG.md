@@ -9,6 +9,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Author: Unknown <unknown@example.com> -->
 <!-- Code sign-off: Unknown -->
 
+## [2.2.0] - 2025-11-18
+
+### Added
+- **Attorney Finder Telegram Bot** - Complete application for helping users find legal counsel
+  - Smart search by ZIP code, city, and practice area
+  - Web scraping engine for extracting attorney information from URLs
+  - SQLite database with indexed searches for fast retrieval
+  - Telegram bot interface with inline commands
+  - Automatic extraction of phone numbers, emails, addresses, and practice areas
+  - Phone number validation using libphonenumber
+  - Privacy-focused: no automated calling, users manually contact attorneys
+  - Complete documentation with README, QUICKSTART guide, and setup scripts
+  - One-click installation with `setup.sh` and `run.sh` scripts
+  - `.env` configuration with proper gitignore for security
+  - Bot commands: `/search`, `/scrape`, `/stats`, `/help`
+  - Support for natural language queries (e.g., "94621 family law")
+
+### Technical Details
+- **Bot Module** (`attorney-finder-bot/src/bot.py`) - 350+ lines
+  - Command handlers for all bot operations
+  - Smart query parsing for flexible searches
+  - Formatted results display
+  - Error handling and logging
+- **Scraper Module** (`attorney-finder-bot/src/scraper.py`) - 300+ lines
+  - BeautifulSoup4-based web scraping
+  - Schema.org markup support
+  - Phone number validation with phonenumbers library
+  - Email extraction and validation
+  - Address parsing and geocoding
+  - Practice area detection
+  - Rate limiting and respectful crawling
+- **Database Module** (`attorney-finder-bot/src/database.py`) - 200+ lines
+  - SQLite ORM with indexed searches
+  - Attorney data management
+  - Search by location and practice area
+  - Database statistics tracking
+- **Setup Scripts** - Automated installation and deployment
+- **Documentation** - Comprehensive guides for users and developers
+
+### Contributors
+- Claude (Attorney Finder Bot implementation)
+
+---
+
 ## [2.1.0] - 2025-11-18
 
 ### Added
