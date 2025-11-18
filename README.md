@@ -4,7 +4,25 @@
 
 ---
 
-## ⭐ NEW in v2.0 - Enhanced Automation Features
+## ⭐ NEW in v2.2 - Attorney Finder Telegram Bot
+
+### 🏛️ Major New Feature: Attorney Finder Bot
+
+A complete Telegram bot application for helping users find legal counsel!
+
+- **🔍 Smart Search** - Search attorneys by ZIP code, city, or practice area
+- **🌐 Web Scraping** - Automatically extract attorney info from web pages
+- **💾 SQLite Database** - Fast, indexed searches with complete attorney profiles
+- **🤖 Telegram Interface** - Clean bot with `/search`, `/scrape`, `/stats` commands
+- **📱 Natural Queries** - Just type "94621 family law" to search
+- **🔒 Privacy-Focused** - No automated calling, users contact attorneys manually
+- **⚡ Easy Setup** - One-click installation with `setup.sh` and `run.sh`
+
+📁 **Location:** `attorney-finder-bot/` | 📚 **[Quick Start Guide →](attorney-finder-bot/QUICKSTART.md)** | 📖 **[Full Docs →](attorney-finder-bot/README.md)**
+
+---
+
+## ⭐ v2.0 - Enhanced Automation Features
 
 We've added powerful new automation features to supercharge your DevOps workflow:
 
