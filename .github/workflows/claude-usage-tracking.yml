@@ -1,0 +1,496 @@
+name: Claude Usage Tracking & Test Feedback
+
+# Author: User (via git config)
+# Automatically track Claude Code usage and provide test feedback on every push/PR
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 1: Calculate and Track Claude Code Usage
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  track-usage:
+    name: 📊 Track Claude Code Usage
+    runs-on: ubuntu-latest
+    outputs:
+      tokens_used: ${{ steps.calculate.outputs.tokens_used }}
+      estimated_cost: ${{ steps.calculate.outputs.estimated_cost }}
+      files_changed: ${{ steps.calculate.outputs.files_changed }}
+      lines_changed: ${{ steps.calculate.outputs.lines_changed }}
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🎯 Initialize Tracking
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "📊 Claude Code Usage Tracking"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Actor: ${{ github.actor }}"
+          echo "Commit: ${{ github.sha }}"
+          echo ""
+
+      - name: 📊 Calculate Usage Metrics
+        id: calculate
+        run: |
+          echo "→ Analyzing commit changes..."
+
+          # Get base commit for comparison
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE_REF="${{ github.event.pull_request.base.sha }}"
+          else
+            BASE_REF="HEAD~1"
+          fi
+
+          # Calculate changes
+          FILES_CHANGED=$(git diff --numstat $BASE_REF HEAD | wc -l || echo 1)
+          LINES_ADDED=$(git diff --numstat $BASE_REF HEAD | awk '{sum+=$1} END {print sum}' || echo 0)
+          LINES_DELETED=$(git diff --numstat $BASE_REF HEAD | awk '{sum+=$2} END {print sum}' || echo 0)
+          TOTAL_CHANGES=$((LINES_ADDED + LINES_DELETED))
+
+          echo "Files changed: $FILES_CHANGED"
+          echo "Lines added: +$LINES_ADDED"
+          echo "Lines deleted: -$LINES_DELETED"
+          echo "Total changes: $TOTAL_CHANGES"
+          echo ""
+
+          # Token estimation (1 line ≈ 10-15 tokens, using 12 as average)
+          # Add baseline for context and conversation
+          ESTIMATED_TOKENS=$((TOTAL_CHANGES * 12 + 500))
+
+          # Claude Sonnet 4.5 pricing (per million tokens)
+          # Input: $3.00, Output: $15.00
+          # Conservative estimate: 70% input, 30% output
+          INPUT_TOKENS=$((ESTIMATED_TOKENS * 70 / 100))
+          OUTPUT_TOKENS=$((ESTIMATED_TOKENS * 30 / 100))
+
+          # Calculate cost in cents (to avoid floating point issues)
+          INPUT_COST_CENTS=$((INPUT_TOKENS * 300 / 100000))
+          OUTPUT_COST_CENTS=$((OUTPUT_TOKENS * 1500 / 100000))
+          TOTAL_COST_CENTS=$((INPUT_COST_CENTS + OUTPUT_COST_CENTS))
+
+          # Convert to dollars
+          ESTIMATED_COST=$(echo "scale=4; $TOTAL_COST_CENTS / 100" | bc)
+
+          echo "💰 Usage Estimate:"
+          echo "  Estimated tokens: ~$ESTIMATED_TOKENS"
+          echo "  Input tokens: ~$INPUT_TOKENS (70%)"
+          echo "  Output tokens: ~$OUTPUT_TOKENS (30%)"
+          echo "  Estimated cost: \$$ESTIMATED_COST"
+          echo ""
+
+          # Set outputs
+          echo "tokens_used=$ESTIMATED_TOKENS" >> $GITHUB_OUTPUT
+          echo "estimated_cost=$ESTIMATED_COST" >> $GITHUB_OUTPUT
+          echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          echo "lines_changed=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
+
+      - name: 📝 Update CLAUDE_USAGE.md
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "→ Updating CLAUDE_USAGE.md..."
+
+          # Run the tracking script
+          if [ -f "scripts/track-claude-usage.sh" ]; then
+            bash scripts/track-claude-usage.sh "${{ github.event.head_commit.message }}"
+          else
+            echo "⚠️  Warning: track-claude-usage.sh not found"
+          fi
+
+      - name: 💾 Commit Updated Usage File
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+          if [ -n "$(git status --porcelain CLAUDE_USAGE.md)" ]; then
+            git add CLAUDE_USAGE.md
+            git commit -m "chore: update Claude usage tracking
+
+Auto-updated by workflow
+Tokens: ${{ steps.calculate.outputs.tokens_used }}
+Cost: \$${{ steps.calculate.outputs.estimated_cost }}
+
+Signed-off-by: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
+            git push
+            echo "✓ CLAUDE_USAGE.md updated and committed"
+          else
+            echo "ℹ️  No changes to CLAUDE_USAGE.md"
+          fi
+
+      - name: 📊 Generate Usage Report
+        if: always()
+        run: |
+          cat > $GITHUB_STEP_SUMMARY << EOF
+          # 📊 Claude Code Usage Report
+
+          ## This Commit
+
+          | Metric | Value |
+          |--------|-------|
+          | **Tokens Used** | ~${{ steps.calculate.outputs.tokens_used }} |
+          | **Estimated Cost** | \$${{ steps.calculate.outputs.estimated_cost }} |
+          | **Files Changed** | ${{ steps.calculate.outputs.files_changed }} |
+          | **Lines Changed** | ${{ steps.calculate.outputs.lines_changed }} |
+
+          ## Pricing Reference
+
+          **Claude Sonnet 4.5:**
+          - Input tokens: \$3.00 per million tokens
+          - Output tokens: \$15.00 per million tokens
+
+          **Calculation:**
+          - Estimated 70% input, 30% output tokens
+          - ~12 tokens per line of code changed
+          - +500 token baseline for context
+
+          ## 💡 Tip
+
+          View complete usage history in \`CLAUDE_USAGE.md\`
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          *Attribution: ${{ github.actor }}*
+          EOF
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 2: Run Tests with Detailed Feedback
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  test-with-feedback:
+    name: 🧪 Run Tests with Troubleshooting
+    runs-on: ubuntu-latest
+    needs: track-usage
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🎯 Initialize Testing
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🧪 Enhanced Test Suite with Diagnostics"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+
+      - name: 📦 Setup Node.js
+        if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 🔍 Environment Diagnostics
+        run: |
+          echo "→ System Information:"
+          echo "  OS: $(uname -s)"
+          echo "  Kernel: $(uname -r)"
+          echo "  Architecture: $(uname -m)"
+          echo ""
+
+          echo "→ Available Tools:"
+          echo "  Git: $(git --version || echo 'Not found')"
+          echo "  Node: $(node --version 2>/dev/null || echo 'Not found')"
+          echo "  npm: $(npm --version 2>/dev/null || echo 'Not found')"
+          echo "  Python: $(python3 --version 2>/dev/null || echo 'Not found')"
+          echo "  Docker: $(docker --version 2>/dev/null || echo 'Not found')"
+          echo ""
+
+      - name: 📥 Install Dependencies
+        if: hashFiles('package.json') != ''
+        run: |
+          echo "[████████░░░░░░░░░░░░░░░░░░░░░░░░] 25% Installing dependencies..."
+          npm ci
+          echo "✓ Dependencies installed"
+
+      - name: 🔒 Security Audit
+        if: hashFiles('package.json') != ''
+        continue-on-error: true
+        run: |
+          echo "[████████████████░░░░░░░░░░░░░░░░] 50% Running security audit..."
+
+          npm audit --json > audit-results.json || true
+
+          CRITICAL=$(jq '.metadata.vulnerabilities.critical // 0' audit-results.json)
+          HIGH=$(jq '.metadata.vulnerabilities.high // 0' audit-results.json)
+          MODERATE=$(jq '.metadata.vulnerabilities.moderate // 0' audit-results.json)
+          LOW=$(jq '.metadata.vulnerabilities.low // 0' audit-results.json)
+
+          echo ""
+          echo "Security Scan Results:"
+          echo "  🔴 Critical: $CRITICAL"
+          echo "  🟠 High: $HIGH"
+          echo "  🟡 Moderate: $MODERATE"
+          echo "  🟢 Low: $LOW"
+          echo ""
+
+          if [ "$CRITICAL" -gt 0 ] || [ "$HIGH" -gt 0 ]; then
+            echo "⚠️  Security vulnerabilities detected!"
+            echo ""
+            echo "🔧 Troubleshooting Steps:"
+            echo "  1. Run: npm audit fix"
+            echo "  2. For breaking changes: npm audit fix --force"
+            echo "  3. Review: npm audit"
+            echo "  4. Update manually if needed"
+            echo ""
+          fi
+
+      - name: 🧪 Run Tests
+        if: hashFiles('package.json') != ''
+        continue-on-error: true
+        id: tests
+        run: |
+          echo "[████████████████████████░░░░░░░░] 75% Running tests..."
+
+          if grep -q '"test"' package.json; then
+            if npm test 2>&1 | tee test-output.log; then
+              echo "✓ All tests passed"
+              echo "test_status=passed" >> $GITHUB_OUTPUT
+            else
+              echo "❌ Tests failed"
+              echo "test_status=failed" >> $GITHUB_OUTPUT
+
+              echo ""
+              echo "🔧 Troubleshooting Test Failures:"
+              echo ""
+              echo "Common Issues & Solutions:"
+              echo ""
+              echo "1. Missing Dependencies"
+              echo "   → Run: npm install"
+              echo "   → Check package.json for all required packages"
+              echo ""
+              echo "2. Outdated Packages"
+              echo "   → Run: npm outdated"
+              echo "   → Update: npm update"
+              echo ""
+              echo "3. Environment Variables"
+              echo "   → Check .env.example for required vars"
+              echo "   → Set in GitHub Secrets if needed"
+              echo ""
+              echo "4. Database Connection"
+              echo "   → Verify database is running"
+              echo "   → Check connection string"
+              echo "   → Review migration status"
+              echo ""
+              echo "5. Port Conflicts"
+              echo "   → Check if ports are already in use"
+              echo "   → Use different ports in test config"
+              echo ""
+              echo "📋 Test Output (last 50 lines):"
+              tail -50 test-output.log
+              echo ""
+            fi
+          else
+            echo "ℹ️  No test script found"
+            echo "test_status=skipped" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 🏗️  Build Check
+        if: hashFiles('package.json') != ''
+        continue-on-error: true
+        id: build
+        run: |
+          echo "[████████████████████████████████] 100% Checking build..."
+
+          if grep -q '"build"' package.json; then
+            if npm run build 2>&1 | tee build-output.log; then
+              echo "✓ Build successful"
+              echo "build_status=passed" >> $GITHUB_OUTPUT
+
+              # Show build size
+              if [ -d "dist" ] || [ -d "build" ]; then
+                BUILD_DIR=$([ -d "dist" ] && echo "dist" || echo "build")
+                BUILD_SIZE=$(du -sh "$BUILD_DIR" | cut -f1)
+                echo "  Build size: $BUILD_SIZE"
+              fi
+            else
+              echo "❌ Build failed"
+              echo "build_status=failed" >> $GITHUB_OUTPUT
+
+              echo ""
+              echo "🔧 Troubleshooting Build Failures:"
+              echo ""
+              echo "Common Build Issues:"
+              echo ""
+              echo "1. TypeScript Errors"
+              echo "   → Run: npm run type-check (if available)"
+              echo "   → Check for type mismatches"
+              echo "   → Review tsconfig.json"
+              echo ""
+              echo "2. Missing Files"
+              echo "   → Check import paths"
+              echo "   → Verify all files are committed"
+              echo "   → Check .gitignore isn't excluding needed files"
+              echo ""
+              echo "3. Webpack/Vite Configuration"
+              echo "   → Review webpack.config.js or vite.config.js"
+              echo "   → Check for plugin compatibility"
+              echo "   → Verify loader configurations"
+              echo ""
+              echo "4. Memory Issues"
+              echo "   → Increase Node memory: NODE_OPTIONS=--max-old-space-size=4096"
+              echo "   → Check for circular dependencies"
+              echo ""
+              echo "5. Module Resolution"
+              echo "   → Clear node_modules and reinstall"
+              echo "   → Check package.json for correct versions"
+              echo "   → Verify peer dependencies"
+              echo ""
+              echo "📋 Build Output (last 50 lines):"
+              tail -50 build-output.log
+              echo ""
+            fi
+          else
+            echo "ℹ️  No build script found"
+            echo "build_status=skipped" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📊 Generate Test Report
+        if: always()
+        run: |
+          TEST_STATUS="${{ steps.tests.outputs.test_status }}"
+          BUILD_STATUS="${{ steps.build.outputs.build_status }}"
+
+          cat > $GITHUB_STEP_SUMMARY << EOF
+          # 🧪 Test & Build Report
+
+          ## Status Summary
+
+          | Check | Status |
+          |-------|--------|
+          | Tests | $([ "$TEST_STATUS" == "passed" ] && echo "✅ Passed" || [ "$TEST_STATUS" == "failed" ] && echo "❌ Failed" || echo "⚠️  Skipped") |
+          | Build | $([ "$BUILD_STATUS" == "passed" ] && echo "✅ Passed" || [ "$BUILD_STATUS" == "failed" ] && echo "❌ Failed" || echo "⚠️  Skipped") |
+          | Security | See security audit above |
+
+          ## Troubleshooting Resources
+
+          ### If Tests Failed:
+          - Check test output above for specific errors
+          - Verify all dependencies are installed
+          - Check environment variables
+          - Review database connections
+          - Look for port conflicts
+
+          ### If Build Failed:
+          - Review build output for specific errors
+          - Check TypeScript errors
+          - Verify import paths
+          - Check webpack/vite configuration
+          - Clear node_modules and reinstall
+
+          ### Common Commands:
+          \`\`\`bash
+          # Reinstall dependencies
+          rm -rf node_modules package-lock.json
+          npm install
+
+          # Run tests locally
+          npm test
+
+          # Run build locally
+          npm run build
+
+          # Check for issues
+          npm run lint
+          npm audit
+          \`\`\`
+
+          ## Next Steps
+
+          1. ✅ Fix any failing tests
+          2. ✅ Resolve security vulnerabilities
+          3. ✅ Ensure build succeeds
+          4. ✅ Review code quality
+          5. ✅ Update documentation
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          *Attribution: ${{ github.actor }}*
+          EOF
+
+      - name: 📤 Upload Test Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            test-output.log
+            build-output.log
+            audit-results.json
+          retention-days: 30
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Job 3: Comment on PR with Usage & Test Summary
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  pr-comment:
+    name: 💬 PR Feedback
+    runs-on: ubuntu-latest
+    needs: [track-usage, test-with-feedback]
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: 💬 Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tokensUsed = '${{ needs.track-usage.outputs.tokens_used }}';
+            const estimatedCost = '${{ needs.track-usage.outputs.estimated_cost }}';
+            const filesChanged = '${{ needs.track-usage.outputs.files_changed }}';
+            const linesChanged = '${{ needs.track-usage.outputs.lines_changed }}';
+
+            const comment = `## 📊 Claude Code Usage & Test Report
+
+            ### 💰 Usage Estimate for this PR
+
+            | Metric | Value |
+            |--------|-------|
+            | **Estimated Tokens** | ~${tokensUsed} |
+            | **Estimated Cost** | \$${estimatedCost} |
+            | **Files Changed** | ${filesChanged} |
+            | **Lines Changed** | ${linesChanged} |
+
+            ### 📋 Test Status
+
+            - Tests: Check workflow for detailed results
+            - Build: Check workflow for build status
+            - Security: npm audit completed
+
+            ### 💡 Notes
+
+            - Token estimation based on ~12 tokens per line changed
+            - Uses Claude Sonnet 4.5 pricing (Input: $3/M, Output: $15/M)
+            - Assumes 70% input / 30% output token distribution
+
+            ### 🔗 Resources
+
+            - [View Complete Usage History](../blob/main/CLAUDE_USAGE.md)
+            - [Test Troubleshooting Guide](../blob/main/NEW-FEATURES-GUIDE.md#troubleshooting)
+
+            ---
+            *Auto-generated by Claude Usage Tracking workflow*
+            *Attribution: ${{ github.actor }}*
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
