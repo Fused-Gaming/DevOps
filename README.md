@@ -22,6 +22,49 @@ A complete Telegram bot application for helping users find legal counsel!
 
 ---
 
+## 🤖 NEW: Telegram Bot Templates
+
+### ⚡ Create Production-Ready Bots in 60 Seconds!
+
+Never start from scratch again! Generate fully-configured Telegram bots with one command.
+
+**Quick Start:**
+```bash
+cd telegram-bot-templates
+./create-bot.sh my-awesome-bot YOUR_BOT_TOKEN
+cd my-awesome-bot-bot
+./setup.sh && ./run.sh
+```
+
+**What You Get:**
+- ✅ Dual mode (polling for dev, webhook for production)
+- ✅ Vercel deployment built-in
+- ✅ One-click deploy scripts
+- ✅ Clean, maintainable structure
+- ✅ Security best practices
+- ✅ Full documentation
+
+**Features:**
+- 🚀 **Instant Setup** - Bot ready in 1 minute
+- 🔄 **Local → Production** - Seamless workflow
+- 📦 **Vercel Integration** - Deploy with `./deploy-vercel.sh`
+- 🔒 **Secure by Default** - .env gitignored, tokens protected
+- 📚 **Well Documented** - README, quickstart, examples
+
+**Use Cases:**
+```bash
+./create-bot.sh customer-support    # Customer service bot
+./create-bot.sh notifications       # Alert/notification bot
+./create-bot.sh admin-panel         # Admin tools bot
+./create-bot.sh data-collector      # Survey/data collection bot
+```
+
+📁 **Location:** `telegram-bot-templates/` | ⚡ **[Quick Start →](telegram-bot-templates/QUICKSTART.md)** | 📖 **[Full Docs →](telegram-bot-templates/README.md)**
+
+**Example:** The Attorney Finder Bot was built using this template!
+
+---
+
 ## ⭐ v2.0 - Enhanced Automation Features
 
 We've added powerful new automation features to supercharge your DevOps workflow:

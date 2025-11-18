@@ -12,6 +12,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.2.0] - 2025-11-18
 
 ### Added
+- **Telegram Bot Templates** - Production-ready bot generator system
+  - One-command bot creation: `./create-bot.sh <name> [token]`
+  - Dual mode operation: polling (dev) and webhook (production)
+  - Vercel deployment integration with automated scripts
+  - Complete project scaffolding with best practices
+  - Security built-in (.env management, gitignore)
+  - Deployment scripts: setup.sh, run.sh, deploy-vercel.sh, set-webhook.sh
+  - Template includes bot_handlers.py structure for clean code organization
+  - Comprehensive documentation (README, QUICKSTART)
+  - Ready for customization with clear extension points
+
 - **Attorney Finder Telegram Bot** - Complete application for helping users find legal counsel
   - Smart search by ZIP code, city, and practice area
   - Web scraping engine for extracting attorney information from URLs
