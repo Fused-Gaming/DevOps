@@ -9,6 +9,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- Author: Unknown <unknown@example.com> -->
 <!-- Code sign-off: Unknown -->
 
+## [2.1.0] - 2025-11-18
+
+### Added
+- **Automated Claude Usage Tracking Workflow** - GitHub Actions workflow that tracks usage on every push/PR
+  - Automatic token calculation based on code changes
+  - Cost estimation using Claude Sonnet 4.5 pricing
+  - Comprehensive test feedback with troubleshooting steps
+  - Automatic PR comments with usage statistics
+  - Detailed workflow summaries and reports
+- **CNAME Generation** - Script for GitHub Pages custom domain setup
+  - Support for apex domains and subdomains
+  - Complete DNS configuration guide
+  - A record and CNAME record instructions
+  - GitHub Pages integration steps
+  - SSL/TLS guidance
+- **Automatic Update Checker** - Interactive script to check for repository updates
+  - Detects new commits available
+  - Categorizes changes by type (features, fixes, docs, chores)
+  - Shows affected files
+  - Interactive update with confirmation
+  - Smart stashing of uncommitted changes
+  - Merge conflict handling
+
+### Changed
+- **SEO Workflow** - Enhanced to include CNAME generation (7 steps instead of 6)
+- **Makefile** - Added `make update` command for checking updates
+- **Makefile** - Updated `make seo-optimize` to include CNAME generation
+- **Documentation** - Comprehensive updates to README.md and NEW-FEATURES-GUIDE.md
+
+### Contributors
+- User (via git config)
+
+---
+
 ## [1.0.0] - 2025-11-16
 
 ### Added

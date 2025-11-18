@@ -895,3 +895,198 @@ git push
 ---
 
 These workflows provide comprehensive automation for your DevOps pipeline with all the security and quality gates we discussed!
+
+---
+
+## 7. Claude Code Usage Tracking & Test Feedback
+
+**File: `.github/workflows/claude-usage-tracking.yml`**
+
+Automatically track Claude Code usage on every push and PR with comprehensive test feedback and troubleshooting.
+
+### Features
+
+- **Automatic Token Calculation** - Estimates tokens based on code changes
+- **Cost Estimation** - Calculates costs using Claude Sonnet 4.5 pricing
+- **Test Diagnostics** - Runs tests with detailed troubleshooting for failures
+- **Security Scanning** - npm audit with categorized results
+- **Build Validation** - Build checks with failure diagnostics
+- **PR Comments** - Automatic comments on PRs with usage stats
+
+### Triggers
+
+```yaml
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+```
+
+### Jobs
+
+#### Job 1: Track Claude Code Usage
+
+```yaml
+track-usage:
+  name: 📊 Track Claude Code Usage
+  runs-on: ubuntu-latest
+  
+  steps:
+    - Calculate usage metrics based on code changes
+    - Estimate tokens (~12 tokens per line changed + 500 baseline)
+    - Calculate costs (70% input, 30% output tokens)
+    - Update CLAUDE_USAGE.md on main branch
+    - Generate usage report in workflow summary
+```
+
+**Outputs:**
+- `tokens_used` - Estimated tokens for this commit
+- `estimated_cost` - Estimated cost in dollars
+- `files_changed` - Number of files changed
+- `lines_changed` - Total lines changed
+
+#### Job 2: Run Tests with Troubleshooting
+
+```yaml
+test-with-feedback:
+  name: 🧪 Run Tests with Troubleshooting
+  runs-on: ubuntu-latest
+  
+  steps:
+    - Environment diagnostics
+    - npm audit with vulnerability breakdown
+    - Run tests with failure troubleshooting
+    - Build validation with diagnostics
+    - Upload test artifacts
+```
+
+**Troubleshooting Provided:**
+
+For test failures:
+- Missing dependencies solutions
+- Outdated packages guidance
+- Environment variable configuration
+- Database connection help
+- Port conflict resolution
+
+For build failures:
+- TypeScript error guidance
+- Missing files detection
+- Webpack/Vite config help
+- Memory optimization tips
+- Module resolution fixes
+
+#### Job 3: Comment on PR
+
+```yaml
+pr-comment:
+  name: 💬 PR Feedback
+  runs-on: ubuntu-latest
+  if: github.event_name == 'pull_request'
+  
+  steps:
+    - Post comment with usage estimate
+    - Include test status
+    - Link to troubleshooting resources
+```
+
+### Usage Report Example
+
+The workflow generates a summary report:
+
+```markdown
+# 📊 Claude Code Usage Report
+
+## This Commit
+
+| Metric | Value |
+|--------|-------|
+| **Tokens Used** | ~6,452 |
+| **Estimated Cost** | $0.0420 |
+| **Files Changed** | 5 |
+| **Lines Changed** | 593 |
+
+## Pricing Reference
+
+**Claude Sonnet 4.5:**
+- Input tokens: $3.00 per million tokens
+- Output tokens: $15.00 per million tokens
+```
+
+### PR Comment Example
+
+Automatic comment on PRs:
+
+```markdown
+## 📊 Claude Code Usage & Test Report
+
+### 💰 Usage Estimate for this PR
+
+| Metric | Value |
+|--------|-------|
+| **Estimated Tokens** | ~6,452 |
+| **Estimated Cost** | $0.0420 |
+| **Files Changed** | 5 |
+| **Lines Changed** | 593 |
+
+### 📋 Test Status
+
+- Tests: Check workflow for detailed results
+- Build: Check workflow for build status
+- Security: npm audit completed
+
+### 💡 Notes
+
+- Token estimation based on ~12 tokens per line changed
+- Uses Claude Sonnet 4.5 pricing (Input: $3/M, Output: $15/M)
+- Assumes 70% input / 30% output token distribution
+```
+
+### Troubleshooting Output
+
+When tests fail, the workflow provides detailed troubleshooting:
+
+```bash
+🔧 Troubleshooting Test Failures:
+
+Common Issues & Solutions:
+
+1. Missing Dependencies
+   → Run: npm install
+   → Check package.json for all required packages
+
+2. Outdated Packages
+   → Run: npm outdated
+   → Update: npm update
+
+3. Environment Variables
+   → Check .env.example for required vars
+   → Set in GitHub Secrets if needed
+
+4. Database Connection
+   → Verify database is running
+   → Check connection string
+   → Review migration status
+```
+
+### Benefits
+
+1. **Cost Visibility** - Know exactly what each commit costs
+2. **Early Detection** - Catch issues before they reach production
+3. **Actionable Feedback** - Specific solutions for common problems
+4. **PR Context** - Usage stats visible in every pull request
+5. **Automatic Tracking** - No manual effort required
+
+### Setup
+
+1. Create file: `.github/workflows/claude-usage-tracking.yml`
+2. Copy the workflow content
+3. Commit and push
+4. Workflow runs automatically on every push/PR
+
+No secrets or configuration required - works out of the box!
+
+---
+

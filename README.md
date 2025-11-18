@@ -11,11 +11,14 @@ We've added powerful new automation features to supercharge your DevOps workflow
 ### 🎯 What's New
 
 - **🔍 Claude Code Usage Tracking** - Automatically track AI usage, tokens, and costs on every commit
-- **🧪 Enhanced Testing** - Comprehensive diagnostics with beautiful progress indicators
+- **⚡ Automated Usage Workflow** - GitHub Actions tracks usage on every push/PR with detailed reports
+- **🧪 Enhanced Testing** - Comprehensive diagnostics with beautiful progress indicators and troubleshooting
 - **📊 Interactive Makefile** - Progress bars, colored output, and clear status updates
-- **🚀 Enhanced CI/CD** - Better feedback in GitHub Actions workflows
-- **🎨 SEO & Marketing Automation** - Auto-generate sitemap, robots.txt, schema.json, and more
+- **🚀 Enhanced CI/CD** - Better feedback in GitHub Actions workflows with test troubleshooting
+- **🎨 SEO & Marketing Automation** - Auto-generate sitemap, robots.txt, schema.json, CNAME, and more
+- **🌐 CNAME Generation** - Easy custom domain setup for GitHub Pages with DNS guidance
 - **📱 Social Media Ready** - Meta tags and graphics templates for all platforms
+- **🔄 Auto Update Checker** - Stay current with interactive update notifications
 
 ### 🚀 Quick Start with New Features
 
@@ -26,17 +29,84 @@ make setup
 # Run enhanced tests with diagnostics
 make test
 
-# Generate all SEO files
+# Generate all SEO files (including CNAME)
 make seo-optimize
 
-# View project status
+# Check for updates
+make update
+
+# View project status and usage
 make status
+make view-usage
 
 # See all available commands
 make help
 ```
 
 📚 **[Read the Complete Features Guide →](NEW-FEATURES-GUIDE.md)**
+
+---
+
+## 🆕 Latest Features (v2.1)
+
+### ⚡ Automated Claude Usage Tracking Workflow
+
+GitHub Actions automatically tracks Claude Code usage on **every push and PR**:
+
+- **📊 Token Calculation** - Estimates tokens based on code changes
+- **💰 Cost Estimation** - Calculates costs using Claude Sonnet 4.5 pricing
+- **🧪 Test Feedback** - Comprehensive diagnostics with troubleshooting for failures
+- **💬 PR Comments** - Automatic comments on PRs with usage stats
+- **📈 Reports** - Detailed workflow summaries and test results
+
+**Triggers:** Every push, pull request, and manual workflow dispatch
+
+```yaml
+# Automatically provides on every PR:
+## 📊 Claude Code Usage & Test Report
+
+| Metric | Value |
+|--------|-------|
+| Estimated Tokens | ~6,452 |
+| Estimated Cost | $0.0420 |
+| Files Changed | 5 |
+| Lines Changed | 593 |
+```
+
+### 🌐 CNAME Generation for Custom Domains
+
+Easily set up custom domains for GitHub Pages:
+
+```bash
+# Generate CNAME with DNS instructions
+CUSTOM_DOMAIN=docs.yourcompany.com bash scripts/generate-cname.sh
+
+# Or include in SEO generation
+make seo-optimize
+```
+
+**Features:**
+- ✅ Supports apex domains (example.com) and subdomains (docs.example.com)
+- ✅ Provides complete DNS configuration guide
+- ✅ A records and CNAME records with GitHub Pages IPs
+- ✅ Step-by-step GitHub Pages setup
+- ✅ SSL/TLS guidance
+
+### 🔄 Automatic Update Checker
+
+Stay current with new features and fixes:
+
+```bash
+# Check for updates interactively
+make update
+```
+
+**Shows:**
+- ✨ New features available
+- 🐛 Bug fixes
+- 📝 Documentation updates
+- 📊 Affected files
+- Interactive update prompt with stash support
 
 ---
 
