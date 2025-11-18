@@ -679,3 +679,114 @@ Create an issue in the repository with:
 *Documentation generated: 2025-11-16*
 *Author: User (via git config)*
 *All code and commits attributed to repository contributors via git config*
+
+## CNAME & Custom Domain Support
+
+### Overview
+
+Automatically generate CNAME files for GitHub Pages custom domains with complete DNS setup instructions.
+
+### Features
+
+- **CNAME Generation**: Creates CNAME files for root and public directories
+- **Domain Validation**: Basic format checking
+- **DNS Guide**: Detailed configuration instructions for both apex and subdomains
+- **GitHub Pages Setup**: Step-by-step integration guide
+
+### Usage
+
+```bash
+# Generate CNAME with a custom domain
+CUSTOM_DOMAIN=docs.yourcompany.com bash scripts/generate-cname.sh
+
+# Or use Makefile (included in seo-optimize)
+make seo-optimize
+
+# Generate without domain (creates template with instructions)
+bash scripts/generate-cname.sh
+```
+
+### DNS Configuration
+
+**For Apex Domains (example.com):**
+- Configure A records pointing to GitHub Pages IPs:
+  - 185.199.108.153
+  - 185.199.109.153
+  - 185.199.110.153
+  - 185.199.111.153
+
+**For Subdomains (docs.example.com):**
+- Configure CNAME record pointing to: `your-username.github.io`
+
+### Files Created
+
+- `CNAME` - Root CNAME file
+- `public/CNAME` - Public directory CNAME (for builds)
+
+---
+
+## Automatic Update Checker
+
+### Overview
+
+Stay up to date with the latest DevOps repository features and fixes using the built-in update checker.
+
+### Features
+
+- **Update Detection**: Checks remote repository for new commits
+- **Change Summary**: Shows features, fixes, docs, and chores
+- **File Preview**: Displays affected files
+- **Interactive Update**: Prompts for confirmation before updating
+- **Smart Stashing**: Handles uncommitted changes automatically
+- **Conflict Handling**: Provides guidance for merge conflicts
+
+### Usage
+
+```bash
+# Check for and install updates
+make update
+
+# Or run directly
+bash scripts/check-for-updates.sh
+```
+
+### What It Shows
+
+1. **Current Status**: Branch name, remote URL
+2. **Update Availability**: Number of commits behind/ahead
+3. **Change Summary**:
+   - ✨ New features
+   - 🐛 Bug fixes  
+   - 📝 Documentation updates
+   - 🔧 Maintenance updates
+4. **Affected Files**: List of files that will change
+5. **Interactive Prompt**: Option to update immediately
+
+### Update Process
+
+1. Fetches latest changes from remote
+2. Compares local vs remote commits
+3. Shows detailed changelog
+4. Prompts for confirmation
+5. Optionally stashes uncommitted changes
+6. Pulls latest changes
+7. Restores stashed changes (if any)
+8. Provides post-update instructions
+
+### Handling Uncommitted Changes
+
+The script automatically detects uncommitted changes and offers to stash them before updating:
+
+```bash
+⚠️  You have uncommitted changes
+Stash changes before updating? [y/N]:
+```
+
+If stashing is chosen:
+- Changes are stashed
+- Update is performed
+- Changes are automatically restored
+- Merge conflicts are handled gracefully
+
+---
+

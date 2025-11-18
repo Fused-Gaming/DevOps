@@ -2,7 +2,7 @@
 # Version: 1.0.0
 # Author: User (via git config)
 
-.PHONY: help install test build deploy clean setup-hooks track-usage devops-check seo-optimize
+.PHONY: help install test build deploy clean setup-hooks track-usage devops-check seo-optimize update
 
 # Colors
 BLUE := \033[0;34m
@@ -55,6 +55,7 @@ help:
 	@echo "  $(GREEN)make track-usage$(NC)        - Manually track Claude Code usage"
 	@echo "  $(GREEN)make view-usage$(NC)         - View usage statistics"
 	@echo "  $(GREEN)make status$(NC)             - Show project status"
+	@echo "  $(GREEN)make update$(NC)             - Check for and install updates"
 	@echo ""
 	@echo "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo ""
@@ -164,23 +165,27 @@ seo-optimize:
 	@echo "$(BOLD)$(CYAN)  SEO Optimization$(NC)"
 	@echo "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo ""
-	@$(MAKE) -s progress-bar TASK="Generating sitemap.xml" STEP=1 TOTAL=5
+	@$(MAKE) -s progress-bar TASK="Generating sitemap.xml" STEP=1 TOTAL=6
 	@bash scripts/generate-sitemap.sh > /dev/null 2>&1 || echo "$(YELLOW)⚠ Script not found$(NC)"
 	@echo "$(GREEN)$(CHECK) sitemap.xml updated$(NC)"
 	@echo ""
-	@$(MAKE) -s progress-bar TASK="Generating robots.txt" STEP=2 TOTAL=5
+	@$(MAKE) -s progress-bar TASK="Generating robots.txt" STEP=2 TOTAL=6
 	@bash scripts/generate-robots.sh > /dev/null 2>&1 || echo "$(YELLOW)⚠ Script not found$(NC)"
 	@echo "$(GREEN)$(CHECK) robots.txt updated$(NC)"
 	@echo ""
-	@$(MAKE) -s progress-bar TASK="Updating CHANGELOG.md" STEP=3 TOTAL=5
+	@$(MAKE) -s progress-bar TASK="Updating CHANGELOG.md" STEP=3 TOTAL=6
 	@bash scripts/update-changelog.sh > /dev/null 2>&1 || echo "$(YELLOW)⚠ Script not found$(NC)"
 	@echo "$(GREEN)$(CHECK) CHANGELOG.md updated$(NC)"
 	@echo ""
-	@$(MAKE) -s progress-bar TASK="Generating schema.json" STEP=4 TOTAL=5
+	@$(MAKE) -s progress-bar TASK="Generating schema.json" STEP=4 TOTAL=6
 	@bash scripts/generate-schema.sh > /dev/null 2>&1 || echo "$(YELLOW)⚠ Script not found$(NC)"
 	@echo "$(GREEN)$(CHECK) schema.json updated$(NC)"
 	@echo ""
-	@$(MAKE) -s progress-bar TASK="Processing social graphics" STEP=5 TOTAL=5
+	@$(MAKE) -s progress-bar TASK="Generating CNAME" STEP=5 TOTAL=6
+	@bash scripts/generate-cname.sh > /dev/null 2>&1 || echo "$(YELLOW)⚠ Script not found$(NC)"
+	@echo "$(GREEN)$(CHECK) CNAME generated$(NC)"
+	@echo ""
+	@$(MAKE) -s progress-bar TASK="Processing social graphics" STEP=6 TOTAL=6
 	@bash scripts/generate-social-graphics.sh > /dev/null 2>&1 || echo "$(YELLOW)⚠ Script not found$(NC)"
 	@echo "$(GREEN)$(CHECK) Social graphics updated$(NC)"
 	@echo ""
@@ -238,6 +243,12 @@ status:
 	@echo ""
 	@echo "$(BLUE)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(NC)"
 	@echo ""
+
+## ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+## update: Check for and install updates
+## ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+update:
+	@bash scripts/check-for-updates.sh
 
 ## ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ## clean: Clean build artifacts

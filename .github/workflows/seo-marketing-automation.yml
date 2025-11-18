@@ -90,10 +90,10 @@ jobs:
           bash scripts/generate-schema.sh
           echo "✓ schema.json generated"
 
-      - name: 📊 Progress - Step 5/6
+      - name: 📊 Progress - Step 5/7
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-          echo "[██████████████████████████████░░░░░░] 83% - Processing social graphics"
+          echo "[████████████████████████░░░░░░░░░░░░] 71% - Processing social graphics"
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
       - name: 🎨 Generate social media graphics
@@ -102,7 +102,19 @@ jobs:
           bash scripts/generate-social-graphics.sh
           echo "✓ Social graphics generated"
 
-      - name: 📊 Progress - Step 6/6
+      - name: 📊 Progress - Step 6/7
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[███████████████████████████████░░░░░] 86% - Generating CNAME"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 🌐 Generate CNAME
+        run: |
+          echo "→ Generating CNAME file..."
+          bash scripts/generate-cname.sh
+          echo "✓ CNAME generated"
+
+      - name: 📊 Progress - Step 7/7
         run: |
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "[████████████████████████████████████] 100% - Complete!"
@@ -126,7 +138,7 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-          git add sitemap.xml robots.txt CHANGELOG.md schema.json public/ || true
+          git add sitemap.xml robots.txt CHANGELOG.md schema.json CNAME public/ || true
 
           git commit -m "chore: update SEO and marketing files
 
@@ -136,6 +148,7 @@ jobs:
           - Updated robots.txt
           - Updated CHANGELOG.md
           - Updated schema.json
+          - Generated CNAME for custom domains
           - Generated social media graphics
 
           Signed-off-by: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
@@ -156,6 +169,7 @@ jobs:
           - ✅ **robots.txt** - Crawler directives
           - ✅ **CHANGELOG.md** - Version history
           - ✅ **schema.json** - Structured data
+          - ✅ **CNAME** - Custom domain configuration
           - ✅ **Social Graphics** - OG images, favicons
 
           ## Repository Information
@@ -171,6 +185,7 @@ jobs:
           - ✅ Sitemap for search engine indexing
           - ✅ Robots.txt for crawler management
           - ✅ Structured data (schema.json) for rich results
+          - ✅ CNAME for custom domain setup
           - ✅ Social media meta tags and graphics
           - ✅ Changelog for version tracking
 
