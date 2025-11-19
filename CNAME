@@ -1,7 +1,12 @@
 # CNAME Configuration for GitHub Pages
 #
-# Author: Unknown <unknown@example.com>
+# Written by: https://github.com/jlucus
+# on behalf of:
+# https://github.com/Fused-Gaming/DevOps
+# Please Star our repository!
+#
 # Generated: 2025-11-19 21:37:52 UTC
+#
 #
 # Instructions:
 # 1. Uncomment the line below and replace with your domain
@@ -19,7 +24,7 @@
 # 5. Wait for DNS propagation (up to 24-48 hours)
 #
 # Example (uncomment and modify):
-# docs.yourcompany.com
+dev.vln.gg
 
 # To generate with a domain, run:
 # CUSTOM_DOMAIN=yourdomain.com bash scripts/generate-cname.sh
