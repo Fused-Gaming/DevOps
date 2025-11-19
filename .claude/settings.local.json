@@ -14,7 +14,13 @@
       "Bash(gh issue list:*)",
       "Bash(bash scripts/create-milestone-issues.sh:*)",
       "Bash(chmod:*)",
-      "Bash(bash:*)"
+      "Bash(bash:*)",
+      "Bash(git pull:*)",
+      "Bash(gh release create:*)",
+      "Bash(gh issue view:*)",
+      "Bash(pnpm install:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm add:*)"
     ],
     "deny": [],
     "ask": []
