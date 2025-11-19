@@ -12,16 +12,58 @@ A Next.js 15 DevOps control panel with VLN styling, featuring deployment monitor
 - **Quick Actions**: Execute DevOps scripts directly from the panel
 - **VLN Styling**: Beautiful sage green dark theme matching vln.gg
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
+### ⚡ One-Liner: Fetch & Auto-Deploy from GitHub
 
+```bash
+curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
+```
+
+This single command will:
+- Clone the repository
+- Install dependencies
+- Present deployment options (dev server, production, or preview server)
+
+**See [QUICK-REFERENCE.md](./QUICK-REFERENCE.md) for more one-liner commands and deployment scenarios.**
+
+---
+
+### 🚀 Automated Setup (Recommended)
+
+The fastest way to get started is using our automated setup script:
+
+```bash
+cd devops-panel
+./quick-start.sh
+```
+
+This interactive script will:
+- ✓ Check prerequisites and install dependencies
+- ✓ Create and configure your `.env` file
+- ✓ Generate secure session secrets
+- ✓ Set up GitHub & Vercel integrations (optional)
+- ✓ Start the development server
+
+For production deployment:
+
+```bash
+./deploy-production.sh
+```
+
+See [README-SCRIPTS.md](./README-SCRIPTS.md) for detailed script documentation.
+
+### 📖 Manual Setup
+
+If you prefer manual setup:
+
+**Prerequisites:**
 - Node.js 18+ or pnpm
 - Git
 - (Optional) GitHub Personal Access Token
 - (Optional) Vercel API Token
 
-### Installation
+**Installation:**
 
 1. Install dependencies:
 
