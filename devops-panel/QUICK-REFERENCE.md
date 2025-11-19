@@ -7,12 +7,12 @@ One-liner commands to fetch and deploy the DevOps Panel from GitHub.
 ### Option 1: Fetch and Auto-Deploy (Interactive)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Fused-Gaming/DevOps/main/devops-panel/auto-deploy.sh | bash
+curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
 ```
 
 Or with wget:
 ```bash
-wget -qO- https://raw.githubusercontent.com/Fused-Gaming/DevOps/main/devops-panel/auto-deploy.sh | bash
+wget -qO- https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
 ```
 
 **What it does:**
@@ -211,7 +211,7 @@ ssh-keygen -t ed25519 -f ~/.ssh/id_rsa_preview -C "devops-panel"
 ### Scenario 1: First Time Setup (Local Development)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Fused-Gaming/DevOps/main/devops-panel/auto-deploy.sh | bash
+curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
 # Choose option 1 - Start development server
 ```
 
@@ -340,7 +340,7 @@ ssh root@YOUR_SERVER "pm2 logs devops-panel-preview --lines 50"
 
 - **Repository**: https://github.com/Fused-Gaming/DevOps
 - **Panel Directory**: https://github.com/Fused-Gaming/DevOps/tree/main/devops-panel
-- **Auto-Deploy Script**: https://raw.githubusercontent.com/Fused-Gaming/DevOps/main/devops-panel/auto-deploy.sh
+- **Auto-Deploy Script**: https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh
 - **Production (Vercel)**: https://dev.vln.gg
 - **Preview Server**: https://preview.vln.gg
 

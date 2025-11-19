@@ -4,8 +4,8 @@
 # Fetches latest code and automatically builds/starts the panel
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/Fused-Gaming/DevOps/main/devops-panel/auto-deploy.sh | bash
-#   Or: wget -qO- https://raw.githubusercontent.com/Fused-Gaming/DevOps/main/devops-panel/auto-deploy.sh | bash
+#   curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
+#   Or: wget -qO- https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
 
 set -e
 

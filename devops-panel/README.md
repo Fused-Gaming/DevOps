@@ -17,7 +17,7 @@ A Next.js 15 DevOps control panel with VLN styling, featuring deployment monitor
 ### ⚡ One-Liner: Fetch & Auto-Deploy from GitHub
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/Fused-Gaming/DevOps/main/devops-panel/auto-deploy.sh | bash
+curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
 ```
 
 This single command will:

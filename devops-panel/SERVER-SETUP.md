@@ -188,7 +188,7 @@ nano .env.deploy
 Configure:
 
 ```env
-PREVIEW_SERVER_HOST=185.121.132.57  # Your server IP
+PREVIEW_SERVER_HOST=YOUR_SERVER_IP  # Your actual server IP address
 PREVIEW_SERVER_USER=root
 PREVIEW_SERVER_PORT=22
 PREVIEW_DEPLOY_PATH=/var/www/devops-panel
