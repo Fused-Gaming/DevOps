@@ -4,8 +4,13 @@
 # Fetches latest code and automatically builds/starts the panel
 #
 # Usage:
+#   # Interactive menu:
 #   curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
-#   Or: wget -qO- https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
+#
+#   # Auto-deploy to preview server:
+#   curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | AUTO_DEPLOY_MODE=preview bash
+#
+#   # Auto-deploy options: dev, build, preview, vercel
 
 set -e
 
@@ -26,6 +31,7 @@ REPO_URL="https://github.com/Fused-Gaming/DevOps.git"
 BRANCH="${DEPLOY_BRANCH:-main}"
 INSTALL_DIR="${INSTALL_DIR:-$HOME/devops-panel}"
 AUTO_START="${AUTO_START:-yes}"
+AUTO_DEPLOY_MODE="${AUTO_DEPLOY_MODE:-}"  # Set to: dev, build, preview, vercel, or leave empty for menu
 
 echo -e "${BLUE}Configuration:${NC}"
 echo "  Repository: $REPO_URL"
@@ -98,16 +104,42 @@ pnpm install
 echo -e "${GREEN}✓ Dependencies installed${NC}"
 echo ""
 
-# Ask what to do
-echo -e "${YELLOW}What would you like to do?${NC}"
-echo "  1) Start development server (quick-start.sh)"
-echo "  2) Build for production"
-echo "  3) Deploy to preview server (SSH)"
-echo "  4) Deploy to Vercel production"
-echo "  5) Exit"
-echo ""
-read -p "Choice (1-5): " -n 1 -r CHOICE < /dev/tty
-echo ""
+# Ask what to do (or use AUTO_DEPLOY_MODE if set)
+if [ -n "$AUTO_DEPLOY_MODE" ]; then
+    case "$AUTO_DEPLOY_MODE" in
+        dev|1)
+            CHOICE=1
+            echo -e "${BLUE}Auto-deploying: Development server${NC}"
+            ;;
+        build|2)
+            CHOICE=2
+            echo -e "${BLUE}Auto-deploying: Production build${NC}"
+            ;;
+        preview|3)
+            CHOICE=3
+            echo -e "${BLUE}Auto-deploying: Preview server (SSH)${NC}"
+            ;;
+        vercel|4)
+            CHOICE=4
+            echo -e "${BLUE}Auto-deploying: Vercel production${NC}"
+            ;;
+        *)
+            echo -e "${RED}Invalid AUTO_DEPLOY_MODE: $AUTO_DEPLOY_MODE${NC}"
+            echo -e "${YELLOW}Valid options: dev, build, preview, vercel${NC}"
+            exit 1
+            ;;
+    esac
+else
+    echo -e "${YELLOW}What would you like to do?${NC}"
+    echo "  1) Start development server (quick-start.sh)"
+    echo "  2) Build for production"
+    echo "  3) Deploy to preview server (SSH)"
+    echo "  4) Deploy to Vercel production"
+    echo "  5) Exit"
+    echo ""
+    read -p "Choice (1-5): " -n 1 -r CHOICE < /dev/tty
+    echo ""
+fi
 echo ""
 
 case $CHOICE in
