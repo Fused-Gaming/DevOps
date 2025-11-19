@@ -4,7 +4,7 @@ One-liner commands to fetch and deploy the DevOps Panel from GitHub.
 
 ## 🚀 One-Liner Installations
 
-### Option 1: Fetch and Auto-Deploy (Interactive)
+### Option 1: Fetch and Auto-Deploy (Interactive Menu)
 
 ```bash
 curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash
@@ -19,6 +19,18 @@ wget -qO- https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-depl
 - Clones the repository
 - Installs dependencies
 - Presents interactive menu for deployment options
+
+### Option 1a: Auto-Deploy to Preview Server (No Menu)
+
+```bash
+curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | AUTO_DEPLOY_MODE=preview bash
+```
+
+**Auto-deploy modes:**
+- `preview` - Deploy to preview server (SSH)
+- `dev` - Start development server
+- `build` - Build for production
+- `vercel` - Deploy to Vercel
 
 ### Option 2: Fetch, Build, and Start Development (One Command)
 
