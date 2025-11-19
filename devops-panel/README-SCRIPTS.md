@@ -31,9 +31,42 @@ Sets up and runs the panel in development mode from scratch.
   - API Token
   - Project ID
 
-### 🌐 `deploy-production.sh` - Production Deployment
+### 🌐 `deploy-production.sh` - Production Deployment (Vercel)
 
 Builds and deploys the panel to production using Vercel.
+
+### 🖥️ `deploy-preview.sh` - Preview Server Deployment (SSH)
+
+Deploys the panel to your own preview server (preview.vln.gg) via SSH/rsync.
+
+**Usage:**
+```bash
+# First time: Configure deployment settings
+cp .env.deploy.example .env.deploy
+nano .env.deploy  # Edit with your server details
+
+# Deploy
+./deploy-preview.sh
+```
+
+**What it does:**
+1. ✓ Validates deployment configuration (.env.deploy)
+2. ✓ Checks SSH connectivity to preview server
+3. ✓ Builds Next.js application for production
+4. ✓ Syncs files to server via rsync
+5. ✓ Installs dependencies on server
+6. ✓ Sets up PM2 process manager
+7. ✓ Starts/restarts application automatically
+
+**Required Configuration (.env.deploy):**
+- `PREVIEW_SERVER_HOST` - Your server IP address (kept secret via env var)
+- `PREVIEW_SERVER_USER` - SSH username (default: root)
+- `PREVIEW_DEPLOY_PATH` - Deployment directory on server
+- `PREVIEW_DOMAIN` - Your preview domain (preview.vln.gg)
+- `PREVIEW_SSH_KEY` - Path to SSH private key
+
+**Server Setup:**
+See [SERVER-SETUP.md](./SERVER-SETUP.md) for complete server configuration guide.
 
 **Usage:**
 ```bash
@@ -62,10 +95,17 @@ Builds and deploys the panel to production using Vercel.
 - **Node.js 18+** - [Download](https://nodejs.org/)
 - **Package Manager** - pnpm (recommended) or npm
 
-### Optional
+### Optional (Vercel Deployment)
 - **Vercel CLI** - Auto-installed if missing when running `deploy-production.sh`
-- **GitHub Personal Access Token** - For GitHub Actions integration
 - **Vercel API Token** - For deployment monitoring
+
+### Optional (SSH Deployment)
+- **SSH Access** - To your preview server
+- **rsync** - For file synchronization (usually pre-installed)
+- **Nginx** - On the preview server for reverse proxy
+
+### Optional (Integrations)
+- **GitHub Personal Access Token** - For GitHub Actions integration
 
 ## Quick Start Examples
 
@@ -86,11 +126,22 @@ cd devops-panel
 # Choose option 1 for production deployment
 ```
 
-### Deploy to Preview (Testing)
+### Deploy to Preview (Vercel Testing)
 
 ```bash
 ./deploy-production.sh
 # Choose option 2 for preview deployment
+```
+
+### Deploy to Preview Server (SSH)
+
+```bash
+# Configure server details (first time only)
+cp .env.deploy.example .env.deploy
+nano .env.deploy
+
+# Deploy
+./deploy-preview.sh
 ```
 
 ### Build Locally
