@@ -1,0 +1,242 @@
+name: Milestone Progress Tracking
+
+on:
+  issues:
+    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned]
+  pull_request:
+    types: [opened, closed, reopened]
+  workflow_dispatch:
+    inputs:
+      milestone:
+        description: 'Milestone number to update (optional)'
+        required: false
+        type: string
+
+permissions:
+  issues: write
+  pull-requests: write
+  contents: write
+
+jobs:
+  update-milestone-progress:
+    runs-on: ubuntu-latest
+    name: Update Milestone Progress
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Get milestone progress
+        id: milestone-progress
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const milestones = await github.rest.issues.listMilestones({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+
+            console.log('📊 Milestone Progress Report\n');
+
+            let summary = '# 📊 Milestone Progress\n\n';
+
+            for (const milestone of milestones.data) {
+              const total = milestone.open_issues + milestone.closed_issues;
+              const percentage = total > 0 ? Math.round((milestone.closed_issues / total) * 100) : 0;
+              const progressBar = '█'.repeat(Math.floor(percentage / 5)) + '░'.repeat(20 - Math.floor(percentage / 5));
+
+              summary += `## ${milestone.title}\n`;
+              summary += `Progress: ${progressBar} ${percentage}%\n`;
+              summary += `Issues: ${milestone.closed_issues}/${total} closed\n`;
+
+              if (milestone.due_on) {
+                const dueDate = new Date(milestone.due_on);
+                const now = new Date();
+                const daysLeft = Math.ceil((dueDate - now) / (1000 * 60 * 60 * 24));
+                summary += `Due: ${dueDate.toDateString()} (${daysLeft} days)\n`;
+              }
+
+              summary += '\n';
+
+              console.log(`${milestone.title}: ${percentage}% (${milestone.closed_issues}/${total})`);
+            }
+
+            core.setOutput('summary', summary);
+            return summary;
+
+      - name: Check for critical issues
+        id: check-critical
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'priority:critical',
+              state: 'open'
+            });
+
+            if (issues.data.length > 0) {
+              let criticalSummary = '\n## ⚠️ Critical Issues\n\n';
+              for (const issue of issues.data) {
+                criticalSummary += `- #${issue.number}: ${issue.title}\n`;
+              }
+              console.log(criticalSummary);
+              core.setOutput('has_critical', 'true');
+              core.setOutput('critical_count', issues.data.length);
+              core.setOutput('critical_summary', criticalSummary);
+            } else {
+              core.setOutput('has_critical', 'false');
+            }
+
+      - name: Post milestone update comment
+        if: github.event_name == 'issues' && (github.event.action == 'closed' || github.event.action == 'reopened')
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+
+            if (!issue.milestone) {
+              console.log('Issue has no milestone, skipping');
+              return;
+            }
+
+            const milestone = await github.rest.issues.getMilestone({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              milestone_number: issue.milestone.number
+            });
+
+            const total = milestone.data.open_issues + milestone.data.closed_issues;
+            const percentage = Math.round((milestone.data.closed_issues / total) * 100);
+            const progressBar = '█'.repeat(Math.floor(percentage / 5)) + '░'.repeat(20 - Math.floor(percentage / 5));
+
+            const action = github.event.action === 'closed' ? 'closed' : 'reopened';
+
+            const comment = `
+🎯 **Milestone Progress Update**
+
+This issue was ${action}, updating **${milestone.data.title}** progress:
+
+\`\`\`
+${progressBar} ${percentage}%
+\`\`\`
+
+**Status:** ${milestone.data.closed_issues}/${total} issues completed
+
+${percentage >= 100 ? '🎉 **Milestone Complete!** All issues closed.' : ''}
+${percentage >= 75 && percentage < 100 ? '🔥 **Almost there!** Keep going!' : ''}
+
+[View Milestone](${milestone.data.html_url})
+            `.trim();
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: comment
+            });
+
+      - name: Generate milestone report
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          cat << 'EOF' > milestone-report.md
+          ${{ steps.milestone-progress.outputs.summary }}
+          ${{ steps.check-critical.outputs.has_critical == 'true' && steps.check-critical.outputs.critical_summary || '' }}
+          EOF
+
+          echo "📄 Milestone Report Generated"
+          cat milestone-report.md
+
+      - name: Update milestone description
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const milestones = await github.rest.issues.listMilestones({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+
+            for (const milestone of milestones.data) {
+              const total = milestone.open_issues + milestone.closed_issues;
+              const percentage = total > 0 ? Math.round((milestone.closed_issues / total) * 100) : 0;
+
+              // Get issues for this milestone
+              const issues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                milestone: milestone.number,
+                state: 'all',
+                per_page: 100
+              });
+
+              // Count by status
+              const openIssues = issues.data.filter(i => i.state === 'open');
+              const closedIssues = issues.data.filter(i => i.state === 'closed');
+
+              console.log(`\n📌 ${milestone.title}`);
+              console.log(`   Progress: ${percentage}%`);
+              console.log(`   Open: ${openIssues.length}`);
+              console.log(`   Closed: ${closedIssues.length}`);
+
+              if (percentage === 100) {
+                console.log('   ✅ COMPLETE - Consider closing this milestone');
+              }
+            }
+
+  notify-critical-stale:
+    runs-on: ubuntu-latest
+    name: Check for Stale Critical Issues
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule
+
+    steps:
+      - name: Check for stale critical issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'priority:critical',
+              state: 'open'
+            });
+
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+            let staleCount = 0;
+
+            for (const issue of issues.data) {
+              const updatedAt = new Date(issue.updated_at);
+
+              if (updatedAt < thirtyDaysAgo) {
+                staleCount++;
+                console.log(`⚠️  Stale critical issue: #${issue.number} - ${issue.title}`);
+                console.log(`   Last updated: ${updatedAt.toDateString()}`);
+
+                // Optionally add a comment
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                  body: `⚠️ **Stale Critical Issue**\n\nThis critical issue hasn't been updated in 30+ days. Please review and update the status.`
+                });
+              }
+            }
+
+            if (staleCount > 0) {
+              core.setFailed(`Found ${staleCount} stale critical issues`);
+            }
