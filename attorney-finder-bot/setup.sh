@@ -36,23 +36,33 @@ else
 fi
 echo ""
 
-# Check if activate script exists
-if [ ! -f "venv/bin/activate" ]; then
+# Check if activate script exists (handle Windows/Linux)
+ACTIVATE_SCRIPT=""
+if [ -f "venv/bin/activate" ]; then
+    ACTIVATE_SCRIPT="venv/bin/activate"
+elif [ -f "venv/Scripts/activate" ]; then
+    ACTIVATE_SCRIPT="venv/Scripts/activate"
+else
     echo "❌ Virtual environment activation script not found!"
     echo "   Trying to recreate virtual environment..."
     rm -rf venv
     python3 -m venv venv
 
-    if [ ! -f "venv/bin/activate" ]; then
+    # Check again after recreation
+    if [ -f "venv/bin/activate" ]; then
+        ACTIVATE_SCRIPT="venv/bin/activate"
+    elif [ -f "venv/Scripts/activate" ]; then
+        ACTIVATE_SCRIPT="venv/Scripts/activate"
+    else
         echo "❌ Still can't create virtual environment"
-        echo "   Please install: apt-get install python3-venv"
+        echo "   Please install python3-venv or ensure Python is properly installed"
         exit 1
     fi
 fi
 
 # Activate virtual environment
 echo "🔌 Activating virtual environment..."
-source venv/bin/activate
+source "$ACTIVATE_SCRIPT"
 
 # Upgrade pip
 echo "⬆️  Upgrading pip..."
