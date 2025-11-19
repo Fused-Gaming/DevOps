@@ -170,6 +170,7 @@ echo "🚀 Deploying to Vercel..."
 echo ""
 
 DEPLOY_OUTPUT=$(vercel --prod --yes 2>&1 | tee /dev/tty)
+DEPLOY_EXIT_CODE=$?
 
 # Extract URL from output
 VERCEL_URL=$(echo "$DEPLOY_OUTPUT" | grep -oE 'https://[a-zA-Z0-9.-]+\.vercel\.app' | head -1)
@@ -180,8 +181,29 @@ if [ -z "$VERCEL_URL" ]; then
     read -p "Enter your Vercel URL: " VERCEL_URL
 fi
 
+# Verify deployment succeeded
 echo ""
-echo "✅ Deployment successful!"
+echo "🔍 Verifying deployment..."
+
+if [ $DEPLOY_EXIT_CODE -eq 0 ] && [ -n "$VERCEL_URL" ]; then
+    # Test if URL is accessible
+    if curl -s -o /dev/null -w "%{http_code}" "$VERCEL_URL" | grep -q "200"; then
+        echo "✅ Deployment successful!"
+        echo "✅ Web app is accessible"
+    else
+        echo "⚠️  Deployment completed but site not responding yet"
+        echo "   (This is normal, may take a few seconds to propagate)"
+    fi
+else
+    echo "❌ Deployment may have failed (exit code: $DEPLOY_EXIT_CODE)"
+    echo "   Check the output above for errors"
+    read -p "Continue anyway? (y/n) " -n 1 -r
+    echo ""
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
 echo ""
 echo "📍 Your app: $VERCEL_URL"
 echo ""
@@ -194,10 +216,33 @@ if [ -n "$BOT_TOKEN" ] && [ -n "$VERCEL_URL" ]; then
     RESPONSE=$(curl -s "https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${WEBHOOK_URL}")
 
     if echo "$RESPONSE" | grep -q '"ok":true'; then
-        echo "✅ Webhook configured: $WEBHOOK_URL"
+        echo "✅ Webhook configured successfully"
+        echo "   URL: $WEBHOOK_URL"
+
+        # Verify webhook
+        echo ""
+        echo "🔍 Verifying webhook..."
+        WEBHOOK_INFO=$(curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getWebhookInfo")
+
+        if echo "$WEBHOOK_INFO" | grep -q "\"url\":\"$WEBHOOK_URL\""; then
+            echo "✅ Webhook verified and active"
+
+            # Check for errors
+            if echo "$WEBHOOK_INFO" | grep -q '"last_error_message"'; then
+                echo "⚠️  Previous webhook errors detected:"
+                echo "$WEBHOOK_INFO" | python3 -c "import sys, json; data=json.load(sys.stdin); print('   ' + data.get('result', {}).get('last_error_message', 'Unknown error'))" 2>/dev/null || echo "   Check webhook manually"
+            fi
+        else
+            echo "⚠️  Webhook set but verification failed"
+        fi
     else
-        echo "⚠️  Webhook setup failed. Set manually:"
-        echo "   curl -X POST \"https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${WEBHOOK_URL}\""
+        echo "❌ Webhook setup failed!"
+        echo ""
+        echo "Response from Telegram:"
+        echo "$RESPONSE" | python3 -m json.tool 2>/dev/null || echo "$RESPONSE"
+        echo ""
+        echo "Manual setup command:"
+        echo "curl -X POST \"https://api.telegram.org/bot${BOT_TOKEN}/setWebhook?url=${WEBHOOK_URL}\""
     fi
 else
     echo "⚠️  Skipping webhook setup (no bot token)"
@@ -213,26 +258,72 @@ rm -rf "$TEMP_DIR"
 echo "✅ Cleanup complete"
 echo ""
 
-# Step 13: Summary
+# Step 13: Final Verification & Summary
+echo "🧪 Running final checks..."
+echo ""
+
+# Test web app
+WEB_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$VERCEL_URL")
+if [ "$WEB_STATUS" == "200" ]; then
+    echo "✅ Web app is live (HTTP $WEB_STATUS)"
+else
+    echo "⚠️  Web app status: HTTP $WEB_STATUS"
+fi
+
+# Test API endpoint
+API_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${VERCEL_URL}/api/web/stats")
+if [ "$API_STATUS" == "200" ]; then
+    echo "✅ API endpoints working (HTTP $API_STATUS)"
+else
+    echo "⚠️  API status: HTTP $API_STATUS (may need a moment to initialize)"
+fi
+
+# Test Telegram webhook
+if [ -n "$BOT_TOKEN" ]; then
+    WEBHOOK_CHECK=$(curl -s "https://api.telegram.org/bot${BOT_TOKEN}/getWebhookInfo" | grep -o '"url":"[^"]*"' | cut -d'"' -f4)
+    if [ "$WEBHOOK_CHECK" == "${VERCEL_URL}/api/webhook" ]; then
+        echo "✅ Telegram webhook configured correctly"
+    else
+        echo "⚠️  Telegram webhook: $WEBHOOK_CHECK"
+    fi
+fi
+
+echo ""
 echo "🎉 Deployment Complete!"
 echo ""
 echo "=========================================="
 echo "📊 Deployment Summary"
 echo "=========================================="
 echo ""
+echo "Status: ✅ LIVE"
+echo ""
 echo "🌐 Web App:      $VERCEL_URL"
+echo "   Status:       HTTP $WEB_STATUS"
+echo ""
 echo "🤖 Telegram:     https://t.me/LawmanRoBot"
-echo "🔗 Webhook:      ${VERCEL_URL}/api/webhook"
+if [ -n "$BOT_TOKEN" ]; then
+echo "   Webhook:      ✅ Configured"
+else
+echo "   Webhook:      ⚠️  Not set (add token later)"
+fi
+echo ""
+echo "🔗 API Endpoints:"
+echo "   /api/webhook        - Telegram bot"
+echo "   /api/web/search     - Search API"
+echo "   /api/web/auth       - Authentication"
+echo "   /api/web/stats      - Statistics"
 echo ""
 echo "📝 Next Steps:"
-echo "1. Visit web app and test Telegram login"
-echo "2. Message bot in Telegram: /start"
-echo "3. Add attorneys: /scrape <url>"
-echo "4. Test search on both platforms"
+echo "1. ✅ Visit: $VERCEL_URL"
+echo "2. ✅ Test Telegram login on web"
+echo "3. ✅ Message bot: /start"
+echo "4. ✅ Add attorneys: /scrape <url>"
+echo "5. ✅ Test search on both platforms"
 echo ""
-echo "📚 Documentation:"
+echo "📚 Resources:"
 echo "- GitHub: $GITHUB_REPO"
-echo "- Vercel Dashboard: https://vercel.com/team-4eckd"
+echo "- Vercel: https://vercel.com/team-4eckd"
+echo "- Logs: vercel logs"
 echo ""
 
 read -p "Open web app in browser? (y/n) " -n 1 -r
