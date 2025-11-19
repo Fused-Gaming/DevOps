@@ -106,7 +106,7 @@ echo "  3) Deploy to preview server (SSH)"
 echo "  4) Deploy to Vercel production"
 echo "  5) Exit"
 echo ""
-read -p "Choice (1-5): " -n 1 -r CHOICE
+read -p "Choice (1-5): " -n 1 -r CHOICE < /dev/tty
 echo ""
 echo ""
 
