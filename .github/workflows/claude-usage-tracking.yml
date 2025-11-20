@@ -5,7 +5,7 @@ name: Claude Usage Tracking & Test Feedback
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
@@ -104,10 +104,9 @@ jobs:
           echo "lines_changed=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
 
       - name: 📝 Update CLAUDE_USAGE.md
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           echo "→ Updating CLAUDE_USAGE.md..."
-          echo "Branch: ${{ github.ref_name }}"
 
           # Run the tracking script
           if [ -f "scripts/track-claude-usage.sh" ]; then
@@ -117,24 +116,20 @@ jobs:
           fi
 
       - name: 💾 Commit Updated Usage File
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
           if [ -n "$(git status --porcelain CLAUDE_USAGE.md)" ]; then
+            TOKENS="${{ steps.calculate.outputs.tokens_used }}"
+            COST="${{ steps.calculate.outputs.estimated_cost }}"
+            ACTOR="${{ github.actor }}"
+
             git add CLAUDE_USAGE.md
-            git commit -m "chore: update Claude usage tracking [skip ci]
-
-Auto-updated by workflow on branch: ${{ github.ref_name }}
-Tokens: ${{ steps.calculate.outputs.tokens_used }}
-Cost: \$${{ steps.calculate.outputs.estimated_cost }}
-
-Signed-off-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-
-            # Push to current branch
-            git push origin HEAD:${{ github.ref_name }}
-            echo "✓ CLAUDE_USAGE.md updated and committed to ${{ github.ref_name }}"
+            git commit -m "chore: update Claude usage tracking" -m "Auto-updated by workflow" -m "Tokens: $TOKENS" -m "Cost: \$$COST" -m "Signed-off-by: $ACTOR <$ACTOR@users.noreply.github.com>"
+            git push
+            echo "✓ CLAUDE_USAGE.md updated and committed"
           else
             echo "ℹ️  No changes to CLAUDE_USAGE.md"
           fi
@@ -142,7 +137,7 @@ Signed-off-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com
       - name: 📊 Generate Usage Report
         if: always()
         run: |
-          cat > $GITHUB_STEP_SUMMARY << EOF
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
           # 📊 Claude Code Usage Report
 
           ## This Commit

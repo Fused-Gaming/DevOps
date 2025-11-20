@@ -93,9 +93,7 @@ jobs:
           PR_NUMBER="${{ github.event.pull_request.number }}"
 
           # Approve the PR
-          gh pr review "$PR_NUMBER" \
-            --approve \
-            --body "$(cat <<'APPROVE_EOF'
+          cat > /tmp/approve_body.md << 'APPROVE_EOF'
 ## ✅ Auto-Approval
 
 All checks have passed successfully!
@@ -111,7 +109,8 @@ This PR will be automatically merged.
 ---
 *Auto-approved by auto-merge-reviewed workflow*
 APPROVE_EOF
-)"
+
+          gh pr review "$PR_NUMBER" --approve --body-file /tmp/approve_body.md
 
           echo "✅ PR #$PR_NUMBER auto-approved"
 
@@ -193,14 +192,15 @@ This PR is still a draft. To enable auto-merge:
 PR status checked. Waiting for conditions to enable auto-merge."
           fi
 
-          gh pr comment "$PR_NUMBER" --body "$(cat <<STATUS_EOF
+          cat > /tmp/status_comment.md <<STATUS_EOF
 $STATUS_MESSAGE
 
 ---
 *Status checked at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
 *Workflow: auto-merge-reviewed*
 STATUS_EOF
-)" || true
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/status_comment.md || true
 
       - name: 📋 Workflow Summary
         if: always()
