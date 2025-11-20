@@ -186,6 +186,14 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const commitCount = '${{ steps.analyze.outputs.commit_count }}';
+            const filesChanged = '${{ steps.analyze.outputs.files_changed }}';
+            const insertions = '${{ steps.analyze.outputs.insertions }}';
+            const deletions = '${{ steps.analyze.outputs.deletions }}';
+            const featCount = '${{ steps.analyze.outputs.feat_count }}';
+            const fixCount = '${{ steps.analyze.outputs.fix_count }}';
+            const docsCount = '${{ steps.analyze.outputs.docs_count }}';
+
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -193,15 +201,15 @@ jobs:
               body: `## 🤖 PR Analysis Complete
 
 **Statistics:**
-- 📊 Commits: ${{ steps.analyze.outputs.commit_count }}
-- 📁 Files changed: ${{ steps.analyze.outputs.files_changed }}
-- ➕ Insertions: ${{ steps.analyze.outputs.insertions }}
-- ➖ Deletions: ${{ steps.analyze.outputs.deletions }}
+- 📊 Commits: ${commitCount}
+- 📁 Files changed: ${filesChanged}
+- ➕ Insertions: ${insertions}
+- ➖ Deletions: ${deletions}
 
 **Commit Types:**
-- ✨ Features: ${{ steps.analyze.outputs.feat_count }}
-- 🐛 Bug Fixes: ${{ steps.analyze.outputs.fix_count }}
-- 📚 Documentation: ${{ steps.analyze.outputs.docs_count }}
+- ✨ Features: ${featCount}
+- 🐛 Bug Fixes: ${fixCount}
+- 📚 Documentation: ${docsCount}
 
 The PR description has been automatically enhanced with detailed information. Review and edit as needed!
 

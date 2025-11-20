@@ -204,6 +204,22 @@ jobs:
           WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
           WORKFLOW_STATUS="${{ github.event.workflow_run.conclusion }}"
           WORKFLOW_URL="${{ github.event.workflow_run.html_url }}"
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          HAS_PR="${{ steps.get-pr.outputs.has_pr }}"
+          PR_NUMBER="${{ steps.get-pr.outputs.pr_number }}"
+          TOTAL="${{ steps.collect.outputs.total }}"
+          PASSED="${{ steps.collect.outputs.passed }}"
+          FAILED="${{ steps.collect.outputs.failed }}"
+          PENDING="${{ steps.collect.outputs.pending }}"
+          SKIPPED="${{ steps.collect.outputs.skipped }}"
+
+          if [ "$HAS_PR" == "true" ]; then
+            PR_INFO="#$PR_NUMBER"
+            ACTION_TAKEN="✅ Posted summary to PR"
+          else
+            PR_INFO="N/A"
+            ACTION_TAKEN="⚠️ No PR found, skipping comment"
+          fi
 
           cat >> $GITHUB_STEP_SUMMARY << EOFMARKER
           # 📊 Workflow Summary Report
@@ -212,20 +228,20 @@ jobs:
 
           - **Name:** $WORKFLOW_NAME
           - **Status:** $WORKFLOW_STATUS
-          - **Branch:** ${{ github.event.workflow_run.head_branch }}
-          - **PR:** ${{{ steps.get-pr.outputs.has_pr == 'true' && format('#{0}', steps.get-pr.outputs.pr_number) || 'N/A' }}}
+          - **Branch:** $BRANCH
+          - **PR:** $PR_INFO
 
           ## Results
 
-          - **Total Checks:** ${{ steps.collect.outputs.total || '0' }}
-          - **Passed:** ${{ steps.collect.outputs.passed || '0' }}
-          - **Failed:** ${{ steps.collect.outputs.failed || '0' }}
-          - **Pending:** ${{ steps.collect.outputs.pending || '0' }}
-          - **Skipped:** ${{ steps.collect.outputs.skipped || '0' }}
+          - **Total Checks:** ${TOTAL:-0}
+          - **Passed:** ${PASSED:-0}
+          - **Failed:** ${FAILED:-0}
+          - **Pending:** ${PENDING:-0}
+          - **Skipped:** ${SKIPPED:-0}
 
           ## Actions Taken
 
-          ${{{ steps.get-pr.outputs.has_pr == 'true' && '✅ Posted summary to PR' || '⚠️ No PR found, skipping comment' }}}
+          $ACTION_TAKEN
 
           [View Workflow Run]($WORKFLOW_URL)
 

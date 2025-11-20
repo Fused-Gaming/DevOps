@@ -277,6 +277,7 @@ jobs:
             const tier = '${{ steps.feature_size.outputs.tier }}';
             const tierName = '${{ steps.feature_size.outputs.tier_name }}';
             const linesChanged = '${{ steps.feature_size.outputs.lines_changed }}';
+            const headRef = '${{ github.head_ref }}';
 
             let tierRequirements = '';
             if (tier === '2') {
@@ -293,7 +294,7 @@ jobs:
 
             const comment = `## ⚠️ Feature Documentation Required
 
-This PR is for feature branch \`${{ github.head_ref }}\` but is missing proper feature documentation.
+This PR is for feature branch \`${headRef}\` but is missing proper feature documentation.
 
 ### Feature Size & Requirements
 
