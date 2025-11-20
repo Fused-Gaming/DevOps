@@ -287,20 +287,75 @@ jobs:
             echo "action=skip" >> $GITHUB_OUTPUT
           fi
 
+      - name: 📊 Collect check results
+        id: checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER=$(gh pr list --head "${{ github.ref_name }}" --base main --json number -q '.[0].number')
+
+          if [ -z "$PR_NUMBER" ]; then
+            echo "No PR found"
+            exit 0
+          fi
+
+          # Get all checks
+          CHECKS=$(gh pr checks "$PR_NUMBER" --json name,state,conclusion,detailsUrl 2>/dev/null || echo "[]")
+
+          # Filter out this workflow
+          FILTERED=$(echo "$CHECKS" | jq '[.[] | select(.name != "Auto PR & Merge")]')
+
+          # Build check summary
+          CHECK_SUMMARY=""
+          if [ "$(echo "$FILTERED" | jq '. | length')" -gt 0 ]; then
+            CHECK_SUMMARY=$(echo "$FILTERED" | jq -r '.[] |
+              if .conclusion == "SUCCESS" then "- ✅ **\(.name)** - Passed"
+              elif .conclusion == "FAILURE" then "- ❌ **\(.name)** - Failed"
+              elif .conclusion == "SKIPPED" then "- ⏭️ **\(.name)** - Skipped"
+              else "- ⏳ **\(.name)** - \(.state)"
+              end')
+          else
+            CHECK_SUMMARY="- ℹ️ No additional checks required"
+          fi
+
+          # Save for next steps
+          echo "$CHECK_SUMMARY" > /tmp/check_summary.txt
+
+          TOTAL=$(echo "$FILTERED" | jq '. | length')
+          PASSED=$(echo "$FILTERED" | jq '[.[] | select(.conclusion == "SUCCESS" or .conclusion == "SKIPPED")] | length')
+
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+
       - name: ✅ Merge PR
         if: steps.action.outputs.action == 'merge'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           PR_NUMBER=$(gh pr list --head "${{ github.ref_name }}" --base main --json number -q '.[0].number')
+          CHECK_SUMMARY=$(cat /tmp/check_summary.txt || echo "No checks found")
 
-          gh pr comment "$PR_NUMBER" --body "## ✅ Auto-Merge Approved
+          cat > /tmp/merge_comment.md << EOFMARKER
+          ## ✅ Auto-Merge Approved
 
-          All checks passed! Merging automatically.
+          All required checks passed! Merging automatically.
+
+          ### 📊 Check Summary
+
+          $CHECK_SUMMARY
+
+          ### 📈 Statistics
+
+          - **Total Checks:** ${{ steps.checks.outputs.total }}
+          - **Passed/Skipped:** ${{ steps.checks.outputs.passed }}
+          - **Branch:** \`${{ github.ref_name }}\`
+          - **Target:** \`main\`
 
           ---
-          *Auto-merged by workflow at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*"
+          *Auto-merged by workflow at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOFMARKER
 
+          gh pr comment "$PR_NUMBER" --body-file /tmp/merge_comment.md
           gh pr merge "$PR_NUMBER" --squash --delete-branch --auto
 
           echo "✓ PR #$PR_NUMBER merged"
@@ -311,16 +366,42 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           PR_NUMBER=$(gh pr list --head "${{ github.ref_name }}" --base main --json number -q '.[0].number')
+          CHECK_SUMMARY=$(cat /tmp/check_summary.txt || echo "No check details available")
 
-          gh pr comment "$PR_NUMBER" --body "## ❌ Auto-Merge Rejected
+          # Get failed checks specifically
+          CHECKS=$(gh pr checks "$PR_NUMBER" --json name,state,conclusion,detailsUrl 2>/dev/null || echo "[]")
+          FAILED_CHECKS=$(echo "$CHECKS" | jq -r '[.[] | select(.conclusion == "FAILURE")] | .[] | "- ❌ [\(.name)](\(.detailsUrl)) - Failed"')
 
-          Required checks failed. Please review the logs and fix the issues.
+          cat > /tmp/close_comment.md << EOFMARKER
+          ## ❌ Auto-Merge Rejected - Checks Failed
 
-          **View workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          One or more required checks failed. Please review the errors and fix them.
+
+          ### ❌ Failed Checks
+
+          $FAILED_CHECKS
+
+          ### 📊 All Checks
+
+          $CHECK_SUMMARY
+
+          ### 🔧 Next Steps
+
+          1. Review the failed check logs above
+          2. Fix the issues in your code
+          3. Commit and push your changes
+          4. The checks will run automatically
+
+          ### 🔗 Links
+
+          - [View Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          - [View All Checks](https://github.com/${{ github.repository }}/pull/$PR_NUMBER/checks)
 
           ---
-          *Auto-closed by workflow at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*"
+          *Auto-closed by workflow at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOFMARKER
 
+          gh pr comment "$PR_NUMBER" --body-file /tmp/close_comment.md
           gh pr close "$PR_NUMBER"
 
           echo "✗ PR #$PR_NUMBER closed due to failed checks"
@@ -331,23 +412,46 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           PR_NUMBER=$(gh pr list --head "${{ github.ref_name }}" --base main --json number -q '.[0].number')
+          CHECK_SUMMARY=$(cat /tmp/check_summary.txt || echo "No check details available")
 
-          gh pr comment "$PR_NUMBER" --body "## ❌ Auto-Merge Rejected - Conflicts
+          cat > /tmp/conflict_comment.md << EOFMARKER
+          ## ❌ Auto-Merge Rejected - Merge Conflicts
 
-          This PR has merge conflicts with main. Please resolve them:
+          This PR has merge conflicts with the main branch that must be resolved before merging.
 
-          \`\`\`bash
-          git checkout ${{ github.ref_name }}
-          git fetch origin main
-          git merge origin/main
-          # Resolve conflicts
-          git commit
-          git push
-          \`\`\`
+          ### 🔧 How to Resolve Conflicts
+
+          1. **Update your branch:**
+             \`\`\`bash
+             git checkout ${{ github.ref_name }}
+             git fetch origin main
+             git merge origin/main
+             \`\`\`
+
+          2. **Resolve the conflicts:**
+             - Open the conflicting files in your editor
+             - Look for conflict markers (\`<<<<<<<\`, \`=======\`, \`>>>>>>>\`)
+             - Manually resolve each conflict
+             - Remove the conflict markers
+
+          3. **Commit and push:**
+             \`\`\`bash
+             git add .
+             git commit -m "fix: resolve merge conflicts with main"
+             git push
+             \`\`\`
+
+          ### 📊 Check Status
+
+          $CHECK_SUMMARY
+
+          The PR will be automatically recreated when you push the resolved conflicts.
 
           ---
-          *Auto-closed by workflow at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*"
+          *Auto-closed by workflow at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOFMARKER
 
+          gh pr comment "$PR_NUMBER" --body-file /tmp/conflict_comment.md
           gh pr close "$PR_NUMBER"
 
           echo "✗ PR #$PR_NUMBER closed due to conflicts"

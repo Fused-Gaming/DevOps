@@ -1,0 +1,236 @@
+name: Workflow Summary Reporter
+
+on:
+  workflow_run:
+    workflows:
+      - "Enhanced CI/CD Pipeline"
+      - "Auto PR & Merge"
+      - "Commit Message Linting"
+      - "Feature Docs Check"
+      - "SEO & Marketing Automation"
+    types:
+      - completed
+
+permissions:
+  pull-requests: write
+  actions: read
+  checks: read
+  contents: read
+
+jobs:
+  report-summary:
+    runs-on: ubuntu-latest
+    name: 📊 Generate Workflow Summary Report
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔍 Get PR number
+        id: get-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Get PR associated with the workflow run
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          echo "Branch: $BRANCH"
+
+          # Find PR for this branch
+          PR_NUMBER=$(gh pr list --head "$BRANCH" --state open --json number -q '.[0].number' 2>/dev/null || echo "")
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "has_pr=true" >> $GITHUB_OUTPUT
+            echo "✓ Found PR #$PR_NUMBER"
+          else
+            echo "has_pr=false" >> $GITHUB_OUTPUT
+            echo "→ No PR found for branch $BRANCH"
+          fi
+
+      - name: 📊 Collect workflow results
+        id: collect
+        if: steps.get-pr.outputs.has_pr == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ steps.get-pr.outputs.pr_number }}"
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Collecting workflow results for PR #$PR_NUMBER"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Get all checks for the PR
+          CHECKS=$(gh pr checks "$PR_NUMBER" --json name,state,conclusion,detailsUrl 2>/dev/null || echo "[]")
+
+          # Count statuses
+          TOTAL=$(echo "$CHECKS" | jq '. | length')
+          PASSED=$(echo "$CHECKS" | jq '[.[] | select(.conclusion == "SUCCESS")] | length')
+          FAILED=$(echo "$CHECKS" | jq '[.[] | select(.conclusion == "FAILURE")] | length')
+          PENDING=$(echo "$CHECKS" | jq '[.[] | select(.state == "PENDING" or .state == "IN_PROGRESS")] | length')
+          SKIPPED=$(echo "$CHECKS" | jq '[.[] | select(.conclusion == "SKIPPED")] | length')
+
+          echo "total=$TOTAL" >> $GITHUB_OUTPUT
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "pending=$PENDING" >> $GITHUB_OUTPUT
+          echo "skipped=$SKIPPED" >> $GITHUB_OUTPUT
+
+          # Save checks data
+          echo "$CHECKS" > /tmp/checks.json
+
+          echo "✓ Found $TOTAL checks: $PASSED passed, $FAILED failed, $PENDING pending, $SKIPPED skipped"
+
+      - name: 📝 Generate summary report
+        id: report
+        if: steps.get-pr.outputs.has_pr == 'true'
+        run: |
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          WORKFLOW_STATUS="${{ github.event.workflow_run.conclusion }}"
+          WORKFLOW_URL="${{ github.event.workflow_run.html_url }}"
+
+          TOTAL="${{ steps.collect.outputs.total }}"
+          PASSED="${{ steps.collect.outputs.passed }}"
+          FAILED="${{ steps.collect.outputs.failed }}"
+          PENDING="${{ steps.collect.outputs.pending }}"
+          SKIPPED="${{ steps.collect.outputs.skipped }}"
+
+          # Determine overall status emoji
+          if [ "$FAILED" -gt 0 ]; then
+            STATUS_EMOJI="❌"
+            STATUS_TEXT="Failed"
+          elif [ "$PENDING" -gt 0 ]; then
+            STATUS_EMOJI="⏳"
+            STATUS_TEXT="In Progress"
+          elif [ "$PASSED" -gt 0 ]; then
+            STATUS_EMOJI="✅"
+            STATUS_TEXT="Passed"
+          else
+            STATUS_EMOJI="⚪"
+            STATUS_TEXT="Pending"
+          fi
+
+          # Calculate percentage
+          if [ "$TOTAL" -gt 0 ]; then
+            PERCENTAGE=$(( (PASSED + SKIPPED) * 100 / TOTAL ))
+          else
+            PERCENTAGE=0
+          fi
+
+          # Generate progress bar
+          PROGRESS_BLOCKS=$(( PERCENTAGE / 5 ))
+          PROGRESS_BAR=$(printf '█%.0s' $(seq 1 $PROGRESS_BLOCKS))$(printf '░%.0s' $(seq 1 $((20 - PROGRESS_BLOCKS))))
+
+          # Create detailed check list
+          CHECKS_DETAIL=""
+          if [ -f /tmp/checks.json ]; then
+            CHECKS_DETAIL=$(jq -r '.[] |
+              if .conclusion == "SUCCESS" then "- ✅ **\(.name)** - Passed"
+              elif .conclusion == "FAILURE" then "- ❌ **\(.name)** - Failed ([View logs](\(.detailsUrl)))"
+              elif .conclusion == "SKIPPED" then "- ⏭️ **\(.name)** - Skipped"
+              elif .state == "PENDING" or .state == "IN_PROGRESS" then "- ⏳ **\(.name)** - In Progress"
+              else "- ⚪ **\(.name)** - \(.state)"
+              end' /tmp/checks.json)
+          fi
+
+          # Build the report
+          cat > /tmp/report.md << EOFMARKER
+          ## $STATUS_EMOJI Workflow Summary: $WORKFLOW_NAME
+
+          **Status:** $STATUS_TEXT | **Progress:** $PERCENTAGE% Complete
+
+          \`\`\`
+          $PROGRESS_BAR $PERCENTAGE%
+          \`\`\`
+
+          ### 📊 Check Results
+
+          | Status | Count |
+          |--------|-------|
+          | ✅ Passed | $PASSED |
+          | ❌ Failed | $FAILED |
+          | ⏳ Pending | $PENDING |
+          | ⏭️ Skipped | $SKIPPED |
+          | **Total** | **$TOTAL** |
+
+          ### 📝 Detailed Results
+
+          $CHECKS_DETAIL
+
+          ### 🔗 Links
+
+          - [View Workflow Run]($WORKFLOW_URL)
+          - [View All Checks](https://github.com/${{ github.repository }}/pull/${{ steps.get-pr.outputs.pr_number }}/checks)
+
+          ---
+          *Report generated at $(date -u '+%Y-%m-%d %H:%M:%S UTC') by Workflow Summary Reporter*
+          EOFMARKER
+
+          echo "✓ Summary report generated"
+
+      - name: 💬 Post summary to PR
+        if: steps.get-pr.outputs.has_pr == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PR_NUMBER="${{ steps.get-pr.outputs.pr_number }}"
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Posting summary to PR #$PR_NUMBER"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Check if a comment already exists for this workflow
+          EXISTING_COMMENT=$(gh pr view "$PR_NUMBER" --json comments --jq ".comments[] | select(.body | contains(\"Workflow Summary: $WORKFLOW_NAME\")) | .id" | head -1 || echo "")
+
+          if [ -n "$EXISTING_COMMENT" ]; then
+            # Update existing comment
+            echo "→ Updating existing comment ID: $EXISTING_COMMENT"
+            gh api \
+              -X PATCH \
+              "/repos/${{ github.repository }}/issues/comments/$EXISTING_COMMENT" \
+              -f body="$(cat /tmp/report.md)"
+            echo "✓ Comment updated"
+          else
+            # Create new comment
+            echo "→ Creating new comment"
+            gh pr comment "$PR_NUMBER" --body-file /tmp/report.md
+            echo "✓ Comment posted"
+          fi
+
+      - name: 📊 Update workflow summary
+        if: always()
+        run: |
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+          WORKFLOW_STATUS="${{ github.event.workflow_run.conclusion }}"
+          WORKFLOW_URL="${{ github.event.workflow_run.html_url }}"
+
+          cat >> $GITHUB_STEP_SUMMARY << EOFMARKER
+          # 📊 Workflow Summary Report
+
+          ## Workflow Information
+
+          - **Name:** $WORKFLOW_NAME
+          - **Status:** $WORKFLOW_STATUS
+          - **Branch:** ${{ github.event.workflow_run.head_branch }}
+          - **PR:** ${{{ steps.get-pr.outputs.has_pr == 'true' && format('#{0}', steps.get-pr.outputs.pr_number) || 'N/A' }}}
+
+          ## Results
+
+          - **Total Checks:** ${{ steps.collect.outputs.total || '0' }}
+          - **Passed:** ${{ steps.collect.outputs.passed || '0' }}
+          - **Failed:** ${{ steps.collect.outputs.failed || '0' }}
+          - **Pending:** ${{ steps.collect.outputs.pending || '0' }}
+          - **Skipped:** ${{ steps.collect.outputs.skipped || '0' }}
+
+          ## Actions Taken
+
+          ${{{ steps.get-pr.outputs.has_pr == 'true' && '✅ Posted summary to PR' || '⚠️ No PR found, skipping comment' }}}
+
+          [View Workflow Run]($WORKFLOW_URL)
+
+          ---
+          *Generated at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOFMARKER
+
+          echo "✓ Workflow summary updated"
