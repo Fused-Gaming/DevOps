@@ -122,22 +122,18 @@ jobs:
 
             const action = github.event.action === 'closed' ? 'closed' : 'reopened';
 
-            const comment = `
-🎯 **Milestone Progress Update**
-
-This issue was ${action}, updating **${milestone.data.title}** progress:
-
-\`\`\`
-${progressBar} ${percentage}%
-\`\`\`
-
-**Status:** ${milestone.data.closed_issues}/${total} issues completed
-
-${percentage >= 100 ? '🎉 **Milestone Complete!** All issues closed.' : ''}
-${percentage >= 75 && percentage < 100 ? '🔥 **Almost there!** Keep going!' : ''}
-
-[View Milestone](${milestone.data.html_url})
-            `.trim();
+            let comment = '🎯 **Milestone Progress Update**\n\n';
+            comment += `This issue was ${action}, updating **${milestone.data.title}** progress:\n\n`;
+            comment += '```\n';
+            comment += `${progressBar} ${percentage}%\n`;
+            comment += '```\n\n';
+            comment += `**Status:** ${milestone.data.closed_issues}/${total} issues completed\n\n`;
+            if (percentage >= 100) {
+              comment += '🎉 **Milestone Complete!** All issues closed.\n\n';
+            } else if (percentage >= 75) {
+              comment += '🔥 **Almost there!** Keep going!\n\n';
+            }
+            comment += `[View Milestone](${milestone.data.html_url})`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
