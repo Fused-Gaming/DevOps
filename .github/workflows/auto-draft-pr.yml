@@ -220,23 +220,23 @@ jobs:
 
           # Add comment with reviewer instructions
           cat > /tmp/reviewer_comment.md << 'COMMENT_EOF'
-## 🤖 Auto-Review Requested
+          ## 🤖 Auto-Review Requested
 
-This PR was automatically created and is ready for review.
+          This PR was automatically created and is ready for review.
 
-**Next Steps:**
-1. ✅ All CI/CD checks will run automatically
-2. 👀 Review the changes and approve if everything looks good
-3. 🔄 PR will auto-merge once approved and checks pass
+          **Next Steps:**
+          1. ✅ All CI/CD checks will run automatically
+          2. 👀 Review the changes and approve if everything looks good
+          3. 🔄 PR will auto-merge once approved and checks pass
 
-**Manual Actions:**
-- To mark as ready for review: Click 'Ready for review' button
-- To approve: Use GitHub review feature
-- To merge manually: Use 'Merge' button
+          **Manual Actions:**
+          - To mark as ready for review: Click 'Ready for review' button
+          - To approve: Use GitHub review feature
+          - To merge manually: Use 'Merge' button
 
----
-*Assigned by auto-draft-pr workflow*
-COMMENT_EOF
+          ---
+          *Assigned by auto-draft-pr workflow*
+          COMMENT_EOF
 
           gh pr comment "$PR_NUMBER" --body-file /tmp/reviewer_comment.md || true
 
