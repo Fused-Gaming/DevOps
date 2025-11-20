@@ -25,18 +25,68 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 if [ ! -f "$SCRIPT_DIR/.env.deploy" ]; then
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${RED}  Configuration Error${NC}"
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
     echo -e "${RED}✗ Configuration file not found: .env.deploy${NC}"
     echo ""
-    echo -e "${YELLOW}Run the configuration wizard first:${NC}"
+    echo -e "${YELLOW}The deployment configuration is missing. You need to run the setup wizard first.${NC}"
+    echo ""
+    echo -e "${BLUE}Option 1: Run the configuration wizard (Recommended)${NC}"
+    echo -e "${CYAN}  cd $SCRIPT_DIR${NC}"
     echo -e "${CYAN}  ./setup-deployment-config.sh${NC}"
+    echo ""
+    echo -e "${BLUE}Option 2: Copy and edit the example file manually${NC}"
+    echo -e "${CYAN}  cd $SCRIPT_DIR${NC}"
+    echo -e "${CYAN}  cp .env.deploy.example .env.deploy${NC}"
+    echo -e "${CYAN}  nano .env.deploy${NC}"
+    echo ""
+    echo -e "${BLUE}Required configuration:${NC}"
+    echo "  - TLD (e.g., vln.gg)"
+    echo "  - SUB_DOMAIN1 (e.g., preview)"
+    echo "  - SERVER_IP (your server IP address)"
+    echo "  - SSH_USER (default: root)"
+    echo "  - ROOT_SSH_KEY (your public SSH key)"
     echo ""
     exit 1
 fi
 
 # Load environment variables
+echo -e "${YELLOW}→ Loading configuration from .env.deploy...${NC}"
 set -a
 source "$SCRIPT_DIR/.env.deploy"
 set +a
+echo -e "${GREEN}✓ Configuration loaded${NC}"
+echo ""
+
+# Validate required variables
+REQUIRED_VARS=("TLD" "SERVER_IP" "SSH_USER" "DEPLOY_BASE_PATH")
+MISSING_VARS=()
+
+for var in "${REQUIRED_VARS[@]}"; do
+    if [ -z "${!var}" ]; then
+        MISSING_VARS+=("$var")
+    fi
+done
+
+if [ ${#MISSING_VARS[@]} -ne 0 ]; then
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo -e "${RED}  Configuration Error${NC}"
+    echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+    echo ""
+    echo -e "${RED}✗ Missing required variables in .env.deploy:${NC}"
+    for var in "${MISSING_VARS[@]}"; do
+        echo -e "  ${YELLOW}- $var${NC}"
+    done
+    echo ""
+    echo -e "${YELLOW}Please run the configuration wizard to fix this:${NC}"
+    echo -e "${CYAN}  ./setup-deployment-config.sh${NC}"
+    echo ""
+    echo -e "${BLUE}Or manually edit .env.deploy and add the missing variables.${NC}"
+    echo ""
+    exit 1
+fi
 
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 # Parse Subdomain Argument

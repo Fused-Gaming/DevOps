@@ -161,36 +161,70 @@ case $CHOICE in
         ;;
     3)
         echo -e "${YELLOW}→ Deploying to preview server...${NC}"
+        echo ""
 
         # Check if .env.deploy exists
         if [ ! -f "./.env.deploy" ]; then
+            echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo -e "${RED}  Configuration Required${NC}"
+            echo -e "${RED}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+            echo ""
             echo -e "${YELLOW}⚠️  No deployment configuration found (.env.deploy)${NC}"
             echo ""
-            read -p "Do you want to run the configuration wizard? (Y/n): " -n 1 -r
+            echo -e "${BLUE}To deploy to your preview server, you need to configure:${NC}"
+            echo "  - Your domain (e.g., vln.gg)"
+            echo "  - Subdomain names (e.g., preview, dev, staging)"
+            echo "  - Server IP address"
+            echo "  - SSH keys for authentication"
             echo ""
 
-            if [[ ! $REPLY =~ ^[Nn]$ ]]; then
-                if [ -f "./setup-deployment-config.sh" ]; then
-                    chmod +x ./setup-deployment-config.sh
-                    ./setup-deployment-config.sh
+            # Check if running interactively (has terminal)
+            if [ -t 0 ]; then
+                read -p "Do you want to run the configuration wizard now? (Y/n): " -n 1 -r < /dev/tty
+                echo ""
 
-                    # After setup, continue with deployment
-                    if [ -f "./.env.deploy" ]; then
+                if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+                    if [ -f "./setup-deployment-config.sh" ]; then
+                        chmod +x ./setup-deployment-config.sh
                         echo ""
-                        echo -e "${GREEN}✓ Configuration complete. Continuing with deployment...${NC}"
-                        echo ""
-                        sleep 2
+                        ./setup-deployment-config.sh
+
+                        # After setup, continue with deployment
+                        if [ -f "./.env.deploy" ]; then
+                            echo ""
+                            echo -e "${GREEN}✓ Configuration complete. Continuing with deployment...${NC}"
+                            echo ""
+                            sleep 2
+                        else
+                            echo -e "${RED}✗ Configuration was not completed. Exiting.${NC}"
+                            exit 1
+                        fi
                     else
-                        echo -e "${RED}✗ Configuration was not completed. Exiting.${NC}"
+                        echo -e "${RED}✗ setup-deployment-config.sh not found${NC}"
                         exit 1
                     fi
                 else
-                    echo -e "${RED}✗ setup-deployment-config.sh not found${NC}"
+                    echo ""
+                    echo -e "${YELLOW}Please configure .env.deploy first:${NC}"
+                    echo -e "${CYAN}  ./setup-deployment-config.sh${NC}"
+                    echo ""
                     exit 1
                 fi
             else
-                echo -e "${YELLOW}Please configure .env.deploy first:${NC}"
+                # Non-interactive mode (e.g., piped from curl)
+                echo -e "${YELLOW}Running in non-interactive mode (no terminal attached).${NC}"
+                echo ""
+                echo -e "${CYAN}To configure deployment, clone the repo and run:${NC}"
+                echo ""
+                echo -e "${CYAN}  git clone https://github.com/Fused-Gaming/DevOps.git${NC}"
+                echo -e "${CYAN}  cd DevOps/devops-panel${NC}"
                 echo -e "${CYAN}  ./setup-deployment-config.sh${NC}"
+                echo -e "${CYAN}  ./deploy-to-subdomain.sh SUB_DOMAIN1${NC}"
+                echo ""
+                echo -e "${YELLOW}Or use the interactive menu instead:${NC}"
+                echo -e "${CYAN}  curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-deploy.sh | bash${NC}"
+                echo -e "${CYAN}  # Then choose option 3 from the menu${NC}"
+                echo ""
                 exit 1
             fi
         fi
@@ -199,7 +233,7 @@ case $CHOICE in
             chmod +x ./deploy-to-subdomain.sh
             exec ./deploy-to-subdomain.sh
         else
-            echo -e "${RED}deploy-to-subdomain.sh not found${NC}"
+            echo -e "${RED}✗ deploy-to-subdomain.sh not found${NC}"
             exit 1
         fi
         ;;
