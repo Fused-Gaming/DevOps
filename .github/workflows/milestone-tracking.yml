@@ -2,7 +2,9 @@ name: Milestone Progress Tracking
 
 on:
   issues:
-    types: [closed, reopened, milestoned, demilestoned]
+    types: [opened, closed, reopened, labeled, unlabeled, milestoned, demilestoned]
+  pull_request:
+    types: [opened, closed, reopened]
   workflow_dispatch:
     inputs:
       milestone:
@@ -23,37 +25,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
-      - name: 🏷️ Ensure required labels exist
-        uses: actions/github-script@v7
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const labels = [
-              { name: 'priority:critical', description: 'Critical priority issue', color: 'd73a4a' },
-              { name: 'priority:high', description: 'High priority issue', color: 'ff6b6b' },
-              { name: 'priority:medium', description: 'Medium priority issue', color: 'fbca04' },
-              { name: 'priority:low', description: 'Low priority issue', color: '0e8a16' }
-            ];
-
-            for (const label of labels) {
-              try {
-                await github.rest.issues.createLabel({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  name: label.name,
-                  description: label.description,
-                  color: label.color
-                });
-                console.log(`✓ Created label: ${label.name}`);
-              } catch (error) {
-                if (error.status === 422) {
-                  console.log(`→ Label already exists: ${label.name}`);
-                } else {
-                  console.error(`✗ Error creating label ${label.name}:`, error.message);
-                }
-              }
-            }
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -150,22 +121,19 @@ jobs:
             const progressBar = '█'.repeat(Math.floor(percentage / 5)) + '░'.repeat(20 - Math.floor(percentage / 5));
 
             const action = github.event.action === 'closed' ? 'closed' : 'reopened';
-            const codeBlock = '```';
 
-            const comment = `🎯 **Milestone Progress Update**
-
-            This issue was ${action}, updating **${milestone.data.title}** progress:
-
-            ${codeBlock}
-            ${progressBar} ${percentage}%
-            ${codeBlock}
-
-            **Status:** ${milestone.data.closed_issues}/${total} issues completed
-
-            ${percentage >= 100 ? '🎉 **Milestone Complete!** All issues closed.' : ''}
-            ${percentage >= 75 && percentage < 100 ? '🔥 **Almost there!** Keep going!' : ''}
-
-            [View Milestone](${milestone.data.html_url})`.trim();
+            let comment = '🎯 **Milestone Progress Update**\n\n';
+            comment += `This issue was ${action}, updating **${milestone.data.title}** progress:\n\n`;
+            comment += '```\n';
+            comment += `${progressBar} ${percentage}%\n`;
+            comment += '```\n\n';
+            comment += `**Status:** ${milestone.data.closed_issues}/${total} issues completed\n\n`;
+            if (percentage >= 100) {
+              comment += '🎉 **Milestone Complete!** All issues closed.\n\n';
+            } else if (percentage >= 75) {
+              comment += '🔥 **Almost there!** Keep going!\n\n';
+            }
+            comment += `[View Milestone](${milestone.data.html_url})`;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
