@@ -219,7 +219,7 @@ jobs:
             || true
 
           # Add comment with reviewer instructions
-          gh pr comment "$PR_NUMBER" --body "$(cat <<'COMMENT_EOF'
+          cat > /tmp/reviewer_comment.md << 'COMMENT_EOF'
 ## 🤖 Auto-Review Requested
 
 This PR was automatically created and is ready for review.
@@ -237,7 +237,8 @@ This PR was automatically created and is ready for review.
 ---
 *Assigned by auto-draft-pr workflow*
 COMMENT_EOF
-)" || true
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/reviewer_comment.md || true
 
           echo "✓ Reviewers assigned and labels added"
 
@@ -249,7 +250,7 @@ COMMENT_EOF
           PR_NUMBER="${{ steps.check_pr.outputs.pr_number }}"
 
           # Add comment about new commits
-          gh pr comment "$PR_NUMBER" --body "$(cat <<'UPDATE_EOF'
+          cat > /tmp/update_comment.md <<UPDATE_EOF
 ## 🔄 New Commits Pushed
 
 Branch \`${{ github.ref_name }}\` has been updated with new commits.
@@ -263,7 +264,8 @@ CI/CD checks will re-run automatically.
 ---
 *Updated by auto-draft-pr workflow*
 UPDATE_EOF
-)" || true
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/update_comment.md || true
 
           echo "✓ PR #$PR_NUMBER notified of new commits"
 
