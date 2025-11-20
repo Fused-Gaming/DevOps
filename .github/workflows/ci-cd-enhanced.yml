@@ -1,9 +1,9 @@
 name: Enhanced CI/CD Pipeline
 
 on:
-  push:
-    branches: ["**"]
   pull_request:
+    branches: [main, develop]
+  push:
     branches: [main, develop]
   workflow_dispatch:
 

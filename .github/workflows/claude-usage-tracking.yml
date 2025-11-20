@@ -5,7 +5,7 @@ name: Claude Usage Tracking & Test Feedback
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
@@ -122,14 +122,12 @@ jobs:
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
           if [ -n "$(git status --porcelain CLAUDE_USAGE.md)" ]; then
+            TOKENS="${{ steps.calculate.outputs.tokens_used }}"
+            COST="${{ steps.calculate.outputs.estimated_cost }}"
+            ACTOR="${{ github.actor }}"
+
             git add CLAUDE_USAGE.md
-            git commit -m "chore: update Claude usage tracking
-
-Auto-updated by workflow
-Tokens: ${{ steps.calculate.outputs.tokens_used }}
-Cost: \$${{ steps.calculate.outputs.estimated_cost }}
-
-Signed-off-by: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
+            git commit -m "chore: update Claude usage tracking" -m "Auto-updated by workflow" -m "Tokens: $TOKENS" -m "Cost: \$$COST" -m "Signed-off-by: $ACTOR <$ACTOR@users.noreply.github.com>"
             git push
             echo "✓ CLAUDE_USAGE.md updated and committed"
           else
@@ -139,7 +137,7 @@ Signed-off-by: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com
       - name: 📊 Generate Usage Report
         if: always()
         run: |
-          cat > $GITHUB_STEP_SUMMARY << EOF
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
           # 📊 Claude Code Usage Report
 
           ## This Commit

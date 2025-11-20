@@ -1,0 +1,21 @@
+{
+  "name": "Feature branch workflow",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": {
+      "include": ["refs/heads/feature/*", "refs/heads/fix/*", "refs/heads/claude/*"],
+      "exclude": []
+    }
+  },
+  "rules": [
+    {
+      "type": "deletion"
+    },
+    {
+      "type": "creation",
+      "parameters": {}
+    }
+  ],
+  "bypass_actors": []
+}
