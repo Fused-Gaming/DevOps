@@ -26,6 +26,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: 🏷️ Ensure required labels exist
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const labels = [
+              { name: 'priority:critical', description: 'Critical priority issue', color: 'd73a4a' },
+              { name: 'priority:high', description: 'High priority issue', color: 'ff6b6b' },
+              { name: 'priority:medium', description: 'Medium priority issue', color: 'fbca04' },
+              { name: 'priority:low', description: 'Low priority issue', color: '0e8a16' }
+            ];
+
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name,
+                  description: label.description,
+                  color: label.color
+                });
+                console.log(`✓ Created label: ${label.name}`);
+              } catch (error) {
+                if (error.status === 422) {
+                  console.log(`→ Label already exists: ${label.name}`);
+                } else {
+                  console.error(`✗ Error creating label ${label.name}:`, error.message);
+                }
+              }
+            }
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
