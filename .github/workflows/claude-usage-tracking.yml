@@ -104,9 +104,10 @@ jobs:
           echo "lines_changed=$TOTAL_CHANGES" >> $GITHUB_OUTPUT
 
       - name: 📝 Update CLAUDE_USAGE.md
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         run: |
           echo "→ Updating CLAUDE_USAGE.md..."
+          echo "Branch: ${{ github.ref_name }}"
 
           # Run the tracking script
           if [ -f "scripts/track-claude-usage.sh" ]; then
@@ -116,22 +117,24 @@ jobs:
           fi
 
       - name: 💾 Commit Updated Usage File
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           if [ -n "$(git status --porcelain CLAUDE_USAGE.md)" ]; then
             git add CLAUDE_USAGE.md
-            git commit -m "chore: update Claude usage tracking
+            git commit -m "chore: update Claude usage tracking [skip ci]
 
-Auto-updated by workflow
+Auto-updated by workflow on branch: ${{ github.ref_name }}
 Tokens: ${{ steps.calculate.outputs.tokens_used }}
 Cost: \$${{ steps.calculate.outputs.estimated_cost }}
 
-Signed-off-by: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
-            git push
-            echo "✓ CLAUDE_USAGE.md updated and committed"
+Signed-off-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+            # Push to current branch
+            git push origin HEAD:${{ github.ref_name }}
+            echo "✓ CLAUDE_USAGE.md updated and committed to ${{ github.ref_name }}"
           else
             echo "ℹ️  No changes to CLAUDE_USAGE.md"
           fi
