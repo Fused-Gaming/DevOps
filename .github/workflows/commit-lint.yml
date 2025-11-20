@@ -3,6 +3,7 @@ name: Commit Message Linting
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+    branches: [main, develop]
 
 jobs:
   lint-commits:
