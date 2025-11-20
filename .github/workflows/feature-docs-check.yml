@@ -281,15 +281,9 @@ jobs:
 
             let tierRequirements = '';
             if (tier === '2') {
-              tierRequirements = `**Tier 2 (Medium Feature):** ${linesChanged} lines changed
-- Minimum: 100 words
-- All 4 sections required (Overview, Goals, Implementation, Testing)
-- Each section should be substantive`;
+              tierRequirements = `**Tier 2 (Medium Feature):** ${linesChanged} lines changed\n- Minimum: 100 words\n- All 4 sections required (Overview, Goals, Implementation, Testing)\n- Each section should be substantive`;
             } else {
-              tierRequirements = `**Tier 3 (Large Feature):** ${linesChanged} lines changed
-- Minimum: 200 words
-- All 4 sections required with detailed content
-- Comprehensive technical approach and testing documentation`;
+              tierRequirements = `**Tier 3 (Large Feature):** ${linesChanged} lines changed\n- Minimum: 200 words\n- All 4 sections required with detailed content\n- Comprehensive technical approach and testing documentation`;
             }
 
             const comment = `## ⚠️ Feature Documentation Required
