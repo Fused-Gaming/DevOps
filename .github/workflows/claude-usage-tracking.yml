@@ -137,7 +137,7 @@ jobs:
       - name: 📊 Generate Usage Report
         if: always()
         run: |
-          cat > $GITHUB_STEP_SUMMARY << EOF
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
           # 📊 Claude Code Usage Report
 
           ## This Commit
