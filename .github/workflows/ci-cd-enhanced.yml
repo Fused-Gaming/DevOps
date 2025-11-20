@@ -529,6 +529,65 @@ jobs:
           echo ""
           echo "workflow_warnings=$WARNINGS" >> $GITHUB_OUTPUT
 
+      - name: 📋 Validate CHANGELOG.md
+        if: hashFiles('CHANGELOG.md') != ''
+        id: validate_changelog
+        run: |
+          WARNINGS=0
+          ERRORS=0
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Validating CHANGELOG.md..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Check format
+          if ! grep -q "# Changelog" CHANGELOG.md; then
+            echo "❌ ERROR: CHANGELOG.md missing header"
+            ERRORS=$((ERRORS + 1))
+          else
+            echo "✓ CHANGELOG header found"
+          fi
+
+          # Check for version entries
+          VERSION_COUNT=$(grep -c "^## \[" CHANGELOG.md || echo 0)
+          echo "  Found $VERSION_COUNT version entries"
+
+          if [ $VERSION_COUNT -eq 0 ]; then
+            echo "⚠️  WARNING: No version entries in CHANGELOG"
+            WARNINGS=$((WARNINGS + 1))
+          fi
+
+          # Check last update date
+          LAST_UPDATE=$(grep -m 1 "^## \[" CHANGELOG.md | grep -oP '\d{4}-\d{2}-\d{2}' || echo "1970-01-01")
+          TODAY=$(date +%Y-%m-%d)
+          DAYS_OLD=$(( ($(date -d "$TODAY" +%s) - $(date -d "$LAST_UPDATE" +%s)) / 86400 ))
+
+          echo "  Last entry: $LAST_UPDATE ($DAYS_OLD days ago)"
+
+          if [ $DAYS_OLD -gt 14 ]; then
+            echo "⚠️  WARNING: CHANGELOG hasn't been updated in $DAYS_OLD days"
+            echo "  → May be missing recent changes"
+            echo "  → Check .github/workflows/seo-marketing-automation.yml"
+            WARNINGS=$((WARNINGS + 1))
+          else
+            echo "✓ CHANGELOG was recently updated"
+          fi
+
+          # Check if update script exists and is executable
+          if [ ! -f "scripts/update-changelog.sh" ]; then
+            echo "❌ ERROR: scripts/update-changelog.sh not found"
+            ERRORS=$((ERRORS + 1))
+          elif [ ! -x "scripts/update-changelog.sh" ]; then
+            echo "⚠️  WARNING: update-changelog.sh is not executable"
+            WARNINGS=$((WARNINGS + 1))
+          else
+            echo "✓ Update script exists and is executable"
+          fi
+
+          echo ""
+          echo "changelog_errors=$ERRORS" >> $GITHUB_OUTPUT
+          echo "changelog_warnings=$WARNINGS" >> $GITHUB_OUTPUT
+
       - name: 📊 Generate Validation Report
         if: always()
         run: |
@@ -538,9 +597,11 @@ jobs:
           FORMAT_WARNINGS="${{ steps.validate_format.outputs.format_warnings }}"
           TOTALS_WARNINGS="${{ steps.validate_totals.outputs.totals_warnings }}"
           WORKFLOW_WARNINGS="${{ steps.validate_workflow.outputs.workflow_warnings }}"
+          CHANGELOG_ERRORS="${{ steps.validate_changelog.outputs.changelog_errors }}"
+          CHANGELOG_WARNINGS="${{ steps.validate_changelog.outputs.changelog_warnings }}"
 
-          TOTAL_ERRORS=$((FILE_ERRORS + FORMAT_ERRORS))
-          TOTAL_WARNINGS=$((FILE_WARNINGS + FORMAT_WARNINGS + TOTALS_WARNINGS + WORKFLOW_WARNINGS))
+          TOTAL_ERRORS=$((FILE_ERRORS + FORMAT_ERRORS + CHANGELOG_ERRORS))
+          TOTAL_WARNINGS=$((FILE_WARNINGS + FORMAT_WARNINGS + TOTALS_WARNINGS + WORKFLOW_WARNINGS + CHANGELOG_WARNINGS))
 
           echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
           echo "📊 Validation Summary"
@@ -561,65 +622,77 @@ jobs:
           fi
 
           cat > $GITHUB_STEP_SUMMARY << EOF
-          # 📊 Claude Usage Tracking Validation
+          # 📊 Documentation Automation Validation
 
           ## Summary
 
-          | Category | Errors | Warnings |
-          |----------|--------|----------|
-          | Files | ${FILE_ERRORS:-0} | ${FILE_WARNINGS:-0} |
-          | Format | ${FORMAT_ERRORS:-0} | ${FORMAT_WARNINGS:-0} |
-          | Totals | 0 | ${TOTALS_WARNINGS:-0} |
-          | Workflow | 0 | ${WORKFLOW_WARNINGS:-0} |
-          | **Total** | **$TOTAL_ERRORS** | **$TOTAL_WARNINGS** |
+          | System | Category | Errors | Warnings |
+          |--------|----------|--------|----------|
+          | **Claude Tracking** | Files | ${FILE_ERRORS:-0} | ${FILE_WARNINGS:-0} |
+          | | Format | ${FORMAT_ERRORS:-0} | ${FORMAT_WARNINGS:-0} |
+          | | Totals | 0 | ${TOTALS_WARNINGS:-0} |
+          | | Workflow | 0 | ${WORKFLOW_WARNINGS:-0} |
+          | **CHANGELOG** | Validation | ${CHANGELOG_ERRORS:-0} | ${CHANGELOG_WARNINGS:-0} |
+          | **Total** | | **$TOTAL_ERRORS** | **$TOTAL_WARNINGS** |
 
           ## Overall Status
 
           $(if [ $TOTAL_ERRORS -gt 0 ]; then
-            echo "❌ **ERRORS FOUND** - Claude tracking system needs attention"
+            echo "❌ **ERRORS FOUND** - Documentation automation needs attention"
             echo ""
             echo "### Required Actions:"
-            echo "1. Review error messages in job logs"
+            echo "1. Review error messages in job logs above"
             echo "2. Fix missing or corrupted files"
             echo "3. Verify workflow permissions"
-            echo "4. See \`docs/USAGE-TRACKING-GUIDE.md\` for help"
+            echo "4. Check automation scripts are executable"
           elif [ $TOTAL_WARNINGS -gt 0 ]; then
-            echo "⚠️  **WARNINGS PRESENT** - System functional but improvements recommended"
+            echo "⚠️  **WARNINGS PRESENT** - Systems functional but improvements recommended"
             echo ""
             echo "### Recommended Actions:"
             echo "1. Review warning messages in job logs"
             echo "2. Update outdated entries if needed"
-            echo "3. Verify workflow configuration"
-            echo "4. Consider running manual tracking update"
+            echo "3. Verify workflow configurations"
+            echo "4. Consider running manual updates"
           else
-            echo "✅ **ALL CHECKS PASSED** - Tracking system working correctly"
+            echo "✅ **ALL CHECKS PASSED** - All automation systems working correctly"
             echo ""
             echo "### System Status:"
-            echo "- ✅ All required files present"
-            echo "- ✅ File format is correct"
-            echo "- ✅ Totals are accurate"
-            echo "- ✅ Workflow properly configured"
+            echo "- ✅ Claude usage tracking operational"
+            echo "- ✅ CHANGELOG automation working"
+            echo "- ✅ All files present and properly formatted"
+            echo "- ✅ Workflows properly configured"
             echo "- ✅ Recent updates detected"
           fi)
 
           ## Documentation
 
-          - **Troubleshooting Guide**: \`docs/USAGE-TRACKING-GUIDE.md\`
-          - **Usage Log**: \`CLAUDE_USAGE.md\`
-          - **Workflow**: \`.github/workflows/claude-usage-tracking.yml\`
-          - **Script**: \`scripts/track-claude-usage.sh\`
+          **Claude Usage Tracking:**
+          - Guide: \`docs/USAGE-TRACKING-GUIDE.md\`
+          - Log: \`CLAUDE_USAGE.md\`
+          - Workflow: \`.github/workflows/claude-usage-tracking.yml\`
+          - Script: \`scripts/track-claude-usage.sh\`
+
+          **CHANGELOG:**
+          - File: \`CHANGELOG.md\`
+          - Workflow: \`.github/workflows/seo-marketing-automation.yml\`
+          - Script: \`scripts/update-changelog.sh\`
 
           ## Quick Fixes
 
           \`\`\`bash
-          # Make script executable
+          # Make scripts executable
           chmod +x scripts/track-claude-usage.sh
+          chmod +x scripts/update-changelog.sh
 
           # Manually update tracking
           bash scripts/track-claude-usage.sh "Manual update"
 
-          # Trigger workflow manually
+          # Manually update CHANGELOG
+          bash scripts/update-changelog.sh
+
+          # Trigger workflows manually
           gh workflow run claude-usage-tracking.yml
+          gh workflow run seo-marketing-automation.yml
           \`\`\`
 
           ---
