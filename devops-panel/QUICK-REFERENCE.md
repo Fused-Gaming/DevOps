@@ -32,6 +32,20 @@ curl -fsSL https://github.com/Fused-Gaming/DevOps/raw/main/devops-panel/auto-dep
 - `build` - Build for production
 - `vercel` - Deploy to Vercel
 
+### Option 1b: Deploy to Any Subdomain (Multi-Environment)
+
+```bash
+# One-time setup
+./setup-deployment-config.sh
+
+# Deploy to different environments
+./deploy-to-subdomain.sh SUB_DOMAIN1  # preview.vln.gg
+./deploy-to-subdomain.sh SUB_DOMAIN2  # dev.vln.gg
+./deploy-to-subdomain.sh SUB_DOMAIN3  # staging.vln.gg
+```
+
+**See [SUBDOMAIN-DEPLOYMENT.md](./SUBDOMAIN-DEPLOYMENT.md) for complete guide.**
+
 ### Option 2: Fetch, Build, and Start Development (One Command)
 
 ```bash

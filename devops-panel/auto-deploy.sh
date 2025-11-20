@@ -161,11 +161,45 @@ case $CHOICE in
         ;;
     3)
         echo -e "${YELLOW}→ Deploying to preview server...${NC}"
-        if [ -f "./deploy-preview.sh" ]; then
-            chmod +x ./deploy-preview.sh
-            exec ./deploy-preview.sh
+
+        # Check if .env.deploy exists
+        if [ ! -f "./.env.deploy" ]; then
+            echo -e "${YELLOW}⚠️  No deployment configuration found (.env.deploy)${NC}"
+            echo ""
+            read -p "Do you want to run the configuration wizard? (Y/n): " -n 1 -r
+            echo ""
+
+            if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+                if [ -f "./setup-deployment-config.sh" ]; then
+                    chmod +x ./setup-deployment-config.sh
+                    ./setup-deployment-config.sh
+
+                    # After setup, continue with deployment
+                    if [ -f "./.env.deploy" ]; then
+                        echo ""
+                        echo -e "${GREEN}✓ Configuration complete. Continuing with deployment...${NC}"
+                        echo ""
+                        sleep 2
+                    else
+                        echo -e "${RED}✗ Configuration was not completed. Exiting.${NC}"
+                        exit 1
+                    fi
+                else
+                    echo -e "${RED}✗ setup-deployment-config.sh not found${NC}"
+                    exit 1
+                fi
+            else
+                echo -e "${YELLOW}Please configure .env.deploy first:${NC}"
+                echo -e "${CYAN}  ./setup-deployment-config.sh${NC}"
+                exit 1
+            fi
+        fi
+
+        if [ -f "./deploy-to-subdomain.sh" ]; then
+            chmod +x ./deploy-to-subdomain.sh
+            exec ./deploy-to-subdomain.sh
         else
-            echo -e "${RED}deploy-preview.sh not found${NC}"
+            echo -e "${RED}deploy-to-subdomain.sh not found${NC}"
             exit 1
         fi
         ;;

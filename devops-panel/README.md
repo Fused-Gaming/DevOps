@@ -35,6 +35,26 @@ This single command will:
 
 **See [QUICK-REFERENCE.md](./QUICK-REFERENCE.md) for more one-liner commands and deployment scenarios.**
 
+### 🌐 Deploy to Multiple Subdomains (New!)
+
+Deploy to any subdomain (preview.vln.gg, dev.vln.gg, staging.vln.gg) with one command:
+
+```bash
+# 1. Run configuration wizard (one-time setup)
+./setup-deployment-config.sh
+
+# 2. Deploy to your subdomain
+./deploy-to-subdomain.sh SUB_DOMAIN1  # preview.vln.gg
+```
+
+The wizard will:
+- Configure your domain (e.g., vln.gg) and subdomains
+- Set up your server IP and SSH keys
+- Automatically add your public key to the server
+- Deploy in one command
+
+**See [SUBDOMAIN-DEPLOYMENT.md](./SUBDOMAIN-DEPLOYMENT.md) for complete subdomain deployment guide.**
+
 ---
 
 ### 🚀 Automated Setup (Recommended)
