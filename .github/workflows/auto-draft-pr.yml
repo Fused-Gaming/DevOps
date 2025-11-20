@@ -219,7 +219,8 @@ jobs:
             || true
 
           # Add comment with reviewer instructions
-          gh pr comment "$PR_NUMBER" --body "## 🤖 Auto-Review Requested
+          gh pr comment "$PR_NUMBER" --body "$(cat <<'COMMENT_EOF'
+## 🤖 Auto-Review Requested
 
 This PR was automatically created and is ready for review.
 
@@ -234,7 +235,9 @@ This PR was automatically created and is ready for review.
 - To merge manually: Use 'Merge' button
 
 ---
-*Assigned by auto-draft-pr workflow*" || true
+*Assigned by auto-draft-pr workflow*
+COMMENT_EOF
+)" || true
 
           echo "✓ Reviewers assigned and labels added"
 
@@ -246,7 +249,8 @@ This PR was automatically created and is ready for review.
           PR_NUMBER="${{ steps.check_pr.outputs.pr_number }}"
 
           # Add comment about new commits
-          gh pr comment "$PR_NUMBER" --body "## 🔄 New Commits Pushed
+          gh pr comment "$PR_NUMBER" --body "$(cat <<'UPDATE_EOF'
+## 🔄 New Commits Pushed
 
 Branch \`${{ github.ref_name }}\` has been updated with new commits.
 
@@ -257,7 +261,9 @@ Branch \`${{ github.ref_name }}\` has been updated with new commits.
 CI/CD checks will re-run automatically.
 
 ---
-*Updated by auto-draft-pr workflow*" || true
+*Updated by auto-draft-pr workflow*
+UPDATE_EOF
+)" || true
 
           echo "✓ PR #$PR_NUMBER notified of new commits"
 

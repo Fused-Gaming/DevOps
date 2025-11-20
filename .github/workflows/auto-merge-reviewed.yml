@@ -95,7 +95,8 @@ jobs:
           # Approve the PR
           gh pr review "$PR_NUMBER" \
             --approve \
-            --body "## ✅ Auto-Approval
+            --body "$(cat <<'APPROVE_EOF'
+## ✅ Auto-Approval
 
 All checks have passed successfully!
 
@@ -108,7 +109,9 @@ All checks have passed successfully!
 This PR will be automatically merged.
 
 ---
-*Auto-approved by auto-merge-reviewed workflow*"
+*Auto-approved by auto-merge-reviewed workflow*
+APPROVE_EOF
+)"
 
           echo "✅ PR #$PR_NUMBER auto-approved"
 
@@ -190,11 +193,14 @@ This PR is still a draft. To enable auto-merge:
 PR status checked. Waiting for conditions to enable auto-merge."
           fi
 
-          gh pr comment "$PR_NUMBER" --body "$STATUS_MESSAGE
+          gh pr comment "$PR_NUMBER" --body "$(cat <<STATUS_EOF
+$STATUS_MESSAGE
 
 ---
 *Status checked at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
-*Workflow: auto-merge-reviewed*" || true
+*Workflow: auto-merge-reviewed*
+STATUS_EOF
+)" || true
 
       - name: 📋 Workflow Summary
         if: always()
