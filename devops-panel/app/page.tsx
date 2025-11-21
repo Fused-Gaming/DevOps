@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Button from "@/components/ui/button";
 import StatusCard from "@/components/devops/status-card";
 import MilestoneCard from "@/components/devops/milestone-card";
@@ -12,17 +13,38 @@ import {
   GitBranch,
   Rocket,
   CheckCircle,
-  LogOut
+  LogOut,
+  Shield,
+  ExternalLink
 } from "lucide-react";
+
+interface HealthData {
+  overall: {
+    status: "healthy" | "degraded" | "down";
+    healthy: number;
+    degraded: number;
+    down: number;
+    total: number;
+  };
+}
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{ username: string } | null>(null);
+  const [healthData, setHealthData] = useState<HealthData | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     checkAuth();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchHealthData();
+      const interval = setInterval(fetchHealthData, 60000); // Refresh every 60s
+      return () => clearInterval(interval);
+    }
+  }, [user]);
 
   const checkAuth = async () => {
     try {
@@ -38,6 +60,18 @@ export default function DashboardPage() {
       router.push("/login");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchHealthData = async () => {
+    try {
+      const response = await fetch("/api/health");
+      if (response.ok) {
+        const data = await response.json();
+        setHealthData(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch health data:", error);
     }
   };
 
@@ -64,34 +98,58 @@ export default function DashboardPage() {
             <h1 className="text-4xl font-bold text-gradient-sage mb-2">
               DevOps Control Panel
             </h1>
-            <p className="text-vln-gray">
-              Welcome back, {user?.username || "Admin"}
+            <p className="text-vln-gray flex items-center gap-2">
+              <Shield className="text-vln-sage" size={16} />
+              Welcome back, {user?.username || "Admin"} - Password Protected
             </p>
           </div>
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            icon={<LogOut />}
-          >
-            Logout
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link href="/health">
+              <Button variant="secondary" icon={<Activity />}>
+                Health Monitor
+                <ExternalLink className="ml-2" size={16} />
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              onClick={handleLogout}
+              icon={<LogOut />}
+            >
+              Logout
+            </Button>
+          </div>
         </div>
 
         {/* Status Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatusCard
-            title="System Status"
-            description="All systems operational"
+            title="System Health"
+            description={
+              healthData
+                ? `${healthData.overall.healthy}/${healthData.overall.total} services healthy`
+                : "Checking services..."
+            }
             icon={Activity}
-            status="success"
-            value="Healthy"
+            status={
+              healthData?.overall.status === "healthy"
+                ? "success"
+                : healthData?.overall.status === "degraded"
+                ? "warning"
+                : "error"
+            }
+            value={
+              healthData
+                ? healthData.overall.status.charAt(0).toUpperCase() +
+                  healthData.overall.status.slice(1)
+                : "Checking..."
+            }
           />
           <StatusCard
-            title="Active Deploys"
-            description="Running deployments"
+            title="Services Online"
+            description="Production deployments"
             icon={Rocket}
             status="info"
-            value="3"
+            value={healthData?.overall.healthy.toString() || "..."}
           />
           <StatusCard
             title="GitHub Actions"
@@ -101,11 +159,11 @@ export default function DashboardPage() {
             value="Passing"
           />
           <StatusCard
-            title="Milestones"
-            description="Completion rate"
+            title="Response Time"
+            description="Average across services"
             icon={CheckCircle}
-            status="warning"
-            value="67%"
+            status="success"
+            value="<1s"
           />
         </div>
 
