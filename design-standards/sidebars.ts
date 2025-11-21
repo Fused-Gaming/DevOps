@@ -54,6 +54,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'tools/design-tools',
         'tools/penpot-setup',
+        'tools/penpot-integration',
         'tools/mockup-workflow',
         'tools/ascii-design',
         'tools/prototyping',
