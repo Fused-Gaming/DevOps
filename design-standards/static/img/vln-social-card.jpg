@@ -1,0 +1,66 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- VLN Hero Banner for Social Cards -->
+  <defs>
+    <linearGradient id="heroBackground" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e0f;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#151a1c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1f2527;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="heroAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#86d993;stop-opacity:1" />
+      <stop offset="33%" style="stop-color:#7dd3fc;stop-opacity:1" />
+      <stop offset="66%" style="stop-color:#fbbf24;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#c084fc;stop-opacity:1" />
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#heroBackground)"/>
+
+  <!-- Grid Pattern -->
+  <g opacity="0.1">
+    <line x1="0" y1="157.5" x2="1200" y2="157.5" stroke="#86d993" stroke-width="1"/>
+    <line x1="0" y1="315" x2="1200" y2="315" stroke="#86d993" stroke-width="1"/>
+    <line x1="0" y1="472.5" x2="1200" y2="472.5" stroke="#86d993" stroke-width="1"/>
+    <line x1="300" y1="0" x2="300" y2="630" stroke="#86d993" stroke-width="1"/>
+    <line x1="600" y1="0" x2="600" y2="630" stroke="#86d993" stroke-width="1"/>
+    <line x1="900" y1="0" x2="900" y2="630" stroke="#86d993" stroke-width="1"/>
+  </g>
+
+  <!-- Accent Line Top -->
+  <rect width="1200" height="6" fill="url(#heroAccent)" filter="url(#glow)"/>
+
+  <!-- VLN Logo -->
+  <circle cx="150" cy="315" r="80" fill="#151a1c" stroke="url(#heroAccent)" stroke-width="3" filter="url(#glow)"/>
+  <text x="150" y="345" font-family="Inter, sans-serif" font-size="56" font-weight="700" text-anchor="middle" fill="#86d993">
+    VLN
+  </text>
+
+  <!-- Main Title -->
+  <text x="300" y="280" font-family="Inter, sans-serif" font-size="72" font-weight="700" fill="#ffffff">
+    Design Standards
+  </text>
+
+  <!-- Subtitle -->
+  <text x="300" y="340" font-family="Inter, sans-serif" font-size="36" font-weight="400" fill="#a8b3b8">
+    WCAG AAA Accessible • Open Source • Built for Engineers
+  </text>
+
+  <!-- Color Swatches -->
+  <g transform="translate(300, 400)">
+    <circle cx="0" cy="0" r="30" fill="#86d993" filter="url(#glow)"/>
+    <circle cx="80" cy="0" r="30" fill="#7dd3fc" filter="url(#glow)"/>
+    <circle cx="160" cy="0" r="30" fill="#fbbf24" filter="url(#glow)"/>
+    <circle cx="240" cy="0" r="30" fill="#c084fc" filter="url(#glow)"/>
+  </g>
+
+  <!-- Accent Line Bottom -->
+  <rect y="624" width="1200" height="6" fill="url(#heroAccent)" filter="url(#glow)"/>
+</svg>
