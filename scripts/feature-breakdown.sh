@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Per-Feature Cost Breakdown Script
-# Version: 1.0.0
+# Version: 1.1.0
 # Purpose: Analyze usage by feature type and generate cost breakdown
+# Note: Uses basic bash/grep/sed for better portability
 
 set -e
 
@@ -23,175 +24,173 @@ echo -e "${GREEN}Feature Cost Breakdown Analysis${NC}"
 echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-# Parse usage data and categorize by feature type
+# Check if usage file exists
 if [ ! -f "$USAGE_FILE" ]; then
     echo -e "${YELLOW}Warning: $USAGE_FILE not found${NC}"
     exit 1
 fi
 
-# Extract and categorize entries
-awk '
-BEGIN {
-    # Initialize counters
-    feat_tokens = 0; feat_cost = 0; feat_count = 0
-    fix_tokens = 0; fix_cost = 0; fix_count = 0
-    chore_tokens = 0; chore_cost = 0; chore_count = 0
-    docs_tokens = 0; docs_cost = 0; docs_count = 0
-    refactor_tokens = 0; refactor_cost = 0; refactor_count = 0
-    test_tokens = 0; test_cost = 0; test_count = 0
-    other_tokens = 0; other_cost = 0; other_count = 0
-}
+# Initialize counters
+feat_count=0 feat_tokens=0 feat_cost=0
+fix_count=0 fix_tokens=0 fix_cost=0
+chore_count=0 chore_tokens=0 chore_cost=0
+docs_count=0 docs_tokens=0 docs_cost=0
+refactor_count=0 refactor_tokens=0 refactor_cost=0
+test_count=0 test_tokens=0 test_cost=0
+other_count=0 other_tokens=0 other_cost=0
 
-/^\| [0-9]{4}-[0-9]{2}-[0-9]{2} \|/ && !/Date/ {
-    # Extract fields
-    match($0, /\| [0-9-]+ \| ([^|]+) \| ([0-9]+) \| \$([0-9.]+)/, arr)
+# Parse usage data line by line
+while IFS='|' read -r col1 col2 col3 col4 col5; do
+    # Skip header and separator lines
+    if [[ "$col1" =~ ^[[:space:]]*Date || "$col1" =~ ^[[:space:]]*-+ || -z "$col1" ]]; then
+        continue
+    fi
 
-    feature = arr[1]
-    tokens = arr[2]
-    cost = arr[3]
+    # Extract and trim values
+    date=$(echo "$col1" | tr -d '[:space:]')
+    feature=$(echo "$col2" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    tokens=$(echo "$col3" | tr -d '[:space:]')
+    cost=$(echo "$col4" | tr -d '[:space:]$' | tr -d '$')
 
-    # Categorize by prefix
-    if (feature ~ /^feat:/ || feature ~ /^feature:/) {
-        feat_tokens += tokens
-        feat_cost += cost
-        feat_count++
-    } else if (feature ~ /^fix:/) {
-        fix_tokens += tokens
-        fix_cost += cost
-        fix_count++
-    } else if (feature ~ /^chore:/) {
-        chore_tokens += tokens
-        chore_cost += cost
-        chore_count++
-    } else if (feature ~ /^docs:/) {
-        docs_tokens += tokens
-        docs_cost += cost
-        docs_count++
-    } else if (feature ~ /^refactor:/) {
-        refactor_tokens += tokens
-        refactor_cost += cost
-        refactor_count++
-    } else if (feature ~ /^test:/) {
-        test_tokens += tokens
-        test_cost += cost
-        test_count++
-    } else {
-        other_tokens += tokens
-        other_cost += cost
-        other_count++
-    }
-}
+    # Skip if not a data row
+    if [[ ! "$date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+        continue
+    fi
 
-END {
-    # Calculate totals
-    total_tokens = feat_tokens + fix_tokens + chore_tokens + docs_tokens + refactor_tokens + test_tokens + other_tokens
-    total_cost = feat_cost + fix_cost + chore_cost + docs_cost + refactor_cost + test_cost + other_cost
-    total_count = feat_count + fix_count + chore_count + docs_count + refactor_count + test_count + other_count
+    # Skip if invalid data
+    if [[ -z "$tokens" || -z "$cost" ]]; then
+        continue
+    fi
 
-    # Print breakdown
-    print "# Feature Cost Breakdown Report\n"
-    print "*Generated: " strftime("%Y-%m-%d %H:%M:%S") "*\n"
-    print "## Summary by Feature Type\n"
-    print "| Category | Sessions | Tokens | Cost | Avg/Session | % of Total |"
-    print "|----------|----------|--------|------|-------------|------------|"
+    # Categorize by feature prefix
+    if [[ "$feature" =~ ^feat: || "$feature" =~ ^feature: ]]; then
+        ((feat_count++))
+        ((feat_tokens += tokens))
+        feat_cost=$(echo "$feat_cost + $cost" | bc)
+    elif [[ "$feature" =~ ^fix: ]]; then
+        ((fix_count++))
+        ((fix_tokens += tokens))
+        fix_cost=$(echo "$fix_cost + $cost" | bc)
+    elif [[ "$feature" =~ ^chore: ]]; then
+        ((chore_count++))
+        ((chore_tokens += tokens))
+        chore_cost=$(echo "$chore_cost + $cost" | bc)
+    elif [[ "$feature" =~ ^docs: ]]; then
+        ((docs_count++))
+        ((docs_tokens += tokens))
+        docs_cost=$(echo "$docs_cost + $cost" | bc)
+    elif [[ "$feature" =~ ^refactor: ]]; then
+        ((refactor_count++))
+        ((refactor_tokens += tokens))
+        refactor_cost=$(echo "$refactor_cost + $cost" | bc)
+    elif [[ "$feature" =~ ^test: ]]; then
+        ((test_count++))
+        ((test_tokens += tokens))
+        test_cost=$(echo "$test_cost + $cost" | bc)
+    else
+        ((other_count++))
+        ((other_tokens += tokens))
+        other_cost=$(echo "$other_cost + $cost" | bc)
+    fi
+done < <(grep "^|" "$USAGE_FILE")
 
-    if (feat_count > 0) {
-        pct = (feat_cost / total_cost) * 100
-        avg = feat_cost / feat_count
-        printf "| 🎯 Features | %d | %d | $%.4f | $%.4f | %.1f%% |\n", feat_count, feat_tokens, feat_cost, avg, pct
-    }
+# Calculate totals
+total_count=$((feat_count + fix_count + chore_count + docs_count + refactor_count + test_count + other_count))
+total_tokens=$((feat_tokens + fix_tokens + chore_tokens + docs_tokens + refactor_tokens + test_tokens + other_tokens))
+total_cost=$(echo "$feat_cost + $fix_cost + $chore_cost + $docs_cost + $refactor_cost + $test_cost + $other_cost" | bc)
 
-    if (fix_count > 0) {
-        pct = (fix_cost / total_cost) * 100
-        avg = fix_cost / fix_count
-        printf "| 🐛 Bug Fixes | %d | %d | $%.4f | $%.4f | %.1f%% |\n", fix_count, fix_tokens, fix_cost, avg, pct
-    }
+# Generate report
+cat > "$BREAKDOWN_FILE" <<EOF
+# Feature Cost Breakdown Report
 
-    if (chore_count > 0) {
-        pct = (chore_cost / total_cost) * 100
-        avg = chore_cost / chore_count
-        printf "| 🔧 Chores | %d | %d | $%.4f | $%.4f | %.1f%% |\n", chore_count, chore_tokens, chore_cost, avg, pct
-    }
+*Generated: $(date '+%Y-%m-%d %H:%M:%S')*
 
-    if (docs_count > 0) {
-        pct = (docs_cost / total_cost) * 100
-        avg = docs_cost / docs_count
-        printf "| 📚 Documentation | %d | %d | $%.4f | $%.4f | %.1f%% |\n", docs_count, docs_tokens, docs_cost, avg, pct
-    }
+## Summary by Feature Type
 
-    if (refactor_count > 0) {
-        pct = (refactor_cost / total_cost) * 100
-        avg = refactor_cost / refactor_count
-        printf "| ♻️  Refactoring | %d | %d | $%.4f | $%.4f | %.1f%% |\n", refactor_count, refactor_tokens, refactor_cost, avg, pct
-    }
+| Category | Sessions | Tokens | Cost | Avg/Session | % of Total |
+|----------|----------|--------|------|-------------|------------|
+EOF
 
-    if (test_count > 0) {
-        pct = (test_cost / total_cost) * 100
-        avg = test_cost / test_count
-        printf "| 🧪 Tests | %d | %d | $%.4f | $%.4f | %.1f%% |\n", test_count, test_tokens, test_cost, avg, pct
-    }
+# Add category rows
+if [ $feat_count -gt 0 ]; then
+    avg=$(echo "scale=4; $feat_cost / $feat_count" | bc)
+    pct=$(echo "scale=1; ($feat_cost / $total_cost) * 100" | bc)
+    echo "| Features | $feat_count | $feat_tokens | \$$feat_cost | \$$avg | $pct% |" >> "$BREAKDOWN_FILE"
+fi
 
-    if (other_count > 0) {
-        pct = (other_cost / total_cost) * 100
-        avg = other_cost / other_count
-        printf "| 📦 Other | %d | %d | $%.4f | $%.4f | %.1f%% |\n", other_count, other_tokens, other_cost, avg, pct
-    }
+if [ $fix_count -gt 0 ]; then
+    avg=$(echo "scale=4; $fix_cost / $fix_count" | bc)
+    pct=$(echo "scale=1; ($fix_cost / $total_cost) * 100" | bc)
+    echo "| Bug Fixes | $fix_count | $fix_tokens | \$$fix_cost | \$$avg | $pct% |" >> "$BREAKDOWN_FILE"
+fi
 
-    print "|----------|----------|--------|------|-------------|------------|"
-    printf "| **TOTAL** | **%d** | **%d** | **$%.4f** | **$%.4f** | **100.0%%** |\n", total_count, total_tokens, total_cost, total_cost/total_count
+if [ $chore_count -gt 0 ]; then
+    avg=$(echo "scale=4; $chore_cost / $chore_count" | bc)
+    pct=$(echo "scale=1; ($chore_cost / $total_cost) * 100" | bc)
+    echo "| Chores | $chore_count | $chore_tokens | \$$chore_cost | \$$avg | $pct% |" >> "$BREAKDOWN_FILE"
+fi
 
-    print "\n## Cost Distribution\n"
-    print "```"
-    print "Features:      " sprintf("%6.2f%%", (feat_cost/total_cost)*100) " [$" sprintf("%.4f", feat_cost) "]"
-    print "Bug Fixes:     " sprintf("%6.2f%%", (fix_cost/total_cost)*100) " [$" sprintf("%.4f", fix_cost) "]"
-    print "Chores:        " sprintf("%6.2f%%", (chore_cost/total_cost)*100) " [$" sprintf("%.4f", chore_cost) "]"
-    print "Documentation: " sprintf("%6.2f%%", (docs_cost/total_cost)*100) " [$" sprintf("%.4f", docs_cost) "]"
-    print "Refactoring:   " sprintf("%6.2f%%", (refactor_cost/total_cost)*100) " [$" sprintf("%.4f", refactor_cost) "]"
-    print "Tests:         " sprintf("%6.2f%%", (test_cost/total_cost)*100) " [$" sprintf("%.4f", test_cost) "]"
-    print "Other:         " sprintf("%6.2f%%", (other_cost/total_cost)*100) " [$" sprintf("%.4f", other_cost) "]"
-    print "```\n"
+if [ $docs_count -gt 0 ]; then
+    avg=$(echo "scale=4; $docs_cost / $docs_count" | bc)
+    pct=$(echo "scale=1; ($docs_cost / $total_cost) * 100" | bc)
+    echo "| Documentation | $docs_count | $docs_tokens | \$$docs_cost | \$$avg | $pct% |" >> "$BREAKDOWN_FILE"
+fi
 
-    print "## Key Insights\n"
+if [ $refactor_count -gt 0 ]; then
+    avg=$(echo "scale=4; $refactor_cost / $refactor_count" | bc)
+    pct=$(echo "scale=1; ($refactor_cost / $total_cost) * 100" | bc)
+    echo "| Refactoring | $refactor_count | $refactor_tokens | \$$refactor_cost | \$$avg | $pct% |" >> "$BREAKDOWN_FILE"
+fi
 
-    # Find most expensive category
-    max_cost = 0
-    max_category = ""
-    if (feat_cost > max_cost) { max_cost = feat_cost; max_category = "Features" }
-    if (fix_cost > max_cost) { max_cost = fix_cost; max_category = "Bug Fixes" }
-    if (chore_cost > max_cost) { max_cost = chore_cost; max_category = "Chores" }
-    if (docs_cost > max_cost) { max_cost = docs_cost; max_category = "Documentation" }
-    if (refactor_cost > max_cost) { max_cost = refactor_cost; max_category = "Refactoring" }
-    if (test_cost > max_cost) { max_cost = test_cost; max_category = "Tests" }
-    if (other_cost > max_cost) { max_cost = other_cost; max_category = "Other" }
+if [ $test_count -gt 0 ]; then
+    avg=$(echo "scale=4; $test_cost / $test_count" | bc)
+    pct=$(echo "scale=1; ($test_cost / $total_cost) * 100" | bc)
+    echo "| Tests | $test_count | $test_tokens | \$$test_cost | \$$avg | $pct% |" >> "$BREAKDOWN_FILE"
+fi
 
-    print "- **Highest Cost Category:** " max_category " ($" sprintf("%.4f", max_cost) ")"
-    print "- **Average Cost per Session:** $" sprintf("%.4f", total_cost/total_count)
-    print "- **Total Sessions Analyzed:** " total_count
-    print "- **Total Cost:** $" sprintf("%.4f", total_cost)
+if [ $other_count -gt 0 ]; then
+    avg=$(echo "scale=4; $other_cost / $other_count" | bc)
+    pct=$(echo "scale=1; ($other_cost / $total_cost) * 100" | bc)
+    echo "| Other | $other_count | $other_tokens | \$$other_cost | \$$avg | $pct% |" >> "$BREAKDOWN_FILE"
+fi
 
-    print "\n## Recommendations\n"
+# Add total row
+if [ $total_count -gt 0 ]; then
+    avg_total=$(echo "scale=4; $total_cost / $total_count" | bc)
+    cat >> "$BREAKDOWN_FILE" <<EOF
+|----------|----------|--------|------|-------------|------------|
+| **TOTAL** | **$total_count** | **$total_tokens** | **\$$total_cost** | **\$$avg_total** | **100.0%** |
 
-    if ((feat_cost/total_cost) > 0.6) {
-        print "- Feature development accounts for >60% of costs. Consider breaking down large features into smaller iterations."
-    }
+## Key Insights
 
-    if ((fix_cost/total_cost) > 0.3) {
-        print "- Bug fixes represent >30% of costs. Investing in better testing could reduce overall costs."
-    }
+- **Total Sessions Analyzed:** $total_count
+- **Total Cost:** \$$total_cost
+- **Average Cost per Session:** \$$avg_total
 
-    if ((docs_cost/total_cost) < 0.05) {
-        print "- Documentation costs are low (<5%). Ensure sufficient documentation to prevent future costly debugging."
-    }
+## Recommendations
 
-    if (total_count > 0 && (total_cost/total_count) > 0.10) {
-        print "- Average cost per session is >$0.10. Consider optimizing prompts and reducing token usage."
-    }
+EOF
 
-    print "\n---"
-    print "*Report generated from: " FILENAME "*"
-    print "*Analysis period: All time*"
-}
-' "$USAGE_FILE" > "$BREAKDOWN_FILE"
+    # Add specific recommendations based on data
+    if [ $(echo "$feat_cost / $total_cost > 0.6" | bc) -eq 1 ]; then
+        echo "- Feature development accounts for >60% of costs. Consider breaking down large features into smaller iterations." >> "$BREAKDOWN_FILE"
+    fi
+
+    if [ $(echo "$fix_cost / $total_cost > 0.3" | bc) -eq 1 ]; then
+        echo "- Bug fixes represent >30% of costs. Investing in better testing could reduce overall costs." >> "$BREAKDOWN_FILE"
+    fi
+
+    if [ $(echo "$avg_total > 0.10" | bc) -eq 1 ]; then
+        echo "- Average cost per session is >\$0.10. Consider optimizing prompts and reducing token usage." >> "$BREAKDOWN_FILE"
+    fi
+fi
+
+cat >> "$BREAKDOWN_FILE" <<EOF
+
+---
+*Report generated from: $USAGE_FILE*
+*Analysis period: All time*
+EOF
 
 # Display the report
 cat "$BREAKDOWN_FILE"
