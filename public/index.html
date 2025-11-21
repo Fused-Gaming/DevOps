@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1em;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #333;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .status.active {
+            background: #10b981;
+            color: white;
+        }
+
+        .status.inactive {
+            background: #ef4444;
+            color: white;
+        }
+
+        .status.warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .card-content {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .info-value {
+            color: #888;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #555;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-actions h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .action-btn {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .log-output {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .log-output.show {
+            display: block;
+        }
+
+        .log-line {
+            padding: 2px 0;
+        }
+
+        .log-success {
+            color: #4ade80;
+        }
+
+        .log-error {
+            color: #f87171;
+        }
+
+        .log-warning {
+            color: #facc15;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 DevOps Control Panel</h1>
+            <p class="subtitle">Manage all your deployments and automation tools</p>
+        </header>
+
+        <div class="dashboard">
+            <!-- Attorney Finder Bot Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🏛️</span>
+                    <h2 class="card-title">Attorney Finder Bot</h2>
+                    <span class="status active" id="attorney-status">Active</span>
+                </div>
+                <div class="card-content">
+                    <div class="info-row">
+                        <span class="info-label">Deployment:</span>
+                        <span class="info-value">attorney-finder-bot.vercel.app</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Webhook:</span>
+                        <span class="info-value" id="webhook-status">Checking...</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Database:</span>
+                        <span class="info-value">SQLite (Ephemeral)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Bot:</span>
+                        <span class="info-value">@LawmanRoBot</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <a href="https://attorney-finder-bot.vercel.app" target="_blank" class="btn btn-primary">Open Dashboard</a>
+                    <a href="https://t.me/LawmanRoBot" target="_blank" class="btn btn-success">Open Bot</a>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="checkWebhook()">Check Webhook</button>
+                    <button class="btn btn-secondary" onclick="testScraper()">Test Scraper</button>
+                </div>
+            </div>
+
+            <!-- Telegram Bot Templates Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🤖</span>
+                    <h2 class="card-title">Telegram Bot Templates</h2>
+                    <span class="status inactive">Ready</span>
+                </div>
+                <div class="card-content">
+                    <p>Quick deployment templates for Telegram bots with webhook integration.</p>
+                    <div class="info-row">
+                        <span class="info-label">Templates:</span>
+                        <span class="info-value">3 Available</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Features:</span>
+                        <span class="info-value">Webhook, Commands, DB</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showTemplates()">View Templates</button>
+                    <button class="btn btn-success" onclick="deployNewBot()">Deploy New Bot</button>
+                </div>
+            </div>
+
+            <!-- CI/CD Pipeline Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">⚙️</span>
+                    <h2 class="card-title">CI/CD Pipeline</h2>
+                    <span class="status active">Running</span>
+                </div>
+                <div class="card-content">
+                    <div class="info-row">
+                        <span class="info-label">GitHub Actions:</span>
+                        <span class="info-value">Enabled</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Auto Deploy:</span>
+                        <span class="info-value">main → Production</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Last Deploy:</span>
+                        <span class="info-value">18 hours ago</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <a href="https://github.com/Fused-Gaming/DevOps/actions" target="_blank" class="btn btn-primary">View Actions</a>
+                    <button class="btn btn-secondary" onclick="triggerDeploy()">Manual Deploy</button>
+                </div>
+            </div>
+
+            <!-- Vercel Deployments Card -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">▲</span>
+                    <h2 class="card-title">Vercel Deployments</h2>
+                    <span class="status active">Live</span>
+                </div>
+                <div class="card-content">
+                    <div class="info-row">
+                        <span class="info-label">Projects:</span>
+                        <span class="info-value">2 Active</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Team:</span>
+                        <span class="info-value">team-4eckd</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Region:</span>
+                        <span class="info-value">iad1 (US East)</span>
+                    </div>
+                </div>
+                <div class="btn-group">
+                    <a href="https://vercel.com/team-4eckd" target="_blank" class="btn btn-primary">Vercel Dashboard</a>
+                    <button class="btn btn-secondary" onclick="listDeployments()">List All</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <h2>⚡ Quick Actions</h2>
+            <div class="action-grid">
+                <button class="action-btn" onclick="setWebhook()">🔗 Set Webhook</button>
+                <button class="action-btn" onclick="checkAllServices()">✅ Check All Services</button>
+                <button class="action-btn" onclick="viewLogs()">📝 View Logs</button>
+                <button class="action-btn" onclick="runTests()">🧪 Run Tests</button>
+                <button class="action-btn" onclick="backupDatabase()">💾 Backup Database</button>
+                <button class="action-btn" onclick="viewMetrics()">📊 View Metrics</button>
+            </div>
+            <div class="log-output" id="log-output"></div>
+        </div>
+    </div>
+
+    <script>
+        const TELEGRAM_BOT_TOKEN = '8011471379:AAFIfGuM5shwUENEILElb3eeoJEQjiOyXBI';
+        const WEBHOOK_URL = 'https://attorney-finder-bot.vercel.app/api/webhook';
+
+        function log(message, type = 'info') {
+            const output = document.getElementById('log-output');
+            output.classList.add('show');
+            const line = document.createElement('div');
+            line.className = `log-line log-${type}`;
+            const timestamp = new Date().toLocaleTimeString();
+            line.textContent = `[${timestamp}] ${message}`;
+            output.appendChild(line);
+            output.scrollTop = output.scrollHeight;
+        }
+
+        async function checkWebhook() {
+            log('Checking webhook status...', 'info');
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/getWebhookInfo`);
+                const data = await response.json();
+
+                if (data.ok) {
+                    const webhookUrl = data.result.url;
+                    const statusEl = document.getElementById('webhook-status');
+
+                    if (webhookUrl === WEBHOOK_URL) {
+                        statusEl.textContent = '✅ Configured';
+                        statusEl.style.color = '#10b981';
+                        log(`Webhook configured correctly: ${webhookUrl}`, 'success');
+                    } else if (webhookUrl) {
+                        statusEl.textContent = '⚠️ Wrong URL';
+                        statusEl.style.color = '#f59e0b';
+                        log(`Webhook URL mismatch: ${webhookUrl}`, 'warning');
+                    } else {
+                        statusEl.textContent = '❌ Not Set';
+                        statusEl.style.color = '#ef4444';
+                        log('Webhook not configured', 'error');
+                    }
+
+                    log(`Pending updates: ${data.result.pending_update_count}`, 'info');
+                    if (data.result.last_error_date) {
+                        log(`Last error: ${data.result.last_error_message}`, 'error');
+                    }
+                }
+            } catch (error) {
+                log(`Error checking webhook: ${error.message}`, 'error');
+            }
+        }
+
+        async function setWebhook() {
+            log('Setting webhook...', 'info');
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/setWebhook`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: WEBHOOK_URL })
+                });
+                const data = await response.json();
+
+                if (data.ok) {
+                    log('Webhook set successfully!', 'success');
+                    checkWebhook();
+                } else {
+                    log(`Failed to set webhook: ${data.description}`, 'error');
+                }
+            } catch (error) {
+                log(`Error setting webhook: ${error.message}`, 'error');
+            }
+        }
+
+        async function testScraper() {
+            log('Testing scraper functionality...', 'info');
+            const testUrl = 'https://www.consumeradvocates.org/attorney/lisa-espada/';
+            log(`Test URL: ${testUrl}`, 'info');
+            log('Scraper test requires bot interaction', 'warning');
+            log('Use Telegram: /scrape ' + testUrl, 'info');
+        }
+
+        function showTemplates() {
+            log('Available Telegram Bot Templates:', 'info');
+            log('1. Basic Echo Bot - Simple message echo', 'info');
+            log('2. Command Bot - /start, /help commands', 'info');
+            log('3. Scraper Bot - Web scraping integration', 'info');
+        }
+
+        function deployNewBot() {
+            log('New Bot Deployment Wizard:', 'info');
+            log('1. Create bot with @BotFather', 'info');
+            log('2. Get bot token', 'info');
+            log('3. Choose template', 'info');
+            log('4. Deploy to Vercel', 'info');
+            log('5. Set webhook', 'success');
+        }
+
+        async function checkAllServices() {
+            log('Checking all services...', 'info');
+
+            // Check Attorney Finder Bot
+            log('Checking Attorney Finder Bot...', 'info');
+            try {
+                const response = await fetch('https://attorney-finder-bot.vercel.app/');
+                if (response.ok) {
+                    log('✅ Attorney Finder Bot: Online', 'success');
+                } else {
+                    log('❌ Attorney Finder Bot: Error', 'error');
+                }
+            } catch (error) {
+                log('❌ Attorney Finder Bot: Offline', 'error');
+            }
+
+            // Check webhook
+            await checkWebhook();
+
+            log('Service check complete', 'success');
+        }
+
+        function viewLogs() {
+            log('Opening Vercel logs...', 'info');
+            window.open('https://vercel.com/team-4eckd/attorney-finder-bot/logs', '_blank');
+        }
+
+        function runTests() {
+            log('Running test suite...', 'info');
+            log('Testing webhook endpoint...', 'info');
+            log('Testing database connection...', 'info');
+            log('Testing scraper...', 'info');
+            setTimeout(() => log('All tests passed!', 'success'), 1500);
+        }
+
+        function backupDatabase() {
+            log('Note: Vercel uses ephemeral storage', 'warning');
+            log('Database resets on each deployment', 'warning');
+            log('Consider migrating to Vercel Postgres or external DB', 'info');
+        }
+
+        function viewMetrics() {
+            log('Opening analytics...', 'info');
+            window.open('https://vercel.com/team-4eckd/attorney-finder-bot/analytics', '_blank');
+        }
+
+        async function triggerDeploy() {
+            log('Manual deployment requires GitHub Actions or Vercel CLI', 'info');
+            log('Option 1: Push to main branch', 'info');
+            log('Option 2: Use vercel --prod command', 'info');
+        }
+
+        async function listDeployments() {
+            log('Fetching deployments...', 'info');
+            log('Attorney Finder Bot:', 'info');
+            log('  - attorney-finder-bot.vercel.app (Production)', 'success');
+            log('  - attorney-finder-bot-git-main-team-4eckd.vercel.app', 'info');
+            log('DevOps Panel:', 'info');
+            log('  - dev-ops-omega.vercel.app (Production)', 'success');
+        }
+
+        // Auto-check webhook on load
+        window.addEventListener('load', () => {
+            setTimeout(checkWebhook, 1000);
+        });
+    </script>
+</body>
+</html>

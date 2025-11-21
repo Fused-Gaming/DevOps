@@ -1,0 +1,101 @@
+name: Initialize MVP Milestones
+
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force create all issues (ignores existing)'
+        required: false
+        default: 'false'
+        type: boolean
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  create-milestone-issues:
+    runs-on: ubuntu-latest
+    name: Create Milestone Issues
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check existing issues
+        id: check-issues
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'all',
+              per_page: 100
+            });
+
+            const issueCount = issues.data.length;
+            console.log(`Found ${issueCount} existing issues`);
+
+            core.setOutput('issue_count', issueCount);
+            return issueCount;
+
+      - name: Run milestone issues script
+        if: steps.check-issues.outputs.issue_count < 10 || github.event.inputs.force == 'true'
+        run: |
+          chmod +x scripts/create-milestone-issues.sh
+
+          # Run with automatic yes
+          yes y | bash scripts/create-milestone-issues.sh || true
+
+      - name: Generate milestone report
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN}}
+          script: |
+            const milestones = await github.rest.issues.listMilestones({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+
+            let report = '# 📊 Milestone Initialization Report\n\n';
+
+            for (const milestone of milestones.data) {
+              const total = milestone.open_issues + milestone.closed_issues;
+              const percentage = total > 0 ? Math.round((milestone.closed_issues / total) * 100) : 0;
+
+              report += `## ${milestone.title}\n`;
+              report += `- Total Issues: ${total}\n`;
+              report += `- Open: ${milestone.open_issues}\n`;
+              report += `- Closed: ${milestone.closed_issues}\n`;
+              report += `- Progress: ${percentage}%\n\n`;
+            }
+
+            console.log(report);
+            core.summary.addRaw(report);
+            await core.summary.write();
+
+      - name: Post summary comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const milestones = await github.rest.issues.listMilestones({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open'
+            });
+
+            let summary = '🎯 **MVP Milestones Initialized**\n\n';
+            summary += `Created issues for ${milestones.data.length} milestones:\n\n`;
+
+            for (const milestone of milestones.data) {
+              const total = milestone.open_issues + milestone.closed_issues;
+              summary += `- **${milestone.title}**: ${total} issues\n`;
+            }
+
+            summary += '\n[View Milestones](https://github.com/${{ github.repository }}/milestones)';
+
+            console.log(summary);

@@ -1,0 +1,25 @@
+# CNAME Configuration for GitHub Pages
+#
+# Author: Unknown <unknown@example.com>
+# Generated: 2025-11-20 05:04:04 UTC
+#
+# Instructions:
+# 1. Uncomment the line below and replace with your domain
+# 2. Configure DNS records at your domain provider:
+#    - For apex domain (example.com):
+#      A record pointing to GitHub Pages IPs:
+#        185.199.108.153
+#        185.199.109.153
+#        185.199.110.153
+#        185.199.111.153
+#    - For subdomain (www.example.com or docs.example.com):
+#      CNAME record pointing to: your-username.github.io
+# 3. Commit this file to your repository
+# 4. Enable GitHub Pages in repository settings
+# 5. Wait for DNS propagation (up to 24-48 hours)
+#
+# Example (uncomment and modify):
+# docs.yourcompany.com
+
+# To generate with a domain, run:
+# CUSTOM_DOMAIN=yourdomain.com bash scripts/generate-cname.sh

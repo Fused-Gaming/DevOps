@@ -1,0 +1,296 @@
+name: Auto Draft PR with Review
+
+# Automatically create draft PRs for claude/* branches
+# Assign reviewers and auto-merge when approved
+
+on:
+  push:
+    branches:
+      - 'claude/**'
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  create-draft-pr:
+    name: 🚀 Create Draft PR
+    runs-on: ubuntu-latest
+    # Only run if not on main/develop
+    if: github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTO_PR_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: 🔍 Check if PR already exists
+        id: check_pr
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_PR_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+
+          # Check for existing PR
+          EXISTING_PR=$(gh pr list --head "$BRANCH_NAME" --json number --jq '.[0].number' || echo "")
+
+          if [ -n "$EXISTING_PR" ]; then
+            echo "pr_exists=true" >> $GITHUB_OUTPUT
+            echo "pr_number=$EXISTING_PR" >> $GITHUB_OUTPUT
+            echo "ℹ️ PR #$EXISTING_PR already exists for this branch"
+          else
+            echo "pr_exists=false" >> $GITHUB_OUTPUT
+            echo "✓ No existing PR found, will create new one"
+          fi
+
+      - name: 📊 Analyze Changes
+        id: analyze
+        if: steps.check_pr.outputs.pr_exists == 'false'
+        run: |
+          BASE_BRANCH="main"
+
+          # Get commit stats
+          COMMIT_COUNT=$(git log origin/$BASE_BRANCH..HEAD --oneline | wc -l || echo 0)
+
+          # Get file stats
+          STATS=$(git diff --shortstat origin/$BASE_BRANCH...HEAD || echo "0 files changed")
+          FILES_CHANGED=$(echo "$STATS" | grep -oP '\d+(?= files? changed)' || echo 0)
+          INSERTIONS=$(echo "$STATS" | grep -oP '\d+(?= insertions?)' || echo 0)
+          DELETIONS=$(echo "$STATS" | grep -oP '\d+(?= deletions?)' || echo 0)
+
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+          echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          echo "insertions=$INSERTIONS" >> $GITHUB_OUTPUT
+          echo "deletions=$DELETIONS" >> $GITHUB_OUTPUT
+
+          # Get commit types
+          COMMITS=$(git log origin/$BASE_BRANCH..HEAD --oneline || echo "")
+          FEAT_COUNT=$(echo "$COMMITS" | grep -c "feat:" || echo 0)
+          FIX_COUNT=$(echo "$COMMITS" | grep -c "fix:" || echo 0)
+          DOCS_COUNT=$(echo "$COMMITS" | grep -c "docs:" || echo 0)
+          CHORE_COUNT=$(echo "$COMMITS" | grep -c "chore:" || echo 0)
+          TEST_COUNT=$(echo "$COMMITS" | grep -c "test:" || echo 0)
+
+          echo "feat_count=$FEAT_COUNT" >> $GITHUB_OUTPUT
+          echo "fix_count=$FIX_COUNT" >> $GITHUB_OUTPUT
+          echo "docs_count=$DOCS_COUNT" >> $GITHUB_OUTPUT
+          echo "chore_count=$CHORE_COUNT" >> $GITHUB_OUTPUT
+          echo "test_count=$TEST_COUNT" >> $GITHUB_OUTPUT
+
+          # Generate PR title based on primary commit type
+          if [ "$FEAT_COUNT" -gt 0 ]; then
+            FIRST_FEAT=$(echo "$COMMITS" | grep "feat:" | head -1 | sed 's/^[a-f0-9]* feat: //')
+            echo "pr_title=✨ $FIRST_FEAT" >> $GITHUB_OUTPUT
+          elif [ "$FIX_COUNT" -gt 0 ]; then
+            FIRST_FIX=$(echo "$COMMITS" | grep "fix:" | head -1 | sed 's/^[a-f0-9]* fix: //')
+            echo "pr_title=🐛 $FIRST_FIX" >> $GITHUB_OUTPUT
+          elif [ "$DOCS_COUNT" -gt 0 ]; then
+            FIRST_DOCS=$(echo "$COMMITS" | grep "docs:" | head -1 | sed 's/^[a-f0-9]* docs: //')
+            echo "pr_title=📚 $FIRST_DOCS" >> $GITHUB_OUTPUT
+          else
+            FIRST_COMMIT=$(echo "$COMMITS" | head -1 | sed 's/^[a-f0-9]* //')
+            echo "pr_title=$FIRST_COMMIT" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📝 Generate PR Body
+        id: pr_body
+        if: steps.check_pr.outputs.pr_exists == 'false'
+        run: |
+          cat > pr_body.md << 'EOFBODY'
+          ## 🤖 Auto-Generated Draft PR
+
+          This PR was automatically created from branch `${{ github.ref_name }}`.
+
+          ### 📊 Summary
+
+          - **Commits:** ${{ steps.analyze.outputs.commit_count }}
+          - **Files changed:** ${{ steps.analyze.outputs.files_changed }}
+          - **Lines added:** +${{ steps.analyze.outputs.insertions }}
+          - **Lines removed:** -${{ steps.analyze.outputs.deletions }}
+
+          ### 📋 Changes by Type
+
+          EOFBODY
+
+          # Add commit type sections conditionally
+          if [ "${{ steps.analyze.outputs.feat_count }}" -gt 0 ]; then
+            echo "#### ✨ Features (${{ steps.analyze.outputs.feat_count }})" >> pr_body.md
+            echo "" >> pr_body.md
+            git log origin/main..HEAD --oneline | grep "feat:" | sed 's/^[a-f0-9]* feat: /- /' >> pr_body.md || true
+            echo "" >> pr_body.md
+          fi
+
+          if [ "${{ steps.analyze.outputs.fix_count }}" -gt 0 ]; then
+            echo "#### 🐛 Bug Fixes (${{ steps.analyze.outputs.fix_count }})" >> pr_body.md
+            echo "" >> pr_body.md
+            git log origin/main..HEAD --oneline | grep "fix:" | sed 's/^[a-f0-9]* fix: /- /' >> pr_body.md || true
+            echo "" >> pr_body.md
+          fi
+
+          if [ "${{ steps.analyze.outputs.docs_count }}" -gt 0 ]; then
+            echo "#### 📚 Documentation (${{ steps.analyze.outputs.docs_count }})" >> pr_body.md
+            echo "" >> pr_body.md
+            git log origin/main..HEAD --oneline | grep "docs:" | sed 's/^[a-f0-9]* docs: /- /' >> pr_body.md || true
+            echo "" >> pr_body.md
+          fi
+
+          if [ "${{ steps.analyze.outputs.chore_count }}" -gt 0 ]; then
+            echo "#### 🔧 Maintenance (${{ steps.analyze.outputs.chore_count }})" >> pr_body.md
+            echo "" >> pr_body.md
+            git log origin/main..HEAD --oneline | grep "chore:" | sed 's/^[a-f0-9]* chore: /- /' >> pr_body.md || true
+            echo "" >> pr_body.md
+          fi
+
+          if [ "${{ steps.analyze.outputs.test_count }}" -gt 0 ]; then
+            echo "#### 🧪 Tests (${{ steps.analyze.outputs.test_count }})" >> pr_body.md
+            echo "" >> pr_body.md
+            git log origin/main..HEAD --oneline | grep "test:" | sed 's/^[a-f0-9]* test: /- /' >> pr_body.md || true
+            echo "" >> pr_body.md
+          fi
+
+          cat >> pr_body.md << 'EOFBODY'
+
+          ### ✅ Review Checklist
+
+          This PR will be auto-reviewed and merged when:
+          - [ ] All CI/CD checks pass
+          - [ ] No merge conflicts
+          - [ ] Code review approved (auto-assigned to Copilot/Claude)
+
+          ### 🔄 Auto-Merge Status
+
+          - **Draft Status:** This PR is created as a draft
+          - **Auto-Review:** Will be assigned to available reviewers
+          - **Auto-Merge:** Enabled when all checks pass and approved
+
+          ---
+
+          *Generated by auto-draft-pr workflow*
+          *Branch: `${{ github.ref_name }}`*
+          *Triggered by: @${{ github.actor }}*
+          EOFBODY
+
+          echo "body_file=pr_body.md" >> $GITHUB_OUTPUT
+
+      - name: 🎯 Create Draft PR
+        id: create_pr
+        if: steps.check_pr.outputs.pr_exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_PR_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH_NAME="${{ github.ref_name }}"
+          PR_TITLE="${{ steps.analyze.outputs.pr_title }}"
+
+          # Create draft PR
+          PR_URL=$(gh pr create \
+            --draft \
+            --title "$PR_TITLE" \
+            --body-file pr_body.md \
+            --base main \
+            --head "$BRANCH_NAME" \
+            || echo "")
+
+          if [ -n "$PR_URL" ]; then
+            PR_NUMBER=$(echo "$PR_URL" | grep -oP '\d+$')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+            echo "✅ Draft PR #$PR_NUMBER created successfully"
+            echo "$PR_URL"
+          else
+            echo "❌ Failed to create PR"
+            exit 1
+          fi
+
+      - name: 👥 Assign Reviewers
+        if: steps.create_pr.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_PR_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.create_pr.outputs.pr_number }}"
+
+          # Try to request review from GitHub users
+          # You can customize this list or use CODEOWNERS
+          gh pr edit "$PR_NUMBER" \
+            --add-label "auto-generated" \
+            --add-label "claude" \
+            || true
+
+          # Add comment with reviewer instructions
+          cat > /tmp/reviewer_comment.md << 'COMMENT_EOF'
+          ## 🤖 Auto-Review Requested
+
+          This PR was automatically created and is ready for review.
+
+          **Next Steps:**
+          1. ✅ All CI/CD checks will run automatically
+          2. 👀 Review the changes and approve if everything looks good
+          3. 🔄 PR will auto-merge once approved and checks pass
+
+          **Manual Actions:**
+          - To mark as ready for review: Click 'Ready for review' button
+          - To approve: Use GitHub review feature
+          - To merge manually: Use 'Merge' button
+
+          ---
+          *Assigned by auto-draft-pr workflow*
+          COMMENT_EOF
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/reviewer_comment.md || true
+
+          echo "✓ Reviewers assigned and labels added"
+
+      - name: 📢 Update Existing PR
+        if: steps.check_pr.outputs.pr_exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.AUTO_PR_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.check_pr.outputs.pr_number }}"
+
+          # Add comment about new commits
+          cat > /tmp/update_comment.md <<UPDATE_EOF
+## 🔄 New Commits Pushed
+
+Branch \`${{ github.ref_name }}\` has been updated with new commits.
+
+**Latest commit:** \`${{ github.sha }}\`
+**Pushed by:** @${{ github.actor }}
+**Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+CI/CD checks will re-run automatically.
+
+---
+*Updated by auto-draft-pr workflow*
+UPDATE_EOF
+
+          gh pr comment "$PR_NUMBER" --body-file /tmp/update_comment.md || true
+
+          echo "✓ PR #$PR_NUMBER notified of new commits"
+
+      - name: 📊 Summary
+        if: always()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          # 🚀 Auto Draft PR Workflow
+
+          ## Results
+
+          - **Branch:** `${{ github.ref_name }}`
+          - **Triggered by:** @${{ github.actor }}
+          - **Commit:** `${{ github.sha }}`
+
+          ## Status
+
+          ${{ steps.check_pr.outputs.pr_exists == 'true' && '✅ Updated existing PR #' || '✅ Created new draft PR #' }}${{ steps.check_pr.outputs.pr_number || steps.create_pr.outputs.pr_number }}
+
+          ## Next Steps
+
+          1. Review the PR and mark as ready when satisfied
+          2. Approve the PR (or wait for auto-approval)
+          3. PR will auto-merge when all checks pass
+
+          ---
+          *Workflow completed at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF

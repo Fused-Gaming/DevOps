@@ -5,10 +5,13 @@ name: Claude Usage Tracking & Test Feedback
 
 on:
   push:
-    branches: ["**"]
+    branches: [main]
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
+
+# Prevent infinite loops - skip if commit is from bot
+# This works in conjunction with [skip ci] in commit message
 
 permissions:
   contents: write
@@ -22,6 +25,10 @@ jobs:
   track-usage:
     name: 📊 Track Claude Code Usage
     runs-on: ubuntu-latest
+    # Skip if commit message contains [skip ci] or is from usage tracking bot
+    if: |
+      !contains(github.event.head_commit.message, '[skip ci]') &&
+      !contains(github.event.head_commit.message, 'chore: update Claude usage tracking')
     outputs:
       tokens_used: ${{ steps.calculate.outputs.tokens_used }}
       estimated_cost: ${{ steps.calculate.outputs.estimated_cost }}
@@ -120,20 +127,37 @@ jobs:
       - name: 💾 Commit Updated Usage File
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           if [ -n "$(git status --porcelain CLAUDE_USAGE.md)" ]; then
+            TOKENS="${{ steps.calculate.outputs.tokens_used }}"
+            COST="${{ steps.calculate.outputs.estimated_cost }}"
+
             git add CLAUDE_USAGE.md
-            git commit -m "chore: update Claude usage tracking
+            git commit -m "chore: update Claude usage tracking [skip ci]" -m "Auto-updated by workflow" -m "Tokens: $TOKENS" -m "Cost: \$$COST"
 
-Auto-updated by workflow
-Tokens: ${{ steps.calculate.outputs.tokens_used }}
-Cost: \$${{ steps.calculate.outputs.estimated_cost }}
+            # Push with retry logic (up to 4 retries with exponential backoff)
+            MAX_RETRIES=4
+            RETRY_COUNT=0
+            DELAY=2
 
-Signed-off-by: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>"
-            git push
-            echo "✓ CLAUDE_USAGE.md updated and committed"
+            while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+              if git push origin main; then
+                echo "✓ CLAUDE_USAGE.md updated and committed"
+                break
+              else
+                RETRY_COUNT=$((RETRY_COUNT + 1))
+                if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                  echo "⚠️  Push failed, retrying in ${DELAY}s... (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)"
+                  sleep $DELAY
+                  DELAY=$((DELAY * 2))
+                else
+                  echo "❌ Failed to push after $MAX_RETRIES attempts"
+                  exit 1
+                fi
+              fi
+            done
           else
             echo "ℹ️  No changes to CLAUDE_USAGE.md"
           fi
@@ -141,7 +165,7 @@ Signed-off-by: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com
       - name: 📊 Generate Usage Report
         if: always()
         run: |
-          cat > $GITHUB_STEP_SUMMARY << EOF
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
           # 📊 Claude Code Usage Report
 
           ## This Commit
