@@ -53,6 +53,7 @@ const sidebars: SidebarsConfig = {
       label: 'Design Tools',
       items: [
         'tools/design-tools',
+        'tools/penpot-setup',
         'tools/mockup-workflow',
         'tools/ascii-design',
         'tools/prototyping',
