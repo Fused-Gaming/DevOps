@@ -35,8 +35,11 @@ jobs:
         run: |
           # Calculate lines changed (additions + deletions)
           git fetch origin ${{ github.base_ref }}
-          LINES_ADDED=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= insertion)' || echo 0)
-          LINES_DELETED=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD | grep -oP '\d+(?= deletion)' || echo 0)
+          STATS=$(git diff --shortstat origin/${{ github.base_ref }}...HEAD)
+          LINES_ADDED=$(echo "$STATS" | sed -n 's/.* \([0-9]\+\) insertion.*/\1/p')
+          LINES_DELETED=$(echo "$STATS" | sed -n 's/.* \([0-9]\+\) deletion.*/\1/p')
+          LINES_ADDED=${LINES_ADDED:-0}
+          LINES_DELETED=${LINES_DELETED:-0}
           LINES_CHANGED=$((LINES_ADDED + LINES_DELETED))
 
           echo "lines_changed=$LINES_CHANGED" >> $GITHUB_OUTPUT
@@ -190,7 +193,7 @@ jobs:
           echo "  - Word count: $WORD_COUNT words (minimum: $MIN_WORDS)"
 
       - name: Check if docs were updated in this PR
-        if: steps.check_branch.outputs.is_feature == 'true'
+        if: steps.check_branch.outputs.is_feature == 'true' && steps.check_docs.outputs.docs_path != ''
         run: |
           DOCS_PATH="${{ steps.check_docs.outputs.docs_path }}"
 
@@ -205,7 +208,7 @@ jobs:
           fi
 
       - name: Check for project goals alignment
-        if: steps.check_branch.outputs.is_feature == 'true'
+        if: steps.check_branch.outputs.is_feature == 'true' && steps.check_docs.outputs.docs_path != ''
         run: |
           DOCS_PATH="${{ steps.check_docs.outputs.docs_path }}"
 

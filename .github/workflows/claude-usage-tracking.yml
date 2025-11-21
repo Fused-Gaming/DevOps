@@ -89,13 +89,15 @@ jobs:
           INPUT_TOKENS=$((ESTIMATED_TOKENS * 70 / 100))
           OUTPUT_TOKENS=$((ESTIMATED_TOKENS * 30 / 100))
 
-          # Calculate cost in cents (to avoid floating point issues)
-          INPUT_COST_CENTS=$((INPUT_TOKENS * 300 / 100000))
-          OUTPUT_COST_CENTS=$((OUTPUT_TOKENS * 1500 / 100000))
-          TOTAL_COST_CENTS=$((INPUT_COST_CENTS + OUTPUT_COST_CENTS))
+          # Calculate cost in micro-dollars (to avoid floating point issues)
+          # Input: $3.00 per million = 3000 micro-dollars per million = 0.003 per thousand
+          # Output: $15.00 per million = 15000 micro-dollars per million = 0.015 per thousand
+          INPUT_COST_MICRO=$((INPUT_TOKENS * 3000 / 1000000))
+          OUTPUT_COST_MICRO=$((OUTPUT_TOKENS * 15000 / 1000000))
+          TOTAL_COST_MICRO=$((INPUT_COST_MICRO + OUTPUT_COST_MICRO))
 
-          # Convert to dollars
-          ESTIMATED_COST=$(echo "scale=4; $TOTAL_COST_CENTS / 100" | bc)
+          # Convert to dollars with printf (no bc needed)
+          ESTIMATED_COST=$(printf "%.4f" $(awk "BEGIN {print $TOTAL_COST_MICRO / 1000}"))
 
           echo "💰 Usage Estimate:"
           echo "  Estimated tokens: ~$ESTIMATED_TOKENS"
@@ -202,6 +204,7 @@ jobs:
     name: 🧪 Run Tests with Troubleshooting
     runs-on: ubuntu-latest
     needs: track-usage
+    if: hashFiles('package.json') != '' || hashFiles('requirements.txt') != ''
 
     steps:
       - name: 📥 Checkout code

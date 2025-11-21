@@ -33,6 +33,18 @@ jobs:
           ERRORS=0
           WARNINGS=0
 
+          # Check if there are any commits to validate
+          COMMIT_COUNT=$(git log --oneline $BASE_SHA..$HEAD_SHA 2>/dev/null | wc -l)
+          if [ "$COMMIT_COUNT" -eq 0 ]; then
+            echo "ℹ️ No commits to validate"
+            echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+            echo "✓ Validation complete (no commits)"
+            exit 0
+          fi
+
+          echo "Found $COMMIT_COUNT commit(s) to validate"
+          echo ""
+
           # Check each commit
           while IFS= read -r commit; do
             SHA=$(echo "$commit" | awk '{print $1}')
