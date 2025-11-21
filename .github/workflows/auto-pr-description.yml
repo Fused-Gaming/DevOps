@@ -57,7 +57,7 @@ jobs:
           echo "docs_count=$DOCS_COUNT" >> $GITHUB_OUTPUT
 
       - name: 📝 Generate Enhanced Description
-        if: steps.analyze.outputs.commit_count > 0
+        if: steps.analyze.outputs.commit_count != '0' && steps.analyze.outputs.commit_count != ''
         uses: actions/github-script@v7
         env:
           FILES_CHANGED: ${{ steps.analyze.outputs.files_changed }}
@@ -196,7 +196,7 @@ jobs:
             console.log('✓ PR description enhanced!');
 
       - name: 💬 Add Comment
-        if: steps.analyze.outputs.commit_count > 0
+        if: steps.analyze.outputs.commit_count != '0' && steps.analyze.outputs.commit_count != ''
         uses: actions/github-script@v7
         with:
           script: |

@@ -124,17 +124,60 @@ jobs:
             echo "⚠️  Warning: track-claude-usage.sh not found"
           fi
 
+      - name: 💰 Check Budget Alerts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          echo "→ Checking budget alerts..."
+
+          if [ -f "scripts/budget-alerts.sh" ]; then
+            bash scripts/budget-alerts.sh || true
+          else
+            echo "ℹ️  Budget alerts script not found, skipping..."
+          fi
+
+      - name: 📊 Generate Feature Breakdown
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          echo "→ Generating feature breakdown..."
+
+          if [ -f "scripts/feature-breakdown.sh" ]; then
+            bash scripts/feature-breakdown.sh || true
+          else
+            echo "ℹ️  Feature breakdown script not found, skipping..."
+          fi
+
+      - name: 🎯 Run Cost Optimization Analysis
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        run: |
+          echo "→ Running cost optimization analysis..."
+
+          if [ -f "scripts/cost-optimization.sh" ]; then
+            bash scripts/cost-optimization.sh || true
+          else
+            echo "ℹ️  Cost optimization script not found, skipping..."
+          fi
+
       - name: 💾 Commit Updated Usage File
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          if [ -n "$(git status --porcelain CLAUDE_USAGE.md)" ]; then
+          # Check for any changes in tracking files and reports
+          CHANGES=$(git status --porcelain CLAUDE_USAGE.md reports/ logs/ || echo "")
+
+          if [ -n "$CHANGES" ]; then
             TOKENS="${{ steps.calculate.outputs.tokens_used }}"
             COST="${{ steps.calculate.outputs.estimated_cost }}"
 
+            # Add all tracking-related files
             git add CLAUDE_USAGE.md
+            git add reports/ || true
+            git add logs/ || true
+
             git commit -m "chore: update Claude usage tracking [skip ci]" -m "Auto-updated by workflow" -m "Tokens: $TOKENS" -m "Cost: \$$COST"
 
             # Push with retry logic (up to 4 retries with exponential backoff)
@@ -165,7 +208,17 @@ jobs:
       - name: 📊 Generate Usage Report
         if: always()
         run: |
-          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          # Get optimization score if available
+          OPT_SCORE="N/A"
+          if [ -f "reports/optimization-suggestions.md" ]; then
+            OPT_SCORE=$(grep "Current Score:" "reports/optimization-suggestions.md" | grep -oP '\d+' | head -1 || echo "N/A")
+          fi
+
+          # Get total accumulated cost
+          TOTAL_COST=$(grep "Total Estimated Cost" CLAUDE_USAGE.md | grep -oP '\d+\.\d+' || echo "0.00")
+          TOTAL_SESSIONS=$(grep "Sessions:" CLAUDE_USAGE.md | grep -oP '\d+' || echo "0")
+
+          cat > $GITHUB_STEP_SUMMARY << EOF
           # 📊 Claude Code Usage Report
 
           ## This Commit
@@ -176,6 +229,18 @@ jobs:
           | **Estimated Cost** | \$${{ steps.calculate.outputs.estimated_cost }} |
           | **Files Changed** | ${{ steps.calculate.outputs.files_changed }} |
           | **Lines Changed** | ${{ steps.calculate.outputs.lines_changed }} |
+
+          ## Accumulated Totals
+
+          | Metric | Value |
+          |--------|-------|
+          | **Total Sessions** | $TOTAL_SESSIONS |
+          | **Total Cost** | \$$TOTAL_COST |
+          | **Optimization Score** | $OPT_SCORE/100 |
+
+          ## Budget Status
+
+          Check the workflow logs for budget alerts and warnings.
 
           ## Pricing Reference
 
@@ -188,9 +253,12 @@ jobs:
           - ~12 tokens per line of code changed
           - +500 token baseline for context
 
-          ## 💡 Tip
+          ## 📚 Resources
 
-          View complete usage history in \`CLAUDE_USAGE.md\`
+          - View complete usage history: \`CLAUDE_USAGE.md\`
+          - Feature breakdown: \`reports/feature-breakdown.md\`
+          - Optimization suggestions: \`reports/optimization-suggestions.md\`
+          - Budget alerts log: \`logs/budget-alerts.log\`
 
           ---
           *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
