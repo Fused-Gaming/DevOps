@@ -4,7 +4,6 @@ Database module for storing and retrieving attorney information.
 import sqlite3
 from typing import List, Dict, Optional
 from datetime import datetime
-import os
 
 
 class AttorneyDatabase:
