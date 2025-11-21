@@ -12,6 +12,14 @@ export async function GET(request: Request) {
     const githubToken = process.env.GITHUB_TOKEN;
     const { searchParams } = new URL(request.url);
     const repo = searchParams.get("repo") || "Fused-Gaming/DevOps";
+    // Validate repo: must match owner/repo, consisting of allowed chars only
+    const repoPattern = /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/;
+    if (!repoPattern.test(repo)) {
+      return NextResponse.json(
+        { error: "Invalid repository format", workflows: [] },
+        { status: 400 }
+      );
+    }
 
     if (!githubToken) {
       return NextResponse.json({
