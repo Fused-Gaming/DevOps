@@ -248,7 +248,7 @@ jobs:
           else
             echo "✓ No conflicts"
             echo "has_conflicts=false" >> $GITHUB_OUTPUT
-            git merge --abort
+            git merge --abort 2>/dev/null || true
           fi
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
