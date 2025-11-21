@@ -178,30 +178,32 @@ jobs:
       - name: 🎯 Create Draft PR
         id: create_pr
         if: steps.check_pr.outputs.pr_exists == 'false'
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.AUTO_PR_TOKEN || secrets.GITHUB_TOKEN }}
         run: |
           BRANCH_NAME="${{ github.ref_name }}"
           PR_TITLE="${{ steps.analyze.outputs.pr_title }}"
 
-          # Create draft PR
+          # Try to create draft PR (may fail due to permissions)
           PR_URL=$(gh pr create \
             --draft \
             --title "$PR_TITLE" \
             --body-file pr_body.md \
             --base main \
             --head "$BRANCH_NAME" \
-            || echo "")
+            2>&1 || echo "")
 
-          if [ -n "$PR_URL" ]; then
+          if [[ "$PR_URL" == *"https://github.com"* ]]; then
             PR_NUMBER=$(echo "$PR_URL" | grep -oP '\d+$')
             echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
             echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
             echo "✅ Draft PR #$PR_NUMBER created successfully"
             echo "$PR_URL"
           else
-            echo "❌ Failed to create PR"
-            exit 1
+            echo "⚠️  Could not create PR automatically (may require manual creation)"
+            echo "   Reason: $PR_URL"
+            echo "   Branch: $BRANCH_NAME is ready for PR creation"
           fi
 
       - name: 👥 Assign Reviewers
