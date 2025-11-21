@@ -2,7 +2,7 @@
 
 > **Official design system and engineering standards for VLN products**
 
-Visit **https://design.vln.gg** when deployed.
+Built with Docusaurus. Visit **https://design.vln.gg** when deployed.
 
 ## Quick Start
 
@@ -30,10 +30,10 @@ npm run build   # Production build
 
 ## Tech Stack
 
+- Docusaurus 3.9.2
 - React 19
 - TypeScript
 - MDX
-- Modern documentation framework
 
 ## Contributing
 
@@ -41,4 +41,4 @@ See main [DevOps repository](https://github.com/Fused-Gaming/DevOps).
 
 ---
 
-Built with ❤️ for engineers
+Built with ❤️ using Docusaurus

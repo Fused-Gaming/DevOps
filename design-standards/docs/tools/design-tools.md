@@ -10,15 +10,15 @@ Comprehensive guide to free and open source design tools for creating mockups, p
 
 ## Design & Prototyping
 
-### Penpot (Recommended)
+### Penpot (⭐ Recommended)
 
 **The Open Source Figma Alternative**
 
-- **Web-based**: No installation required
-- **Full-featured**: Vector editing, prototyping, design systems
-- **Collaboration**: Real-time collaboration like Figma
-- **Open Standards**: SVG-based, exports to industry standards
-- **Self-hostable**: Host your own instance
+- 🌐 **Web-based**: No installation required
+- 🎨 **Full-featured**: Vector editing, prototyping, design systems
+- 👥 **Collaboration**: Real-time collaboration like Figma
+- 🔓 **Open Standards**: SVG-based, exports to industry standards
+- 💾 **Self-hostable**: Host your own instance
 
 **Getting Started**:
 ```bash
@@ -48,10 +48,10 @@ docker run -d \
 
 **Vector Graphics Powerhouse**
 
-- **Professional**: Full SVG editor
-- **Logo Design**: Perfect for icons and logos
-- **Precision**: Exact measurements and paths
-- **Extensions**: Huge plugin ecosystem
+- 🎯 **Professional**: Full SVG editor
+- 🖼️ **Logo Design**: Perfect for icons and logos
+- 📐 **Precision**: Exact measurements and paths
+- 🔧 **Extensions**: Huge plugin ecosystem
 
 **Installation**:
 ```bash
@@ -82,9 +82,9 @@ brew install --cask inkscape
 
 **Image Editing & Manipulation**
 
-- **Full-featured**: Photoshop alternative
-- **Photo editing**: Professional retouching
-- **Scripting**: Python-based automation
+- 🖼️ **Full-featured**: Photoshop alternative
+- 🎨 **Photo editing**: Professional retouching
+- 🔧 **Scripting**: Python-based automation
 - 🆓 **100% Free**: No subscriptions ever
 
 **Installation**:
@@ -113,9 +113,9 @@ brew install --cask gimp
 **Quick Collaborative Wireframes**
 
 - ✏️ **Hand-drawn style**: Perfect for early wireframes
-- **Fast**: No learning curve
-- **Collaborative**: Real-time multi-user
-- **Privacy**: End-to-end encrypted
+- 🚀 **Fast**: No learning curve
+- 👥 **Collaborative**: Real-time multi-user
+- 🔒 **Privacy**: End-to-end encrypted
 
 **Getting Started**:
 ```bash
@@ -137,10 +137,10 @@ code --install-extension pomdtr.excalidraw-editor
 
 **Windows/Mac Sketch Alternative**
 
-- **Sketch compatible**: Open .sketch files
-- **Built-in graphics**: Huge asset library
+- 📂 **Sketch compatible**: Open .sketch files
+- 🎨 **Built-in graphics**: Huge asset library
 - 🆓 **Free**: No paid tiers
-- **Offline-first**: No internet required
+- 💻 **Offline-first**: No internet required
 
 **Installation**:
 ```bash
@@ -159,10 +159,10 @@ code --install-extension pomdtr.excalidraw-editor
 
 **All-in-One Responsive Testing**
 
-- **Multiple devices**: Test all breakpoints at once
-- **Synchronized**: Scroll and click mirrored across screens
+- 📱 **Multiple devices**: Test all breakpoints at once
+- 🔄 **Synchronized**: Scroll and click mirrored across screens
 - 📸 **Screenshots**: Capture all resolutions
-- **Developer-focused**: Hot reload support
+- 🎯 **Developer-focused**: Hot reload support
 
 **Installation**:
 ```bash
@@ -200,10 +200,10 @@ pnpm dev
 
 **Professional Responsive Development**
 
-- **Multiple viewports**: Side-by-side testing
+- 🎨 **Multiple viewports**: Side-by-side testing
 - ♿ **Accessibility**: Built-in a11y testing
 - 📸 **Screenshot all**: Export all sizes at once
-- **Dev tools**: Per-viewport inspection
+- 🔧 **Dev tools**: Per-viewport inspection
 
 **Note**: Free for open source projects, paid otherwise
 

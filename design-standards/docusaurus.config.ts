@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'VLN Design Standards',
   tagline: 'Design system, UI guidelines, and engineering standards for VLN products',
-  favicon: 'img/favicon.svg',
+  favicon: 'img/favicon.ico',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -25,7 +25,7 @@ const config: Config = {
   organizationName: 'Fused-Gaming', // Usually your GitHub org/user name.
   projectName: 'DevOps', // Usually your repo name.
 
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -54,7 +54,8 @@ const config: Config = {
   ],
 
   themeConfig: {
-    image: 'img/vln-social-card.jpg',
+    // Replace with your project's social card
+    image: 'img/docusaurus-social-card.jpg',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -135,7 +136,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} VLN. All rights reserved.`,
+      copyright: `Copyright © ${new Date().getFullYear()} VLN. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

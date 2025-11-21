@@ -5,16 +5,7 @@
   width: 100%;
 }
 
-.featureIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
-}
-
 .featureSvg {
-  width: 4rem;
-  height: 4rem;
-  stroke-width: 1.5;
-  color: var(--ifm-color-primary);
+  height: 200px;
+  width: 200px;
 }
