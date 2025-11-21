@@ -3,7 +3,6 @@ Vercel deployments API endpoint
 """
 from http.server import BaseHTTPRequestHandler
 import json
-import os
 import subprocess
 
 
