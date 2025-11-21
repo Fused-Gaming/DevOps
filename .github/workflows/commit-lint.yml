@@ -41,6 +41,12 @@ jobs:
             echo "Checking: $SHA"
             echo "Message: $MSG"
 
+            # Skip merge commits
+            if echo "$MSG" | grep -qE "^Merge (branch|pull request)"; then
+              echo "  ⏭️  SKIP: Merge commit"
+              continue
+            fi
+
             # Check format: type: description
             if ! echo "$MSG" | grep -qE "^($VALID_TYPES)(\(.+\))?: .+"; then
               echo "  ❌ FAIL: Invalid format"
