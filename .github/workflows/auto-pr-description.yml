@@ -55,6 +55,10 @@ jobs:
       - name: 📝 Generate Enhanced Description
         if: steps.analyze.outputs.commit_count > 0
         uses: actions/github-script@v7
+        env:
+          FILES_CHANGED: ${{ steps.analyze.outputs.files_changed }}
+          INSERTIONS: ${{ steps.analyze.outputs.insertions }}
+          DELETIONS: ${{ steps.analyze.outputs.deletions }}
         with:
           script: |
             const { data: pr } = await github.rest.pulls.get({
@@ -87,6 +91,11 @@ jobs:
             const otherCommits = commits.filter(c =>
               !c.commit.message.match(/^(feat|fix|docs|chore):/));
 
+            // Get stats from environment
+            const filesChanged = process.env.FILES_CHANGED;
+            const insertions = process.env.INSERTIONS;
+            const deletions = process.env.DELETIONS;
+
             // Build enhanced description
             let enhancedBody = '<!-- AUTO-GENERATED -->\n';
 
@@ -94,7 +103,7 @@ jobs:
             if (!currentBody.includes('## Summary')) {
               enhancedBody += '## Summary\n\n';
               enhancedBody += `This PR includes ${commits.length} commit(s) `;
-              enhancedBody += `with ${${{ steps.analyze.outputs.files_changed }}} file(s) changed.\n\n`;
+              enhancedBody += `with ${filesChanged} file(s) changed.\n\n`;
             }
 
             // Add what's new section
@@ -139,9 +148,9 @@ jobs:
             // Add statistics
             enhancedBody += '## 📊 Statistics\n\n';
             enhancedBody += '**Changes:**\n';
-            enhancedBody += `- **${{ steps.analyze.outputs.files_changed }} files changed**\n`;
-            enhancedBody += `- **${{ steps.analyze.outputs.insertions }}+ lines added**\n`;
-            enhancedBody += `- **${{ steps.analyze.outputs.deletions }}- lines removed**\n\n`;
+            enhancedBody += `- **${filesChanged} files changed**\n`;
+            enhancedBody += `- **${insertions}+ lines added**\n`;
+            enhancedBody += `- **${deletions}- lines removed**\n\n`;
 
             enhancedBody += '**Commits:**\n';
             enhancedBody += `- Total: ${commits.length}\n`;
