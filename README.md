@@ -41,8 +41,32 @@ Centralized web dashboard for project management.
 - `/api/webhook-manager` - Manage Telegram bot webhooks (GET/POST)
 - Full CORS support for cross-origin requests
 
+#### 🌐 Subdomain Architecture
+Standardized subdomain structure for vln.gg domain with 12 designated subdomains:
+
+**Production Services:**
+- `app.vln.gg` - Main application
+- `api.vln.gg` - Backend API endpoints
+- `auth.vln.gg` - Authentication service
+- `pay.vln.gg` - Payment processing
+- `wallet.vln.gg` - Wallet management
+
+**Content & Documentation:**
+- `docs.vln.gg` - Technical documentation
+- `help.vln.gg` - Help center and support
+- `edu.vln.gg` - Educational resources
+- `design.vln.gg` - Design system and UI library
+
+**Development & Infrastructure:**
+- `dev.vln.gg` - Development environment
+- `preview.vln.gg` - Preview/demo environment
+- `mail.vln.gg` - Email services
+
+**See:** [docs/SUBDOMAIN-ARCHITECTURE.md](docs/SUBDOMAIN-ARCHITECTURE.md) for complete architecture documentation and deployment guidelines.
+
 ### Documentation
 
+- **[docs/SUBDOMAIN-ARCHITECTURE.md](docs/SUBDOMAIN-ARCHITECTURE.md)** - Complete vln.gg subdomain architecture and configuration
 - **[docs/MILESTONE-TRACKING.md](docs/MILESTONE-TRACKING.md)** - Complete usage guide with examples
 - **[MILESTONE-AUTOMATION-RECOMMENDATIONS.md](MILESTONE-AUTOMATION-RECOMMENDATIONS.md)** - Integration recommendations
 

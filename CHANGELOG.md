@@ -14,6 +14,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - 2025-11-21
 
 ### Added
+- **Subdomain Architecture Documentation** - Comprehensive documentation for vln.gg domain structure
+  - Complete subdomain definitions for 12 production subdomains (app, api, auth, pay, wallet, docs, help, edu, design, mail, dev, preview)
+  - Architecture diagram and configuration standards
+  - DNS configuration guidelines with SSL/TLS setup
+  - Port allocation and PM2 naming conventions for self-hosted services
+  - Security considerations and access control matrix
+  - Deployment guidelines and rollback procedures
+  - New documentation: `docs/SUBDOMAIN-ARCHITECTURE.md`
+  - Updated: `devops-panel/.env.deploy.example` with subdomain references
+  - Updated: `README.md` with subdomain overview section
+
+- **Enhanced DevOps Panel Security** - Password protection with environment variable configuration
+  - Added middleware-level authentication protection (`middleware.ts`)
+  - Environment variable-based authentication (`DEVOPS_USERNAME`, `DEVOPS_PASSWORD`, `SESSION_SECRET`)
+  - Support for bcrypt password hashing in production (`DEVOPS_PASSWORD_HASH`)
+  - Automatic redirect to login for unauthenticated users
+  - Session-based authentication with iron-session
+  - Comprehensive authentication documentation in subdomain architecture guide
+  - Updated: `devops-panel/.env.example` with detailed security notes
+  - Updated: `devops-panel/.env.deploy.example` with authentication configuration
+
 - Created: 2 GitHub Actions workflows (auto-tracking + initialization) 2 shell scripts (simple + detailed status) 2 documentation files (guide + recommendations) Features: 📊 Real-time milestone progress updates 💬 Automatic comments on issues ⚠️ Critical issue detection 🎯 MVP completion tracking 🚀 Release readiness checks Integration Points: Works with existing scripts/create-milestone-issues.sh Can add to setup-devops-quick-access.sh Can add to Makefile Can integrate into DevOps web panel (@)
 - add GitHub repository ruleset configurations (@)
 - add comprehensive workflow reporting and test summaries (@)
