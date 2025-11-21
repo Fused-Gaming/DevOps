@@ -1,0 +1,46 @@
+# robots.txt
+# Auto-generated: 2025-11-21
+# Author: Unknown <unknown@example.com>
+# Code sign-off: Unknown
+
+# Allow all bots
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://example.com/sitemap.xml
+
+# Disallow private/sensitive paths
+Disallow: /private/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /backups/
+Disallow: /logs/
+Disallow: /.env
+Disallow: /config/
+
+# Crawl-delay (optional, adjust as needed)
+# Crawl-delay: 1
+
+# Specific bot configurations
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Slurp
+Allow: /
+
+# Block bad bots (optional)
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Crawl-delay: 10
+
+# Additional sitemaps (if any)
+# Sitemap: https://example.com/sitemap-images.xml
+# Sitemap: https://example.com/sitemap-videos.xml

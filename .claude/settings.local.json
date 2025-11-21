@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(vercel ls:*)",
+      "Bash(vercel env:*)",
+      "Bash(curl:*)",
+      "Bash(python -m json.tool:*)",
+      "Bash(vercel inspect:*)",
+      "Bash(vercel domains:*)",
+      "Bash(vercel alias:*)",
+      "Bash(timeout 3 bash:*)",
+      "Bash(vercel:*)",
+      "Bash(gh api:*)",
+      "Bash(gh issue list:*)",
+      "Bash(bash scripts/create-milestone-issues.sh:*)",
+      "Bash(chmod:*)",
+      "Bash(bash:*)",
+      "Bash(git pull:*)",
+      "Bash(gh release create:*)",
+      "Bash(gh issue view:*)",
+      "Bash(pnpm install:*)",
+      "Bash(cat:*)",
+      "Bash(pnpm add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

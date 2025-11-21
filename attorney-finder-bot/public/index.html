@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attorney Finder - Find Legal Counsel</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <h1>🏛️ Attorney Finder</h1>
+            <p>Find legal counsel in your area</p>
+        </header>
+
+        <!-- Telegram Login -->
+        <div id="login-section" class="section">
+            <h2>Welcome!</h2>
+            <p>Login with Telegram to access the attorney database</p>
+            <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="LawmanRoBot"
+                data-size="large"
+                data-radius="8"
+                data-onauth="onTelegramAuth(user)"
+                data-request-access="write">
+            </script>
+            <noscript>You need to enable JavaScript to use Telegram login.</noscript>
+        </div>
+
+        <!-- Main App (hidden until logged in) -->
+        <div id="app-section" class="section hidden">
+            <!-- User Info -->
+            <div id="user-info" class="user-info">
+                <img id="user-photo" src="" alt="User" class="user-photo">
+                <div>
+                    <div id="user-name" class="user-name"></div>
+                    <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
+
+            <!-- Search Form -->
+            <div class="search-section">
+                <h2>Search Attorneys</h2>
+                <form id="search-form">
+                    <div class="form-group">
+                        <label for="search-zip">ZIP Code:</label>
+                        <input type="text" id="search-zip" placeholder="94621" pattern="\d{5}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-city">City:</label>
+                        <input type="text" id="search-city" placeholder="Oakland">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="search-practice">Practice Area:</label>
+                        <select id="search-practice">
+                            <option value="">All Areas</option>
+                            <option value="criminal">Criminal</option>
+                            <option value="family">Family Law</option>
+                            <option value="divorce">Divorce</option>
+                            <option value="personal injury">Personal Injury</option>
+                            <option value="dui">DUI/DWI</option>
+                            <option value="immigration">Immigration</option>
+                            <option value="bankruptcy">Bankruptcy</option>
+                            <option value="estate planning">Estate Planning</option>
+                            <option value="real estate">Real Estate</option>
+                            <option value="business">Business</option>
+                            <option value="employment">Employment</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+
+            <!-- Results -->
+            <div id="results-section" class="results-section hidden">
+                <h2>Results</h2>
+                <div id="results-count" class="results-count"></div>
+                <div id="results-list" class="results-list"></div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-section">
+                <h3>Database Statistics</h3>
+                <div id="stats" class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-attorneys">-</div>
+                        <div class="stat-label">Total Attorneys</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-cities">-</div>
+                        <div class="stat-label">Cities</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="stat-states">-</div>
+                        <div class="stat-label">States</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer>
+            <p>Powered by <a href="https://t.me/LawmanRoBot">@LawmanRoBot</a></p>
+            <p>Built with DevOps Arsenal</p>
+        </footer>
+    </div>
+
+    <script src="/assets/js/app.js"></script>
+</body>
+</html>

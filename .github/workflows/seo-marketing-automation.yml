@@ -1,0 +1,213 @@
+name: SEO & Marketing Automation
+
+# Author: User (via git config)
+# This workflow automates SEO and marketing file generation
+
+on:
+  push:
+    branches: ["**"]  # Track all branches
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+    inputs:
+      force_regenerate:
+        description: 'Force regenerate all SEO files'
+        required: false
+        default: 'false'
+
+jobs:
+  seo-optimization:
+    name: 🎯 SEO & Marketing Automation
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🎯 Initialize
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🎯 SEO & Marketing Automation"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Author: ${{ github.actor }}"
+          echo ""
+
+      - name: 📊 Progress - Step 1/6
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[██████░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 17% - Generating sitemap.xml"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 🗺️  Generate sitemap.xml
+        run: |
+          echo "→ Generating sitemap.xml..."
+          bash scripts/generate-sitemap.sh
+          echo "✓ sitemap.xml generated"
+
+      - name: 📊 Progress - Step 2/6
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[████████████░░░░░░░░░░░░░░░░░░░░░░░░] 33% - Generating robots.txt"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 🤖 Generate robots.txt
+        run: |
+          echo "→ Generating robots.txt..."
+          bash scripts/generate-robots.sh
+          echo "✓ robots.txt generated"
+
+      - name: 📊 Progress - Step 3/6
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[██████████████████░░░░░░░░░░░░░░░░░░] 50% - Updating CHANGELOG.md"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 📝 Update CHANGELOG.md
+        run: |
+          echo "→ Updating CHANGELOG.md..."
+          bash scripts/update-changelog.sh
+          echo "✓ CHANGELOG.md updated"
+
+      - name: 📊 Progress - Step 4/6
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[████████████████████████░░░░░░░░░░░░] 67% - Generating schema.json"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 🔖 Generate schema.json
+        run: |
+          echo "→ Generating schema.json..."
+          bash scripts/generate-schema.sh
+          echo "✓ schema.json generated"
+
+      - name: 📊 Progress - Step 5/7
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[████████████████████████░░░░░░░░░░░░] 71% - Processing social graphics"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 🎨 Generate social media graphics
+        run: |
+          echo "→ Generating social media graphics..."
+          bash scripts/generate-social-graphics.sh
+          echo "✓ Social graphics generated"
+
+      - name: 📊 Progress - Step 6/7
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[███████████████████████████████░░░░░] 86% - Generating CNAME"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 🌐 Generate CNAME
+        run: |
+          echo "→ Generating CNAME file..."
+          bash scripts/generate-cname.sh
+          echo "✓ CNAME generated"
+
+      - name: 📊 Progress - Step 7/7
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "[████████████████████████████████████] 100% - Complete!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+      - name: 📋 Check for changes
+        id: check_changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✓ SEO files have been updated"
+            git status --short
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ No changes detected"
+          fi
+
+      - name: 📝 Commit changes
+        if: steps.check_changes.outputs.has_changes == 'true' && github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add sitemap.xml robots.txt CHANGELOG.md schema.json CNAME public/ || true
+
+          git commit -m "chore: update SEO and marketing files [skip ci]
+
+          Auto-generated by SEO workflow on branch: ${{ github.ref_name }}
+
+          - Updated sitemap.xml
+          - Updated robots.txt
+          - Updated CHANGELOG.md
+          - Updated schema.json
+          - Generated CNAME for custom domains
+          - Generated social media graphics
+
+          Signed-off-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
+
+          git push origin HEAD:${{ github.ref_name }}
+
+          echo "✓ Changes committed and pushed to ${{ github.ref_name }}"
+
+      - name: 📊 Generate Summary Report
+        if: always()
+        run: |
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          # 🎯 SEO & Marketing Automation Report
+
+          ## Files Generated/Updated
+
+          - ✅ **sitemap.xml** - Search engine sitemap
+          - ✅ **robots.txt** - Crawler directives
+          - ✅ **CHANGELOG.md** - Version history
+          - ✅ **schema.json** - Structured data
+          - ✅ **CNAME** - Custom domain configuration
+          - ✅ **Social Graphics** - OG images, favicons
+
+          ## Repository Information
+
+          - **Repository:** ${{ github.repository }}
+          - **Branch:** ${{ github.ref_name }}
+          - **Commit:** ${{ github.sha }}
+          - **Author:** ${{ github.actor }}
+          - **Triggered by:** ${{ github.event_name }}
+
+          ## SEO Checklist
+
+          - ✅ Sitemap for search engine indexing
+          - ✅ Robots.txt for crawler management
+          - ✅ Structured data (schema.json) for rich results
+          - ✅ CNAME for custom domain setup
+          - ✅ Social media meta tags and graphics
+          - ✅ Changelog for version tracking
+
+          ## Next Steps
+
+          - Submit sitemap to Google Search Console
+          - Verify robots.txt configuration
+          - Test social media previews
+          - Monitor search rankings
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          *Code sign-off: ${{ github.actor }}*
+          EOF
+
+      - name: ✅ Complete
+        run: |
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ SEO & Marketing Automation Complete!"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "All SEO and marketing files have been generated and updated."
+          echo "Changes attributed to: ${{ github.actor }}"
+          echo ""

@@ -1,0 +1,136 @@
+/**
+ * VLN Design System Custom Styles
+ * Implements the VLN design system colors and theming
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* VLN Light Theme */
+:root {
+  /* Primary - Sage Green */
+  --ifm-color-primary: #5fb76f;
+  --ifm-color-primary-dark: #4fa661;
+  --ifm-color-primary-darker: #4a9d5c;
+  --ifm-color-primary-darkest: #3d824b;
+  --ifm-color-primary-light: #86d993;
+  --ifm-color-primary-lighter: #a8e9b4;
+  --ifm-color-primary-lightest: #c8f5d1;
+
+  /* VLN Brand Colors */
+  --vln-sage: #86d993;
+  --vln-sage-light: #a8e9b4;
+  --vln-sage-dark: #5fb76f;
+  --vln-sky: #7dd3fc;
+  --vln-sky-light: #bae6fd;
+  --vln-sky-dark: #0ea5e9;
+  --vln-amber: #fbbf24;
+  --vln-amber-light: #fcd34d;
+  --vln-amber-dark: #f59e0b;
+  --vln-purple: #c084fc;
+  --vln-purple-light: #d8b4fe;
+  --vln-purple-dark: #a855f7;
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Courier New', monospace;
+  --ifm-code-font-size: 90%;
+
+  /* Backgrounds */
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f9fafb;
+
+  /* Code blocks */
+  --docusaurus-highlighted-code-line-bg: rgba(134, 217, 147, 0.1);
+}
+
+/* VLN Dark Theme */
+[data-theme='dark'] {
+  /* Primary - Sage Green (brighter for dark mode) */
+  --ifm-color-primary: #86d993;
+  --ifm-color-primary-dark: #6fd07e;
+  --ifm-color-primary-darker: #5fb76f;
+  --ifm-color-primary-darkest: #4a9d5c;
+  --ifm-color-primary-light: #a8e9b4;
+  --ifm-color-primary-lighter: #c8f5d1;
+  --ifm-color-primary-lightest: #e0fae5;
+
+  /* Dark mode backgrounds - VLN style */
+  --ifm-background-color: #0a0e0f;
+  --ifm-background-surface-color: #151a1c;
+  --ifm-card-background-color: #1f2527;
+
+  /* Code blocks */
+  --docusaurus-highlighted-code-line-bg: rgba(134, 217, 147, 0.15);
+}
+
+/* VLN Custom Utilities */
+.color-swatch {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  margin: 8px;
+  border: 2px solid var(--ifm-color-emphasis-200);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.color-card {
+  text-align: center;
+}
+
+.color-card-label {
+  margin-top: 8px;
+  font-size: 14px;
+  font-family: var(--ifm-font-family-monospace);
+}
+
+/* Glow effect for accent elements */
+.vln-glow {
+  box-shadow: 0 0 20px rgba(134, 217, 147, 0.3);
+  transition: box-shadow 0.3s ease;
+}
+
+.vln-glow:hover {
+  box-shadow: 0 0 30px rgba(134, 217, 147, 0.5);
+}
+
+/* Component preview containers */
+.component-preview {
+  padding: 32px;
+  background: var(--ifm-background-surface-color);
+  border-radius: 12px;
+  margin: 24px 0;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .component-preview {
+  background: var(--ifm-card-background-color);
+}
+
+/* Responsive showcase */
+.responsive-frame {
+  border: 2px solid var(--ifm-color-emphasis-200);
+  border-radius: 12px;
+  padding: 16px;
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+/* ASCII art styling */
+.ascii-art {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: pre;
+  overflow-x: auto;
+  background: var(--ifm-code-background);
+  padding: 16px;
+  border-radius: 8px;
+}

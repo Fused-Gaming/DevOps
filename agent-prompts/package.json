@@ -1,0 +1,80 @@
+{
+  "name": "claude-agent-prompts",
+  "version": "1.1.0",
+  "description": "Comprehensive collection of 76+ specialized agent prompts for Claude Code",
+  "main": "integrate.js",
+  "bin": {
+    "integrate-agents": "./integrate.js"
+  },
+  "scripts": {
+    "integrate": "node integrate.js",
+    "start": "node integrate.js",
+    "setup": "node setup-wizard.js",
+    "setup:full": "node setup-wizard.js --full",
+    "setup:smart": "node setup-wizard.js --smart",
+    "setup:lite": "node setup-wizard.js --lite",
+    "quick": "./quick-integrate.sh",
+    "list": "./quick-integrate.sh --list",
+    "test": "echo 'Testing integration tool...' && node -e \"const fs = require('fs'); const catalog = JSON.parse(fs.readFileSync('./catalog.json', 'utf8')); console.log('✓ Catalog loaded:', Object.keys(catalog.categories).length, 'categories'); process.exit(0);\"",
+    "version": "cat VERSION",
+    "changelog": "cat CHANGELOG.md",
+    "docs": "echo 'Opening documentation...' && echo 'README: README.md' && echo 'Quick Start: QUICKSTART.md' && echo 'Integration: INTEGRATION_GUIDE.md' && echo 'Automation: AUTOMATION.md' && echo 'Changelog: CHANGELOG.md' && echo 'Releases: RELEASES.md'"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "agent",
+    "prompts",
+    "ai",
+    "automation",
+    "development",
+    "swarm",
+    "mcp"
+  ],
+  "author": "Fused Gaming",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Fused-Gaming/DevOps.git"
+  },
+  "preferGlobal": true,
+  "files": [
+    "integrate.js",
+    "setup-wizard.js",
+    "quick-integrate.sh",
+    "catalog.json",
+    "VERSION",
+    "README.md",
+    "QUICKSTART.md",
+    "INTEGRATION_GUIDE.md",
+    "AUTOMATION.md",
+    "CHANGELOG.md",
+    "RELEASES.md",
+    "core/",
+    "github/",
+    "hive-mind/",
+    "swarm/",
+    "sparc/",
+    "optimization/",
+    "testing/",
+    "devops/",
+    "analysis/",
+    "consensus/",
+    "flow-nexus/",
+    "goal/",
+    "templates/",
+    "neural/",
+    "reasoning/",
+    "development/",
+    "architecture/",
+    "data/",
+    "documentation/",
+    "specialized/"
+  ],
+  "config": {
+    "defaultTarget": ".claude/agents"
+  }
+}

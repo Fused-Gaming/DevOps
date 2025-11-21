@@ -1,0 +1,100 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Base colors */
+  --vln-bg: #0a0e0f;
+  --vln-bg-light: #151a1c;
+  --vln-bg-lighter: #1f2527;
+
+  /* Primary accents - Enhanced for accessibility */
+  --vln-sage: #86d993;
+  --vln-sage-light: #a8e9b4;
+  --vln-sage-dark: #5fb76f;
+
+  /* Secondary accents */
+  --vln-bluegray: #7dd3fc;
+  --vln-bluegray-light: #bae6fd;
+  --vln-bluegray-dark: #0ea5e9;
+
+  /* Tertiary accents */
+  --vln-amber: #fbbf24;
+  --vln-purple: #c084fc;
+
+  /* Semantic colors */
+  --vln-success: #86d993;
+  --vln-warning: #fbbf24;
+  --vln-error: #ef4444;
+  --vln-info: #7dd3fc;
+
+  /* Text */
+  --vln-white: #f8f9fa;
+  --vln-gray: #cbd5e1;
+
+  /* Other */
+  --vln-accent: var(--vln-sage);
+  --vln-radius: 12px;
+  --vln-card-lift: 4px;
+}
+
+@layer base {
+  body {
+    @apply bg-vln-bg text-vln-white font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans tracking-tight;
+  }
+}
+
+@layer utilities {
+  /* Glow effects with different colors */
+  .glow-lift {
+    @apply transition-all duration-300 shadow-[0_0_0_rgba(134,217,147,0)] hover:shadow-vln-glow;
+  }
+
+  .glow-lift-blue {
+    @apply transition-all duration-300 shadow-[0_0_0_rgba(125,211,252,0)] hover:shadow-vln-glow-blue;
+  }
+
+  .glow-lift-amber {
+    @apply transition-all duration-300 shadow-[0_0_0_rgba(251,191,36,0)] hover:shadow-vln-glow-amber;
+  }
+
+  .glow-lift-purple {
+    @apply transition-all duration-300 shadow-[0_0_0_rgba(192,132,252,0)] hover:shadow-vln-glow-purple;
+  }
+
+  /* Card lift effect */
+  .card-lift {
+    @apply transition-all duration-300 translate-y-0 hover:-translate-y-1;
+  }
+
+  /* Gradient text effects */
+  .text-gradient-sage {
+    @apply bg-gradient-to-r from-vln-sage-light to-vln-sage-dark bg-clip-text text-transparent;
+  }
+
+  .text-gradient-blue {
+    @apply bg-gradient-to-r from-vln-bluegray-light to-vln-bluegray-dark bg-clip-text text-transparent;
+  }
+
+  .text-gradient-rainbow {
+    @apply bg-gradient-to-r from-vln-sage via-vln-bluegray to-vln-purple bg-clip-text text-transparent;
+  }
+
+  /* Background gradients */
+  .bg-gradient-subtle {
+    background: linear-gradient(135deg, var(--vln-bg) 0%, var(--vln-bg-light) 100%);
+  }
+
+  .bg-gradient-vibrant {
+    background: linear-gradient(135deg,
+      var(--vln-bg) 0%,
+      rgba(134, 217, 147, 0.1) 50%,
+      var(--vln-bg) 100%
+    );
+  }
+}

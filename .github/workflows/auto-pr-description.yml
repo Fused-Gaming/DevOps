@@ -1,0 +1,216 @@
+name: Auto-Generate PR Description
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+  contents: read
+  issues: write
+
+jobs:
+  generate-description:
+    name: Generate PR Description
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: 🔄 Fetch base branch
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      - name: 🔍 Analyze PR
+        id: analyze
+        run: |
+          BASE_BRANCH="${{ github.event.pull_request.base.ref }}"
+          HEAD_BRANCH="${{ github.event.pull_request.head.ref }}"
+
+          echo "Analyzing PR from $HEAD_BRANCH to $BASE_BRANCH"
+
+          # Get commit count
+          COMMIT_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | wc -l)
+          echo "commit_count=$COMMIT_COUNT" >> $GITHUB_OUTPUT
+
+          # Get file stats
+          STATS=$(git diff --shortstat origin/$BASE_BRANCH...HEAD)
+          FILES_CHANGED=$(echo "$STATS" | grep -oP '\d+(?= files? changed)' || echo 0)
+          INSERTIONS=$(echo "$STATS" | grep -oP '\d+(?= insertions?)' || echo 0)
+          DELETIONS=$(echo "$STATS" | grep -oP '\d+(?= deletions?)' || echo 0)
+
+          echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
+          echo "insertions=$INSERTIONS" >> $GITHUB_OUTPUT
+          echo "deletions=$DELETIONS" >> $GITHUB_OUTPUT
+
+          # Categorize commits
+          FEAT_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "feat:" || echo 0)
+          FIX_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "fix:" || echo 0)
+          DOCS_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "docs:" || echo 0)
+
+          echo "feat_count=$FEAT_COUNT" >> $GITHUB_OUTPUT
+          echo "fix_count=$FIX_COUNT" >> $GITHUB_OUTPUT
+          echo "docs_count=$DOCS_COUNT" >> $GITHUB_OUTPUT
+
+      - name: 📝 Generate Enhanced Description
+        if: steps.analyze.outputs.commit_count != '0' && steps.analyze.outputs.commit_count != ''
+        uses: actions/github-script@v7
+        env:
+          FILES_CHANGED: ${{ steps.analyze.outputs.files_changed }}
+          INSERTIONS: ${{ steps.analyze.outputs.insertions }}
+          DELETIONS: ${{ steps.analyze.outputs.deletions }}
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            // Get current description
+            const currentBody = pr.body || '';
+
+            // Check if already has auto-generated content
+            if (currentBody.includes('<!-- AUTO-GENERATED -->')) {
+              console.log('PR already has auto-generated description, skipping');
+              return;
+            }
+
+            // Get commits
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            // Categorize commits
+            const featCommits = commits.filter(c => c.commit.message.startsWith('feat:'));
+            const fixCommits = commits.filter(c => c.commit.message.startsWith('fix:'));
+            const docsCommits = commits.filter(c => c.commit.message.startsWith('docs:'));
+            const choreCommits = commits.filter(c => c.commit.message.startsWith('chore:'));
+            const otherCommits = commits.filter(c =>
+              !c.commit.message.match(/^(feat|fix|docs|chore):/));
+
+            // Get stats from environment
+            const filesChanged = process.env.FILES_CHANGED;
+            const insertions = process.env.INSERTIONS;
+            const deletions = process.env.DELETIONS;
+
+            // Build enhanced description
+            let enhancedBody = '<!-- AUTO-GENERATED -->\n';
+
+            // Add summary if not present
+            if (!currentBody.includes('## Summary')) {
+              enhancedBody += '## Summary\n\n';
+              enhancedBody += `This PR includes ${commits.length} commit(s) `;
+              enhancedBody += `with ${filesChanged} file(s) changed.\n\n`;
+            }
+
+            // Add what's new section
+            enhancedBody += '## 📋 What\'s New\n\n';
+
+            if (featCommits.length > 0) {
+              enhancedBody += '### ✨ Features\n\n';
+              featCommits.forEach(c => {
+                const msg = c.commit.message.split('\n')[0].replace(/^feat:\s*/, '');
+                enhancedBody += `- ${msg}\n`;
+              });
+              enhancedBody += '\n';
+            }
+
+            if (fixCommits.length > 0) {
+              enhancedBody += '### 🐛 Bug Fixes\n\n';
+              fixCommits.forEach(c => {
+                const msg = c.commit.message.split('\n')[0].replace(/^fix:\s*/, '');
+                enhancedBody += `- ${msg}\n`;
+              });
+              enhancedBody += '\n';
+            }
+
+            if (docsCommits.length > 0) {
+              enhancedBody += '### 📚 Documentation\n\n';
+              docsCommits.forEach(c => {
+                const msg = c.commit.message.split('\n')[0].replace(/^docs:\s*/, '');
+                enhancedBody += `- ${msg}\n`;
+              });
+              enhancedBody += '\n';
+            }
+
+            if (choreCommits.length > 0) {
+              enhancedBody += '### 🔧 Maintenance\n\n';
+              choreCommits.forEach(c => {
+                const msg = c.commit.message.split('\n')[0].replace(/^chore:\s*/, '');
+                enhancedBody += `- ${msg}\n`;
+              });
+              enhancedBody += '\n';
+            }
+
+            // Add statistics
+            enhancedBody += '## 📊 Statistics\n\n';
+            enhancedBody += '**Changes:**\n';
+            enhancedBody += `- **${filesChanged} files changed**\n`;
+            enhancedBody += `- **${insertions}+ lines added**\n`;
+            enhancedBody += `- **${deletions}- lines removed**\n\n`;
+
+            enhancedBody += '**Commits:**\n';
+            enhancedBody += `- Total: ${commits.length}\n`;
+            if (featCommits.length > 0) enhancedBody += `- Features: ${featCommits.length}\n`;
+            if (fixCommits.length > 0) enhancedBody += `- Bug Fixes: ${fixCommits.length}\n`;
+            if (docsCommits.length > 0) enhancedBody += `- Documentation: ${docsCommits.length}\n`;
+            if (choreCommits.length > 0) enhancedBody += `- Maintenance: ${choreCommits.length}\n`;
+            enhancedBody += '\n';
+
+            // Add commit history
+            enhancedBody += '## 📝 Commit History\n\n';
+            commits.forEach(c => {
+              const shortSha = c.sha.substring(0, 7);
+              const msg = c.commit.message.split('\n')[0];
+              enhancedBody += `- \`${shortSha}\` ${msg}\n`;
+            });
+            enhancedBody += '\n';
+
+            // Add testing checklist
+            enhancedBody += '## ✅ Testing\n\n';
+            enhancedBody += '- [ ] Manual testing completed\n';
+            enhancedBody += '- [ ] No regressions found\n';
+            enhancedBody += '- [ ] Integration verified\n';
+            enhancedBody += '- [ ] Documentation updated\n\n';
+
+            // Combine with existing body
+            const finalBody = currentBody ?
+              `${currentBody}\n\n---\n\n${enhancedBody}` :
+              enhancedBody;
+
+            // Update PR
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              body: finalBody
+            });
+
+            console.log('✓ PR description enhanced!');
+
+      - name: 💬 Add Comment
+        if: steps.analyze.outputs.commit_count != '0' && steps.analyze.outputs.commit_count != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commitCount = '${{ steps.analyze.outputs.commit_count }}';
+            const filesChanged = '${{ steps.analyze.outputs.files_changed }}';
+            const insertions = '${{ steps.analyze.outputs.insertions }}';
+            const deletions = '${{ steps.analyze.outputs.deletions }}';
+            const featCount = '${{ steps.analyze.outputs.feat_count }}';
+            const fixCount = '${{ steps.analyze.outputs.fix_count }}';
+            const docsCount = '${{ steps.analyze.outputs.docs_count }}';
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 🤖 PR Analysis Complete\n\n**Statistics:**\n- 📊 Commits: ${commitCount}\n- 📁 Files changed: ${filesChanged}\n- ➕ Insertions: ${insertions}\n- ➖ Deletions: ${deletions}\n\n**Commit Types:**\n- ✨ Features: ${featCount}\n- 🐛 Bug Fixes: ${fixCount}\n- 📚 Documentation: ${docsCount}\n\nThe PR description has been automatically enhanced with detailed information. Review and edit as needed!\n\n---\n*Generated by auto-pr-description workflow*`
+            });

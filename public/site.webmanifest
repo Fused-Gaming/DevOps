@@ -1,0 +1,29 @@
+{
+  "name": "DevOps Automation",
+  "short_name": "DevOps",
+  "description": "Professional DevOps tools and automation workflows",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#0066cc",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/public/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/public/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/public/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "author": "Unknown",
+  "generated": "2025-11-21"
+}

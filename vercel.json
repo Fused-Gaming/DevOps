@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "name": "dev-ops",
+  "builds": [
+    {
+      "src": "api/**/*.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/$1.py"
+    },
+    {
+      "src": "/",
+      "dest": "public/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "public/$1"
+    }
+  ],
+  "regions": ["iad1"]
+}
