@@ -1,0 +1,40 @@
+{
+  "budget": {
+    "daily": 5.00,
+    "weekly": 25.00,
+    "monthly": 100.00,
+    "quarterly": 300.00,
+    "annual": 1200.00
+  },
+  "alerts": {
+    "thresholds": [50, 75, 90, 95, 100],
+    "channels": ["github_issue", "workflow_warning"],
+    "enabled": true
+  },
+  "reporting": {
+    "monthly_reports": true,
+    "quarterly_reports": true,
+    "annual_reports": true,
+    "auto_generate": true,
+    "recipients": ["team_lead", "finance"]
+  },
+  "optimization": {
+    "enabled": true,
+    "analyze_patterns": true,
+    "suggest_improvements": true,
+    "track_efficiency": true
+  },
+  "pricing": {
+    "model": "claude-sonnet-4.5",
+    "input_per_million": 3.00,
+    "output_per_million": 15.00,
+    "default_input_ratio": 0.70,
+    "default_output_ratio": 0.30
+  },
+  "tracking": {
+    "real_time": true,
+    "estimate_tokens": true,
+    "track_actual_api": false,
+    "comparison_mode": "estimate_only"
+  }
+}
