@@ -4,7 +4,7 @@
   "devCommand": "npm start",
   "installCommand": "npm install",
   "outputDirectory": "build",
-  "framework": "docusaurus-v2",
+  "framework": "docusaurus",
   "regions": ["iad1"],
   "headers": [
     {
