@@ -21,12 +21,12 @@ Rapid wireframing using ASCII art for quick iteration before moving to high-fide
 
 ### When to Use
 
-- 🎯 **Early ideation**: Exploring layouts quickly
-- 📋 **Issue descriptions**: Showing proposed UI changes
-- 🔄 **PR descriptions**: Documenting UI modifications
-- 📚 **Documentation**: Explaining layouts in markdown
-- 💬 **Async collaboration**: Sketching ideas in text
-- 🚀 **Rapid prototyping**: Before committing to design
+- **Early ideation**: Exploring layouts quickly
+- **Issue descriptions**: Showing proposed UI changes
+- **PR descriptions**: Documenting UI modifications
+- **Documentation**: Explaining layouts in markdown
+- **Async collaboration**: Sketching ideas in text
+- **Rapid prototyping**: Before committing to design
 
 ## Basic Building Blocks
 

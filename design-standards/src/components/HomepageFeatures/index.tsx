@@ -1,11 +1,12 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
+import { Palette, Wrench, Smartphone } from 'lucide-react';
 import styles from './styles.module.css';
 
 type FeatureItem = {
   title: string;
-  icon: string;
+  Icon: React.ComponentType<{ className?: string }>;
   description: ReactNode;
   link: string;
 };
@@ -13,7 +14,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'WCAG AAA Accessible Colors',
-    icon: '🎨',
+    Icon: Palette,
     description: (
       <>
         Our complete color palette featuring Sage Green, Sky Blue, Amber, and Purple
@@ -25,7 +26,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Open Source Design Tools',
-    icon: '🛠️',
+    Icon: Wrench,
     description: (
       <>
         Build professional designs at $0/month using Penpot, our Figma alternative.
@@ -37,7 +38,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Responsive-First Workflow',
-    icon: '📱',
+    Icon: Smartphone,
     description: (
       <>
         Design for all screens with our comprehensive breakpoint system (375px to 1920px).
@@ -49,11 +50,13 @@ const FeatureList: FeatureItem[] = [
   },
 ];
 
-function Feature({title, icon, description, link}: FeatureItem) {
+function Feature({title, Icon, description, link}: FeatureItem) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <div className={styles.featureIcon}>{icon}</div>
+        <div className={styles.featureIcon}>
+          <Icon className={styles.featureSvg} />
+        </div>
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>

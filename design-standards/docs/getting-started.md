@@ -10,7 +10,7 @@ Welcome to the VLN Design Standards! This comprehensive guide provides engineers
 
 ## What's Inside
 
-### 🎨 Design System
+### Design System
 Our custom design system built on modern web standards:
 - **Color Palette**: WCAG AAA accessible color system with Sage Green, Sky Blue, Amber, and Purple accents
 - **Typography**: Inter for UI, JetBrains Mono for code
@@ -18,21 +18,21 @@ Our custom design system built on modern web standards:
 - **Animations**: Framer Motion powered interactions
 - **Icons**: Lucide React icon library
 
-### 📱 Responsive Design
+### Responsive Design
 Guidelines for building interfaces that work everywhere:
 - Breakpoint system
 - Layout patterns
 - Testing strategies
 - Multi-resolution mockups
 
-### 🛠️ Tools & Workflows
+### Tools & Workflows
 Open source tools and workflows for rapid prototyping:
 - **Design Tools**: Figma alternatives (Penpot, Inkscape)
 - **Mockup Generation**: Multi-resolution screenshots and previews
 - **ASCII Design**: Quick wireframing with text
 - **Prototyping**: Interactive prototypes without Figma
 
-### 🎯 Branding
+### Branding
 Consistent brand identity across all touchpoints:
 - Logo usage guidelines
 - Voice and tone
@@ -48,7 +48,7 @@ Consistent brand identity across all touchpoints:
    # Visit https://penpot.app - web-based, no install needed
    ```
 
-   ⭐ **New!** Complete [Penpot Setup Guide](/tools/penpot-setup) with:
+   **New!** Complete [Penpot Setup Guide](/tools/penpot-setup) with:
    - VLN color palette import
    - Typography configuration
    - Component library setup
@@ -153,4 +153,4 @@ We welcome contributions! When adding to the design system:
 
 ---
 
-Let's build something beautiful! 🎨✨
+Let's build something beautiful!

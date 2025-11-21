@@ -6,7 +6,15 @@
 }
 
 .featureIcon {
-  font-size: 4rem;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-bottom: 1rem;
+}
+
+.featureSvg {
+  width: 4rem;
+  height: 4rem;
+  stroke-width: 1.5;
+  color: var(--ifm-color-primary);
 }
