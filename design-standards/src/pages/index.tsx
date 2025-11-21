@@ -14,14 +14,22 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <Heading as="h1" className="hero__title">
-          {siteConfig.title}
+          VLN Design Standards
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className="hero__subtitle">
+          Design system, UI guidelines, and engineering standards for crafting exceptional VLN experiences
+        </p>
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/docs/intro">
-            Docusaurus Tutorial - 5min ⏱️
+            to="/getting-started">
+            Get Started →
+          </Link>
+          <Link
+            className="button button--outline button--lg"
+            style={{marginLeft: '1rem'}}
+            to="/design-system/colors">
+            Explore Design System
           </Link>
         </div>
       </div>
@@ -33,8 +41,8 @@ export default function Home(): ReactNode {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title="Home"
+      description="VLN Design Standards - Design system, UI guidelines, and engineering standards for VLN products">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

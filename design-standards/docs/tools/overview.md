@@ -53,7 +53,7 @@ Complete tooling ecosystem for designing, developing, and deploying VLN products
 - **Time**: 15-30 minutes
 
 ### 6. Documentation
-- **Docusaurus**: This site!
+- **VLN Design Standards**: This site!
 - **Storybook**: Component showcase
 - **Screenshots**: Visual documentation
 - **Time**: 10-20 minutes

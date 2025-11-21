@@ -54,8 +54,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/vln-social-card.jpg',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -136,7 +135,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} VLN. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} VLN. All rights reserved.`,
     },
     prism: {
       theme: prismThemes.github,
