@@ -60,6 +60,14 @@
 
   <!-- Add more URLs dynamically from markdown files -->
 
+  <!-- docs/SUBDOMAIN-ARCHITECTURE.md -->
+  <url>
+    <loc>https://example.com/SUBDOMAIN-ARCHITECTURE</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- docs/MILESTONE-FIX-GUIDE.md -->
   <url>
     <loc>https://example.com/MILESTONE-FIX-GUIDE</loc>
@@ -80,6 +88,14 @@
   <url>
     <loc>https://example.com/MILESTONE-TRACKING</loc>
     <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/VERCEL-DEPLOYMENT-MONITORING.md -->
+  <url>
+    <loc>https://example.com/VERCEL-DEPLOYMENT-MONITORING</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
