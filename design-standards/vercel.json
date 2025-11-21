@@ -1,11 +1,7 @@
 {
-  "version": 2,
   "buildCommand": "npm run build",
-  "devCommand": "npm start",
-  "installCommand": "npm install",
   "outputDirectory": "build",
   "framework": "docusaurus",
-  "regions": ["iad1"],
   "headers": [
     {
       "source": "/(.*)",
@@ -21,19 +17,8 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "X-DNS-Prefetch-Control",
-          "value": "on"
         }
       ]
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/docs",
-      "destination": "/",
-      "permanent": true
     }
   ]
 }
