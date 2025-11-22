@@ -92,6 +92,14 @@
     <priority>0.6</priority>
   </url>
 
+  <!-- docs/VERCEL-DEPLOYMENT-MONITORING.md -->
+  <url>
+    <loc>https://example.com/VERCEL-DEPLOYMENT-MONITORING</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- docs/FEATURE-DOCUMENTATION-GUIDE.md -->
   <url>
     <loc>https://example.com/FEATURE-DOCUMENTATION-GUIDE</loc>
