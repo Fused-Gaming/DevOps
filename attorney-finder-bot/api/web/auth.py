@@ -6,7 +6,6 @@ import sys
 import json
 import hashlib
 import hmac
-from urllib.parse import parse_qs
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
 
