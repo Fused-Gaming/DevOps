@@ -41,6 +41,19 @@ Centralized web dashboard for project management.
 - `/api/webhook-manager` - Manage Telegram bot webhooks (GET/POST)
 - Full CORS support for cross-origin requests
 
+#### 🔍 Vercel Deployment Monitoring
+Automated monitoring system for design.vln.gg with intelligent failure detection and auto-issue creation.
+
+**Features:**
+- ✅ Monitors deployments every 30 minutes automatically
+- ✅ Smart error detection with context-aware solutions
+- ✅ Auto-creates GitHub issues on build failures with detailed logs
+- ✅ Framework validation, dependency errors, build failures, and timeout detection
+- ✅ Provides step-by-step solutions based on error type
+- ✅ Duplicate issue prevention and cleanup
+
+**See:** [docs/VERCEL-DEPLOYMENT-MONITORING.md](docs/VERCEL-DEPLOYMENT-MONITORING.md) for complete documentation
+
 #### 🌐 Subdomain Architecture
 Standardized subdomain structure for vln.gg domain with 12 designated subdomains:
 
