@@ -4,13 +4,18 @@ A Next.js 15 DevOps control panel with VLN styling, featuring deployment monitor
 
 ## Features
 
-- **Authentication**: Secure session-based authentication with bcrypt password hashing
+- **Authentication**: Secure password-protected panel with bcrypt password hashing
 - **Dashboard**: Real-time status cards for system health, deployments, and milestones
+- **Health Monitoring**: Comprehensive health check system for all services and deployments
+  - Real-time service status monitoring
+  - Response time tracking
+  - Auto-refresh capability (configurable intervals)
+  - Monitors: Attorney Finder Bot, DevOps Panel, and all VLN subdomains
 - **Milestone Tracking**: Visual progress bars for project milestones
 - **Deployment Monitoring**: Integration with Vercel API for deployment status
 - **GitHub Actions**: Monitor workflow runs and build status
 - **Quick Actions**: Execute DevOps scripts directly from the panel
-- **VLN Styling**: Beautiful sage green dark theme matching vln.gg
+- **VLN Design Standards**: Beautiful sage green dark theme with WCAG AAA accessibility
 
 ## Quick Start
 
@@ -189,9 +194,13 @@ vercel domains add dev.vln.gg
 
 ## API Routes
 
+### Authentication
 - `POST /api/auth/login` - Authenticate user
 - `POST /api/auth/logout` - End session
 - `GET /api/auth/session` - Check session status
+
+### Monitoring & Status
+- `GET /api/health` - Check health status of all services
 - `GET /api/milestones` - Fetch milestone progress
 - `GET /api/deployments` - Fetch Vercel deployments
 - `GET /api/github` - Fetch GitHub Actions status
@@ -214,7 +223,10 @@ devops-panel/
 │   │   ├── auth/
 │   │   ├── deployments/
 │   │   ├── github/
+│   │   ├── health/          # NEW: Health check API
 │   │   └── milestones/
+│   ├── health/              # NEW: Health monitor page
+│   │   └── page.tsx
 │   ├── login/
 │   ├── layout.tsx
 │   ├── page.tsx
@@ -222,6 +234,7 @@ devops-panel/
 ├── components/
 │   ├── devops/
 │   │   ├── deployment-list.tsx
+│   │   ├── health-status.tsx    # NEW: Health dashboard component
 │   │   ├── milestone-card.tsx
 │   │   ├── quick-actions.tsx
 │   │   └── status-card.tsx
@@ -233,6 +246,7 @@ devops-panel/
 │   │   ├── credentials.ts
 │   │   └── session.ts
 │   └── utils.ts
+├── middleware.ts
 └── package.json
 ```
 

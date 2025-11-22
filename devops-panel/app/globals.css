@@ -13,7 +13,11 @@
   --vln-sage-light: #a8e9b4;
   --vln-sage-dark: #5fb76f;
 
-  /* Secondary accents */
+  /* Secondary accents (Sky Blue) */
+  --vln-sky: #7dd3fc;
+  --vln-sky-light: #bae6fd;
+  --vln-sky-dark: #0ea5e9;
+  /* Aliases for backwards compatibility */
   --vln-bluegray: #7dd3fc;
   --vln-bluegray-light: #bae6fd;
   --vln-bluegray-dark: #0ea5e9;

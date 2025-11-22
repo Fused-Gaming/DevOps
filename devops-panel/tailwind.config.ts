@@ -28,8 +28,12 @@ const config: Config = {
           "sage-light": "#a8e9b4",
           "sage-dark": "#5fb76f",
 
-          // Secondary accents (Blue-Gray family)
-          bluegray: "#7dd3fc",      // Brighter sky blue for better contrast
+          // Secondary accents (Sky Blue family)
+          sky: "#7dd3fc",           // Sky blue for better contrast (Design Standards compliant)
+          "sky-light": "#bae6fd",
+          "sky-dark": "#0ea5e9",
+          // Aliases for backwards compatibility
+          bluegray: "#7dd3fc",
           "bluegray-light": "#bae6fd",
           "bluegray-dark": "#0ea5e9",
 
