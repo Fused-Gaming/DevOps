@@ -2,7 +2,7 @@
 <!--
   Sitemap generated automatically
   Author: Unknown <unknown@example.com>
-  Generated: 2025-11-21
+  Generated: 2025-11-24
   Code sign-off: Unknown
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -13,7 +13,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://example.com/</loc>
-    <lastmod>2025-11-21</lastmod>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -21,7 +21,7 @@
   <!-- Documentation -->
   <url>
     <loc>https://example.com/docs</loc>
-    <lastmod>2025-11-21</lastmod>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -29,7 +29,7 @@
   <!-- Quick Access -->
   <url>
     <loc>https://example.com/quick-access</loc>
-    <lastmod>2025-11-21</lastmod>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -37,7 +37,7 @@
   <!-- Cheat Sheet -->
   <url>
     <loc>https://example.com/cheatsheet</loc>
-    <lastmod>2025-11-21</lastmod>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -45,7 +45,7 @@
   <!-- Security Guide -->
   <url>
     <loc>https://example.com/security</loc>
-    <lastmod>2025-11-21</lastmod>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -53,12 +53,20 @@
   <!-- GitHub Actions -->
   <url>
     <loc>https://example.com/github-actions</loc>
-    <lastmod>2025-11-21</lastmod>
+    <lastmod>2025-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Add more URLs dynamically from markdown files -->
+
+  <!-- docs/SUBDOMAIN-ARCHITECTURE.md -->
+  <url>
+    <loc>https://example.com/SUBDOMAIN-ARCHITECTURE</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
 
   <!-- docs/MILESTONE-FIX-GUIDE.md -->
   <url>
@@ -128,6 +136,14 @@
   <url>
     <loc>https://example.com/USAGE-TRACKING-GUIDE</loc>
     <lastmod>2025-11-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/REPOSITORY-INVENTORY.md -->
+  <url>
+    <loc>https://example.com/REPOSITORY-INVENTORY</loc>
+    <lastmod>2025-11-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
