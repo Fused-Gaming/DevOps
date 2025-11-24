@@ -572,9 +572,113 @@ You can switch between options at any time:
 
 ---
 
+## Repository Tracking & Version Management
+
+### 📦 Multi-Repository Management
+
+Fused-Gaming maintains **11 active repositories** across the organization. DevOps provides centralized tracking and automation for all projects.
+
+**Complete Inventory:** See [REPOSITORY-INVENTORY.md](../docs/REPOSITORY-INVENTORY.md)
+
+### Current Repository Status
+
+| Repository | Version | Status | Deployment |
+|------------|---------|--------|------------|
+| **DevOps** | v2.3.0 | ✅ Production | https://dev-ops-omega.vercel.app |
+| **vln** | v0.1.0 | 🟡 Active Dev | https://vln.gg |
+| **wallet** | v1.0.0 | 🟡 Active Dev | wallet.vln.gg (planned) |
+| **GrindOS** | - | 🟡 Active Dev | - |
+| **BetCartel** | - | 🟡 Active Dev | - |
+| **attorney-finder-bot** | - | ✅ Production | https://attorney-finder-bot.vercel.app |
+
+### Repository Tracking Tools
+
+**List all repositories with versions:**
+```bash
+gh repo list Fused-Gaming --limit 100 --json name,url,isPrivate,pushedAt
+```
+
+**Check releases across all repos:**
+```bash
+for repo in $(gh repo list Fused-Gaming --json name --jq '.[].name'); do
+  echo "=== $repo ==="
+  gh release list --repo Fused-Gaming/$repo --limit 1
+done
+```
+
+**Create release for any repository:**
+```bash
+# From DevOps root
+bash scripts/create-release.sh <repo-name> <version>
+```
+
+### Version Tracking Strategy
+
+**Semantic Versioning for All Projects:**
+- MAJOR: Breaking changes
+- MINOR: New features (backward compatible)
+- PATCH: Bug fixes
+
+**Automation Features:**
+1. ✅ Automated milestone tracking (DevOps)
+2. ✅ Release creation workflows
+3. ✅ Changelog generation from commits
+4. ✅ Cross-repository version synchronization
+5. 🟡 Centralized DevOps dashboard (in progress)
+
+### DevOps Panel Integration
+
+The DevOps control panel provides centralized management:
+- 📊 Real-time repository status dashboard
+- 🏷️ Version tracking across all projects
+- 🚀 One-click deployment triggers
+- 📈 Milestone progress visualization
+- 🔗 Cross-repository dependency tracking
+
+**Access:** https://dev.vln.gg (planned) or https://dev-ops-omega.vercel.app
+
+### Adding New Repositories
+
+When creating a new repository in Fused-Gaming:
+
+1. **Initialize Version Tracking:**
+   ```bash
+   echo "0.1.0" > VERSION
+   # Add to package.json if applicable
+   ```
+
+2. **Add CHANGELOG.md:**
+   ```bash
+   # Follow Keep a Changelog format
+   cp DevOps/CHANGELOG.md your-repo/CHANGELOG.md
+   ```
+
+3. **Configure Release Workflow:**
+   ```bash
+   # Copy from DevOps templates
+   cp DevOps/.github/workflows/release.yml your-repo/.github/workflows/
+   ```
+
+4. **Update DevOps Inventory:**
+   ```bash
+   # Re-run inventory script
+   bash scripts/update-repo-inventory.sh
+   ```
+
+### Migration Plans
+
+**Vercel to Self-Hosted (2025 Q1):**
+- Target Server: root@185.121.132.57
+- Planned Services: DevOps panel, API endpoints, preview.vln.gg
+- Documentation: [SUBDOMAIN-ARCHITECTURE.md](../docs/SUBDOMAIN-ARCHITECTURE.md)
+
+---
+
 ## Support
 
 - **Documentation:** [README.md](README.md) | [QUICKSTART.md](QUICKSTART.md) | [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)
+- **Repository Inventory:** [REPOSITORY-INVENTORY.md](../docs/REPOSITORY-INVENTORY.md)
+- **Milestone Tracking:** [MILESTONE-TRACKING.md](../docs/MILESTONE-TRACKING.md)
 - **Setup Help:** Run `./setup-wizard.js` for guided setup
 - **Issues:** [GitHub Issues](https://github.com/Fused-Gaming/DevOps/issues)
 - **Questions:** Check documentation or open a discussion
