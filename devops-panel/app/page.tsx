@@ -23,25 +23,25 @@ export default function DashboardPage() {
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
-  }, []);
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/session");
+        const data = await response.json();
 
-  const checkAuth = async () => {
-    try {
-      const response = await fetch("/api/auth/session");
-      const data = await response.json();
-
-      if (!data.isLoggedIn) {
+        if (!data.isLoggedIn) {
+          router.push("/login");
+        } else {
+          setUser({ username: data.username });
+        }
+      } catch (error) {
         router.push("/login");
-      } else {
-        setUser({ username: data.username });
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      router.push("/login");
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    checkAuth();
+  }, [router]);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });

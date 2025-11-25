@@ -41,7 +41,7 @@ export default function EmailStatus() {
       <Card.Header>
         <Card.Title className="flex items-center gap-2">
           <MailCheck className="w-5 h-5 text-vln-blue" />
-          Today's Email Activity
+          Today&apos;s Email Activity
         </Card.Title>
       </Card.Header>
 
