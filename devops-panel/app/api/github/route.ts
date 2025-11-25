@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
 
+// Allowlist of valid repositories to prevent SSRF attacks
+const ALLOWED_REPOS = [
+  "Fused-Gaming/DevOps",
+  "Fused-Gaming/vln",
+  "Fused-Gaming/wallet",
+  "Fused-Gaming/attorney-finder-bot",
+  "Fused-Gaming/BetCartel",
+  "Fused-Gaming/GrindOS",
+  "Fused-Gaming/vise",
+  "Fused-Gaming/.github",
+] as const;
+
 export async function GET(request: Request) {
   try {
     const session = await getSession();
@@ -11,7 +23,20 @@ export async function GET(request: Request) {
 
     const githubToken = process.env.GITHUB_TOKEN;
     const { searchParams } = new URL(request.url);
-    const repo = searchParams.get("repo") || "Fused-Gaming/DevOps";
+    const requestedRepo = searchParams.get("repo") || "Fused-Gaming/DevOps";
+
+    // Validate repo against allowlist to prevent SSRF
+    if (!ALLOWED_REPOS.includes(requestedRepo as any)) {
+      return NextResponse.json(
+        {
+          error: "Invalid repository. Repository must be in the allowed list.",
+          allowedRepos: ALLOWED_REPOS
+        },
+        { status: 400 }
+      );
+    }
+
+    const repo = requestedRepo; // Safe to use after validation
 
     if (!githubToken) {
       return NextResponse.json({
@@ -21,6 +46,7 @@ export async function GET(request: Request) {
     }
 
     // Fetch workflow runs from GitHub Actions
+    // Safe: repo is validated against allowlist
     const response = await fetch(
       `https://api.github.com/repos/${repo}/actions/runs?per_page=10`,
       {
