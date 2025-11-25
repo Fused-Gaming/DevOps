@@ -8,6 +8,7 @@ import MilestoneCard from "@/components/devops/milestone-card";
 import DeploymentList from "@/components/devops/deployment-list";
 import QuickActions from "@/components/devops/quick-actions";
 import PenpotQuickAccess from "@/components/penpot/penpot-quick-access";
+import EmailQuickAccess from "@/components/email/email-quick-access";
 import {
   Activity,
   GitBranch,
@@ -129,10 +130,11 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Deployments, Actions & Design System */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Deployments, Actions, Email & Design System */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <DeploymentList />
           <QuickActions />
+          <EmailQuickAccess />
           <PenpotQuickAccess />
         </div>
       </div>
