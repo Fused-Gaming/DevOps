@@ -11,6 +11,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2025-11-25
+
+### Added
+- add email handling system to DevOps panel (@)
+- add intelligent PR failure handling workflow (@)
+- add comprehensive design standards documentation site (#49) (@)
+- add subdomain architecture and enhanced security for DevOps panel (#48) (@)
+
+### Changed
+- Claude/design standards docs 01 h5ndf1n eryw phv ddi1e2g p (#51) (@)
+- Potential fix for code scanning alert no. 4: Unused import (@)
+- Potential fix for code scanning alert no. 3: Unused import (@)
+
+### Fixed
+- remove ALL automatic PR creation from workflows (@)
+
+### Documentation
+- add comprehensive LinkedIn article covering entire DevOps system (#50) (@)
+
+---
+
 ## [Unreleased] - 2025-11-21
 
 ### Added
