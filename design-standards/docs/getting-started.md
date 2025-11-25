@@ -42,22 +42,18 @@ Consistent brand identity across all touchpoints:
 
 ### For Designers
 
-1. **Set Up Penpot (Recommended)**
+1. **Install Open Source Tools**
    ```bash
    # Penpot (Figma alternative)
    # Visit https://penpot.app - web-based, no install needed
-   ```
 
-   ⭐ **New!** Complete [Penpot Setup Guide](/tools/penpot-setup) with:
-   - VLN color palette import
-   - Typography configuration
-   - Component library setup
-   - Collaboration features
+   # Or install desktop version
+   # https://github.com/penpot/penpot
+   ```
 
 2. **Review Color System**
    - Check out [Colors](/design-system/colors) for the complete palette
    - All colors are WCAG AAA compliant
-   - Ready to import into Penpot
 
 3. **Start with ASCII Wireframes**
    - Use [ASCII Design](/tools/ascii-design) for rapid iteration

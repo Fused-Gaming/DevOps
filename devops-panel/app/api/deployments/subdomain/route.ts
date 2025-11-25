@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import { exec } from "child_process";
+import { execFile } from "child_process";
 import { promisify } from "util";
 import path from "path";
 
-const execAsync = promisify(exec);
+const execAsync = promisify(execFile);
 
 export async function POST(request: Request) {
   try {
@@ -44,13 +44,14 @@ export async function POST(request: Request) {
     }
 
     // Determine deployment command based on project
-    let deploymentCommand: string;
+    let vercelArgs: string[];
     let projectPath: string;
 
     if (project === "design-standards") {
       projectPath = path.join(process.cwd(), "..", "design-standards");
       // Deploy design standards to design.vln.gg
-      deploymentCommand = `cd ${projectPath} && vercel --prod --token ${vercelToken} --yes`;
+      vercelArgs = ["--prod", "--token", vercelToken, "--yes"];
+      // Note: domain variable is unused in deployment args here
     } else {
       // Deploy devops-panel to the specified subdomain
       projectPath = process.cwd();
@@ -59,15 +60,20 @@ export async function POST(request: Request) {
         dev: "dev.vln.gg",
         staging: "staging.vln.gg",
       };
-      const domain = domainMap[subdomain];
-      deploymentCommand = `cd ${projectPath} && vercel --prod --token ${vercelToken} --yes`;
+      // const domain = domainMap[subdomain];   // Not used in deployment call
+      vercelArgs = ["--prod", "--token", vercelToken, "--yes"];
     }
 
     // Execute deployment
-    const { stdout, stderr } = await execAsync(deploymentCommand, {
-      timeout: 300000, // 5 minute timeout
-      maxBuffer: 1024 * 1024 * 10, // 10MB buffer
-    });
+    const { stdout, stderr } = await execAsync(
+      "vercel",
+      vercelArgs,
+      {
+        cwd: projectPath,
+        timeout: 300000, // 5 minute timeout
+        maxBuffer: 1024 * 1024 * 10, // 10MB buffer
+      }
+    );
 
     // Parse Vercel output to get deployment URL
     const deploymentUrlMatch = stdout.match(/https:\/\/[^\s]+/);

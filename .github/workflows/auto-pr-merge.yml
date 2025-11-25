@@ -1,11 +1,16 @@
-name: Auto PR & Merge
+name: Auto PR & Merge (DISABLED)
+
+# WORKFLOW DISABLED: GitHub Actions cannot automatically create PRs
+# Use manual PR creation instead. CI/CD failures are monitored by
+# the CI/CD Failure Monitor workflow which creates issues for troubleshooting.
 
 on:
-  push:
-    branches:
-      - "**"
-      - "!main"
-      - "!develop"
+  workflow_dispatch:  # Only allow manual trigger
+  # push:  # DISABLED - was causing permission errors
+  #   branches:
+  #     - "**"
+  #     - "!main"
+  #     - "!develop"
 
 permissions:
   contents: write

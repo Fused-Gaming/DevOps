@@ -1,0 +1,99 @@
+.brandedCard {
+  display: flex;
+  flex-direction: column;
+  background: var(--ifm-card-background-color);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+}
+
+.brandedCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.brandedCard.sage {
+  border-color: #86d993;
+}
+
+.brandedCard.sage:hover {
+  box-shadow: 0 12px 24px rgba(134, 217, 147, 0.3);
+}
+
+.brandedCard.sky {
+  border-color: #7dd3fc;
+}
+
+.brandedCard.sky:hover {
+  box-shadow: 0 12px 24px rgba(125, 211, 252, 0.3);
+}
+
+.brandedCard.amber {
+  border-color: #fbbf24;
+}
+
+.brandedCard.amber:hover {
+  box-shadow: 0 12px 24px rgba(251, 191, 36, 0.3);
+}
+
+.brandedCard.purple {
+  border-color: #c084fc;
+}
+
+.brandedCard.purple:hover {
+  box-shadow: 0 12px 24px rgba(192, 132, 252, 0.3);
+}
+
+.cardImage {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0a0e0f 0%, #151a1c 50%, #1f2527 100%);
+}
+
+.cardImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cardContent {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ifm-heading-color);
+}
+
+.brandedCard.sage .cardTitle {
+  color: #86d993;
+}
+
+.brandedCard.sky .cardTitle {
+  color: #7dd3fc;
+}
+
+.brandedCard.amber .cardTitle {
+  color: #fbbf24;
+}
+
+.brandedCard.purple .cardTitle {
+  color: #c084fc;
+}
+
+.cardDescription {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--ifm-color-emphasis-700);
+  flex: 1;
+}

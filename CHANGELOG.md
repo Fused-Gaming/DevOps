@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ## [Unreleased] - 2025-11-23
 
 ### Added
@@ -32,6 +33,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - 🔄 Real-time refresh capability
     - 🌐 Direct links to GitHub and deployments
 
+- add automated Vercel deployment monitoring and fix framework error (@)
+- implement VLN branding with custom logo, hero image, and branded content cards (@)
+- integrate Penpot management into DevOps panel and rebrand design.vln.gg (@)
+- add Penpot API integration with secure token management (@)
+- add comprehensive Penpot integration guide (@)
+- add comprehensive design standards documentation site (#49) (@)
+- add one-click subdomain deployment to DevOps panel (@)
+- add comprehensive design standards documentation site (@)
+- add subdomain architecture and enhanced security for DevOps panel (#48) (@)
+
+### Changed
+- Claude/design standards docs 01 h5ndf1n eryw phv ddi1e2g p (#51) (@)
+- Potential fix for code scanning alert no. 15: Shell command built from environment values (@)
+- Potential fix for code scanning alert no. 4: Unused import (@)
+- Potential fix for code scanning alert no. 3: Unused import (@)
+- (feat) Real time tracking statistics (#41) (@)
+- Jlucus/update autotags (#40) (@)
+- Update issue templates (#30) (@)
+- Claude/update devops docs automation 01 v rr q8p6abc ad w st qu p rf9u (#33) (@)
+
+### Fixed
+- replace emojis with Lucide React icons for consistent design standards (@)
+- resolve Docusaurus deployment issues (@)
+- correct Vercel framework value for Docusaurus (@)
+- resolve workflow failures in GitHub Actions (#39) (@)
+
+### Documentation
+- update PR summary with complete feature list and VLN branding changes (@)
+- add Penpot quickstart guide for immediate use (@)
+- add comprehensive PR summary for design standards and deployment features (@)
+- add comprehensive LinkedIn article covering entire DevOps system (#50) (@)
+
+---
+
+## [Unreleased] - 2025-11-21
+
+### Added
 - **Subdomain Architecture Documentation** - Comprehensive documentation for vln.gg domain structure
   - Complete subdomain definitions for 12 production subdomains (app, api, auth, pay, wallet, docs, help, edu, design, mail, dev, preview)
   - Architecture diagram and configuration standards
