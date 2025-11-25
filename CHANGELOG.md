@@ -12,6 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2025-11-25
+
+### Added
+- implement comprehensive brute force protection for login (@)
+- add navigation shell and improve devops panel UX (@)
+- add comprehensive repository inventory and version tracking system (@)
+
+### Fixed
+- replace bc with awk for better compatibility in usage tracking (@)
+
+---
+
 ## [Unreleased] - 2025-11-23
 
 ### Added
