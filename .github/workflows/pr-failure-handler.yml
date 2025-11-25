@@ -1,0 +1,413 @@
+name: PR Failure Handler
+
+# Monitor CI/CD results and handle critical failures
+# Closes PRs with critical failures and creates issues for documented bugs
+
+on:
+  workflow_run:
+    workflows: ["Enhanced CI/CD Pipeline"]
+    types: [completed]
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  actions: read
+
+jobs:
+  check-and-handle-failures:
+    name: 🔍 Check CI/CD Status
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_run' || github.event_name == 'pull_request'
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔍 Get PR Number
+        id: get_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_run" ]; then
+            # Get PR from workflow run
+            PR_NUMBER=$(gh pr list --json number,headRefName --jq ".[] | select(.headRefName == \"${{ github.event.workflow_run.head_branch }}\") | .number" | head -1)
+          else
+            # Get PR from pull_request event
+            PR_NUMBER="${{ github.event.pull_request.number }}"
+          fi
+
+          if [ -n "$PR_NUMBER" ]; then
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+            echo "✓ Found PR #$PR_NUMBER"
+          else
+            echo "⚠️  No PR found for this workflow"
+            echo "pr_number=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: 📊 Analyze CI/CD Results
+        id: analyze
+        if: steps.get_pr.outputs.pr_number != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.get_pr.outputs.pr_number }}"
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Analyzing CI/CD results for PR #$PR_NUMBER"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Get check runs for the PR
+          CHECKS=$(gh pr checks "$PR_NUMBER" --json name,conclusion,detailsUrl 2>&1 || echo "[]")
+
+          # Initialize counters
+          CRITICAL_FAILURES=0
+          SECURITY_FAILURES=0
+          BUILD_FAILURES=0
+          TEST_FAILURES=0
+          FAILURE_DETAILS=""
+
+          # Parse check results
+          if echo "$CHECKS" | jq -e '. | length > 0' > /dev/null 2>&1; then
+            echo "$CHECKS" | jq -r '.[] | "\(.name):\(.conclusion)"' | while IFS=: read -r name conclusion; do
+              if [ "$conclusion" == "failure" ]; then
+                echo "  ❌ $name: FAILED"
+
+                # Categorize failures
+                if [[ "$name" == *"security"* ]] || [[ "$name" == *"Security"* ]]; then
+                  SECURITY_FAILURES=$((SECURITY_FAILURES + 1))
+                  CRITICAL_FAILURES=$((CRITICAL_FAILURES + 1))
+                  FAILURE_DETAILS="${FAILURE_DETAILS}\n- 🔒 Security check failed: $name"
+                elif [[ "$name" == *"build"* ]] || [[ "$name" == *"Build"* ]]; then
+                  BUILD_FAILURES=$((BUILD_FAILURES + 1))
+                  CRITICAL_FAILURES=$((CRITICAL_FAILURES + 1))
+                  FAILURE_DETAILS="${FAILURE_DETAILS}\n- 🔨 Build failed: $name"
+                elif [[ "$name" == *"test"* ]] || [[ "$name" == *"Test"* ]]; then
+                  TEST_FAILURES=$((TEST_FAILURES + 1))
+                  FAILURE_DETAILS="${FAILURE_DETAILS}\n- 🧪 Test failed: $name"
+                else
+                  FAILURE_DETAILS="${FAILURE_DETAILS}\n- ⚠️  Check failed: $name"
+                fi
+              elif [ "$conclusion" == "success" ]; then
+                echo "  ✓ $name: SUCCESS"
+              else
+                echo "  ⏳ $name: $conclusion"
+              fi
+            done
+          else
+            echo "  ⚠️  No check results available yet"
+          fi
+
+          # Count failures from the Enhanced CI/CD Pipeline specifically
+          WORKFLOW_STATUS="${{ github.event.workflow_run.conclusion }}"
+          if [ "$WORKFLOW_STATUS" == "failure" ]; then
+            echo ""
+            echo "⚠️  Enhanced CI/CD Pipeline failed"
+            CRITICAL_FAILURES=$((CRITICAL_FAILURES + 1))
+          fi
+
+          # Save results
+          echo "critical_failures=$CRITICAL_FAILURES" >> $GITHUB_OUTPUT
+          echo "security_failures=$SECURITY_FAILURES" >> $GITHUB_OUTPUT
+          echo "build_failures=$BUILD_FAILURES" >> $GITHUB_OUTPUT
+          echo "test_failures=$TEST_FAILURES" >> $GITHUB_OUTPUT
+          echo "failure_details<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$FAILURE_DETAILS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          if [ $CRITICAL_FAILURES -gt 0 ]; then
+            echo "has_critical_failures=true" >> $GITHUB_OUTPUT
+            echo ""
+            echo "❌ Found $CRITICAL_FAILURES critical failure(s)"
+          else
+            echo "has_critical_failures=false" >> $GITHUB_OUTPUT
+            echo ""
+            echo "✓ No critical failures detected"
+          fi
+
+      - name: 🔍 Check for Documented Bugs
+        id: check_bugs
+        if: steps.analyze.outputs.has_critical_failures == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.get_pr.outputs.pr_number }}"
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Checking if failure matches documented bugs"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          IS_DOCUMENTED_BUG=false
+          BUG_CATEGORY=""
+          BUG_DESCRIPTION=""
+
+          # Check for common documented bug patterns
+          FAILURE_DETAILS="${{ steps.analyze.outputs.failure_details }}"
+
+          # Pattern 1: GitHub Actions permission errors
+          if gh run view ${{ github.event.workflow_run.id }} 2>&1 | grep -qi "not permitted\|permission denied\|forbidden"; then
+            echo "✓ Matched: GitHub Actions permission error"
+            IS_DOCUMENTED_BUG=true
+            BUG_CATEGORY="GitHub Actions Permissions"
+            BUG_DESCRIPTION="GitHub Actions is not permitted to create or approve pull requests. This is a known limitation that requires repository settings adjustment or use of a PAT token."
+          fi
+
+          # Pattern 2: npm audit failures with known CVEs
+          if gh run view ${{ github.event.workflow_run.id }} 2>&1 | grep -qi "npm audit.*critical\|high vulnerabilities"; then
+            echo "✓ Matched: npm security vulnerabilities"
+            IS_DOCUMENTED_BUG=true
+            BUG_CATEGORY="Dependency Security Vulnerabilities"
+            BUG_DESCRIPTION="Critical or high severity vulnerabilities detected in npm dependencies. These should be addressed by updating affected packages or finding alternatives."
+          fi
+
+          # Pattern 3: Exposed secrets in code
+          if gh run view ${{ github.event.workflow_run.id }} 2>&1 | grep -qi "secret.*detected\|credentials.*exposed"; then
+            echo "✓ Matched: Exposed secrets detected"
+            IS_DOCUMENTED_BUG=true
+            BUG_CATEGORY="Security: Exposed Secrets"
+            BUG_DESCRIPTION="Potential secrets or credentials detected in the codebase. This is a critical security issue that must be resolved before merging."
+          fi
+
+          # Pattern 4: Build failures
+          if [ "${{ steps.analyze.outputs.build_failures }}" -gt 0 ]; then
+            echo "✓ Matched: Build failure"
+            IS_DOCUMENTED_BUG=true
+            BUG_CATEGORY="Build Failure"
+            BUG_DESCRIPTION="The build process failed. This could be due to syntax errors, missing dependencies, or configuration issues."
+          fi
+
+          # Pattern 5: Test failures
+          if [ "${{ steps.analyze.outputs.test_failures }}" -gt 0 ]; then
+            echo "⚠️  Test failures detected (not creating issue, only closing PR)"
+            IS_DOCUMENTED_BUG=false
+          fi
+
+          echo "is_documented_bug=$IS_DOCUMENTED_BUG" >> $GITHUB_OUTPUT
+          echo "bug_category=$BUG_CATEGORY" >> $GITHUB_OUTPUT
+          echo "bug_description<<EOF" >> $GITHUB_OUTPUT
+          echo "$BUG_DESCRIPTION" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: ❌ Close PR with Critical Failures
+        id: close_pr
+        if: steps.analyze.outputs.has_critical_failures == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.get_pr.outputs.pr_number }}"
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Closing PR #$PR_NUMBER due to critical failures"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Create detailed comment
+          cat > /tmp/close_comment.md << 'COMMENT_EOF'
+## 🚨 PR Automatically Closed - Critical Failures Detected
+
+This PR has been automatically closed due to critical failures in the CI/CD pipeline that make it **unsafe to merge**.
+
+### ❌ Failure Summary
+
+**Critical Failures:** ${{ steps.analyze.outputs.critical_failures }}
+**Security Issues:** ${{ steps.analyze.outputs.security_failures }}
+**Build Failures:** ${{ steps.analyze.outputs.build_failures }}
+**Test Failures:** ${{ steps.analyze.outputs.test_failures }}
+
+### 📋 Failure Details
+
+${{ steps.analyze.outputs.failure_details }}
+
+### 🔧 What to Do Next
+
+1. **Review the CI/CD logs** to understand the specific failures
+2. **Fix the issues** in your local branch
+3. **Test locally** to ensure the fixes work
+4. **Push your fixes** to reopen or create a new PR
+5. **Ensure all checks pass** before requesting review
+
+### 📚 Resources
+
+- [CI/CD Pipeline Documentation](https://github.com/${{ github.repository }}/blob/main/.github/workflows/ci-cd-enhanced.yml)
+- [Security Best Practices](https://github.com/${{ github.repository }}/blob/main/docs/)
+- [Troubleshooting Guide](https://github.com/${{ github.repository }}/blob/main/docs/)
+
+COMMENT_EOF
+
+          # Add issue reference if documented bug
+          if [ "${{ steps.check_bugs.outputs.is_documented_bug }}" == "true" ]; then
+            cat >> /tmp/close_comment.md << 'ISSUE_REF'
+
+### 🐛 Related Issue
+
+This failure matches a documented bug pattern. An issue has been created to track this problem:
+- **Category:** ${{ steps.check_bugs.outputs.bug_category }}
+
+ISSUE_REF
+          fi
+
+          cat >> /tmp/close_comment.md << 'FOOTER'
+
+---
+*This PR was automatically closed by the [PR Failure Handler](.github/workflows/pr-failure-handler.yml) workflow.*
+*Once the issues are resolved, you can reopen this PR or create a new one.*
+FOOTER
+
+          # Post comment and close PR
+          gh pr comment "$PR_NUMBER" --body-file /tmp/close_comment.md
+          gh pr close "$PR_NUMBER" --comment "Automatically closed due to critical CI/CD failures. Please review the comment above for details."
+
+          echo "✓ PR #$PR_NUMBER closed successfully"
+
+      - name: 🐛 Create Issue for Documented Bug
+        if: steps.check_bugs.outputs.is_documented_bug == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER="${{ steps.get_pr.outputs.pr_number }}"
+          BUG_CATEGORY="${{ steps.check_bugs.outputs.bug_category }}"
+
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Creating issue for documented bug"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Check if similar issue already exists
+          EXISTING_ISSUE=$(gh issue list --label "ci-failure" --label "$BUG_CATEGORY" --state open --json number,title --jq ".[0].number" || echo "")
+
+          if [ -n "$EXISTING_ISSUE" ]; then
+            echo "⚠️  Similar issue already exists: #$EXISTING_ISSUE"
+            echo "   Adding comment to existing issue instead"
+
+            cat > /tmp/issue_comment.md << COMMENT_EOF
+## 🔄 Another PR Affected by This Bug
+
+**PR:** #$PR_NUMBER
+**Branch:** \`${{ github.head_ref || github.ref_name }}\`
+**Triggered by:** @${{ github.actor }}
+**Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+### Failure Details
+
+${{ steps.analyze.outputs.failure_details }}
+
+This PR has been automatically closed due to this bug.
+COMMENT_EOF
+
+            gh issue comment "$EXISTING_ISSUE" --body-file /tmp/issue_comment.md
+            echo "✓ Updated issue #$EXISTING_ISSUE"
+          else
+            # Create new issue
+            cat > /tmp/new_issue.md << 'ISSUE_EOF'
+## 🐛 Bug Description
+
+${{ steps.check_bugs.outputs.bug_description }}
+
+## 📊 Details
+
+- **Category:** ${{ steps.check_bugs.outputs.bug_category }}
+- **First detected in PR:** #${{ steps.get_pr.outputs.pr_number }}
+- **Branch:** `${{ github.head_ref || github.ref_name }}`
+- **Workflow:** Enhanced CI/CD Pipeline
+- **Detection date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+## 🔍 Failure Information
+
+${{ steps.analyze.outputs.failure_details }}
+
+## 🔧 Recommended Actions
+
+### For GitHub Actions Permission Errors:
+1. Check repository settings under Settings > Actions > General
+2. Enable "Allow GitHub Actions to create and approve pull requests"
+3. Or use a Personal Access Token (PAT) with appropriate permissions
+
+### For Security Vulnerabilities:
+1. Run `npm audit` locally to see detailed vulnerability report
+2. Run `npm audit fix` to automatically fix compatible issues
+3. For remaining issues, manually update packages or find alternatives
+4. Consider using Dependabot for automated security updates
+
+### For Exposed Secrets:
+1. Remove any hardcoded credentials from the codebase
+2. Use environment variables or GitHub Secrets instead
+3. Rotate any exposed credentials immediately
+4. Add patterns to `.gitignore` to prevent future exposure
+
+### For Build Failures:
+1. Review the build logs for specific error messages
+2. Ensure all dependencies are properly installed
+3. Check for syntax errors or type issues
+4. Test the build locally before pushing
+
+## 📚 Related Documentation
+
+- [CI/CD Pipeline](.github/workflows/ci-cd-enhanced.yml)
+- [Security Guidelines](docs/)
+- [Contributing Guide](CONTRIBUTING.md)
+
+---
+*This issue was automatically created by the [PR Failure Handler](.github/workflows/pr-failure-handler.yml) workflow.*
+ISSUE_EOF
+
+            # Create the issue
+            ISSUE_URL=$(gh issue create \
+              --title "🐛 CI/CD Failure: $BUG_CATEGORY (from PR #$PR_NUMBER)" \
+              --body-file /tmp/new_issue.md \
+              --label "bug" \
+              --label "ci-failure" \
+              --label "$BUG_CATEGORY" \
+              --label "automated" \
+              || echo "")
+
+            if [ -n "$ISSUE_URL" ]; then
+              ISSUE_NUMBER=$(echo "$ISSUE_URL" | grep -oP '\d+$')
+              echo "✓ Created issue #$ISSUE_NUMBER"
+              echo "$ISSUE_URL"
+
+              # Link the issue to the PR
+              gh pr comment "$PR_NUMBER" --body "📋 Related issue created: #$ISSUE_NUMBER" || true
+            else
+              echo "❌ Failed to create issue"
+            fi
+          fi
+
+      - name: 📊 Summary
+        if: always()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          # 🔍 PR Failure Handler Report
+
+          ## Configuration
+
+          - **Event:** ${{ github.event_name }}
+          - **Workflow:** ${{ github.event.workflow_run.name || 'Pull Request' }}
+          - **PR:** #${{ steps.get_pr.outputs.pr_number }}
+          - **Branch:** `${{ github.head_ref || github.ref_name }}`
+
+          ## Results
+
+          | Check | Status |
+          |-------|--------|
+          | PR Found | ${{ steps.get_pr.outputs.pr_number != '' && '✅ Yes' || '⚠️ No' }} |
+          | Critical Failures | ${{ steps.analyze.outputs.critical_failures || '0' }} |
+          | Security Issues | ${{ steps.analyze.outputs.security_failures || '0' }} |
+          | Build Failures | ${{ steps.analyze.outputs.build_failures || '0' }} |
+          | Test Failures | ${{ steps.analyze.outputs.test_failures || '0' }} |
+          | Documented Bug | ${{ steps.check_bugs.outputs.is_documented_bug == 'true' && '✅ Yes' || '❌ No' }} |
+          | PR Closed | ${{ steps.analyze.outputs.has_critical_failures == 'true' && '✅ Yes' || '➖ Not needed' }} |
+          | Issue Created | ${{ steps.check_bugs.outputs.is_documented_bug == 'true' && '✅ Yes' || '➖ Not needed' }} |
+
+          ## Actions Taken
+
+          ${{ steps.analyze.outputs.has_critical_failures == 'true' && '- ❌ Closed PR #' || '- ✅ No action needed - checks passed' }}${{ steps.get_pr.outputs.pr_number }}
+          ${{ steps.check_bugs.outputs.is_documented_bug == 'true' && '- 🐛 Created/updated issue for documented bug' || '' }}
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF

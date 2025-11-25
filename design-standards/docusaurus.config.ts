@@ -25,7 +25,7 @@ const config: Config = {
   organizationName: 'Fused-Gaming', // Usually your GitHub org/user name.
   projectName: 'DevOps', // Usually your repo name.
 
-  onBrokenLinks: 'warn',
+  onBrokenLinks: 'throw',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you

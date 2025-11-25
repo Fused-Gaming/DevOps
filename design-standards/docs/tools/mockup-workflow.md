@@ -337,13 +337,16 @@ Add screenshots to your PR or documentation:
 ## Responsive Preview
 
 ### Mobile (375px)
-![Mobile view](./screenshots/feature-mobile.png)
+<!-- Screenshot: feature-mobile.png -->
+_Add screenshot here after implementation_
 
 ### Tablet (768px)
-![Tablet view](./screenshots/feature-tablet.png)
+<!-- Screenshot: feature-tablet.png -->
+_Add screenshot here after implementation_
 
 ### Desktop (1920px)
-![Desktop view](./screenshots/feature-desktop.png)
+<!-- Screenshot: feature-desktop.png -->
+_Add screenshot here after implementation_
 
 ## Testing Notes
 

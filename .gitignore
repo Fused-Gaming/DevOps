@@ -1,1 +1,15 @@
 .vercel
+
+# Environment files - NEVER COMMIT SECRETS
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+*.env
+!.env.example
+!.env.deploy.example
+
+# Penpot tokens and secrets
+.penpot
+penpot.token

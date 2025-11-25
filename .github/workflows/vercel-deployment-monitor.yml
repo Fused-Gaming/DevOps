@@ -1,0 +1,259 @@
+name: Vercel Deployment Monitor
+
+on:
+  # Run after pushes to main that might trigger deployments
+  push:
+    branches:
+      - main
+    paths:
+      - 'design-standards/**'
+      - '.github/workflows/vercel-deployment-monitor.yml'
+
+  # Run on schedule - check every 30 minutes
+  schedule:
+    - cron: '*/30 * * * *'
+
+  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: 'Vercel project name to monitor'
+        required: false
+        default: 'design-standards'
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  PROJECT_NAME: ${{ github.event.inputs.project_name || 'design-standards' }}
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Monitor Vercel Deployment
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  monitor-deployment:
+    name: 🔍 Monitor Vercel Deployment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🎯 Setup Environment
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🔍 Vercel Deployment Monitor"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Project: ${{ env.PROJECT_NAME }}"
+          echo "Domain: design.vln.gg"
+          echo "Repository: ${{ github.repository }}"
+          echo "Triggered by: ${{ github.event_name }}"
+          echo "Branch: ${{ github.ref_name }}"
+          echo ""
+
+      - name: 🔧 Make monitor script executable
+        run: chmod +x scripts/monitor-vercel-deployment.sh
+
+      - name: 🚀 Run Deployment Monitor
+        id: monitor
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "→ Checking deployment status..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Run monitor script
+          ./scripts/monitor-vercel-deployment.sh "${{ env.PROJECT_NAME }}" || EXIT_CODE=$?
+
+          # Script exits with 0 if deployment is successful
+          # Script exits with 1 if deployment failed (and creates an issue)
+          if [ "${EXIT_CODE:-0}" -eq 0 ]; then
+            echo "deployment_status=success" >> $GITHUB_OUTPUT
+          else
+            echo "deployment_status=failed" >> $GITHUB_OUTPUT
+          fi
+
+          exit ${EXIT_CODE:-0}
+        continue-on-error: true
+
+      - name: 📊 Generate Summary
+        if: always()
+        run: |
+          STATUS="${{ steps.monitor.outputs.deployment_status }}"
+
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          # 🔍 Vercel Deployment Monitor Report
+
+          ## Deployment Status
+
+          **Project:** ${{ env.PROJECT_NAME }}
+          **Domain:** design.vln.gg
+          **Status:** ${{ steps.monitor.outputs.deployment_status }}
+          **Checked at:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          EOF
+
+          if [ "$STATUS" = "success" ]; then
+            cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## ✅ Deployment Successful
+
+          The latest deployment is live and healthy!
+
+          - ✅ Build completed successfully
+          - ✅ Site is accessible
+          - ✅ No errors detected
+
+          **Next Steps:**
+          - Monitor continues on schedule
+          - No action required
+
+          EOF
+          elif [ "$STATUS" = "failed" ]; then
+            cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## ❌ Deployment Failed
+
+          The deployment has failed and an issue has been created automatically.
+
+          **Actions Taken:**
+          - 🔍 Build logs analyzed
+          - 📝 GitHub issue created with error details
+          - 💡 Possible solutions provided
+          - 🔔 Team notified
+
+          **Next Steps:**
+          1. Review the automatically created GitHub issue
+          2. Check the suggested solutions
+          3. Fix the issue in your codebase
+          4. Push changes to trigger a new deployment
+
+          **Links:**
+          - [View Issues](https://github.com/${{ github.repository }}/issues?q=is%3Aissue+is%3Aopen+label%3Adeployment)
+          - [Vercel Dashboard](https://vercel.com/${{ github.repository }})
+
+          EOF
+          else
+            cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## ⏳ Status Unknown
+
+          Could not determine deployment status. This may be temporary.
+
+          **Possible Reasons:**
+          - No deployments found (first deployment pending)
+          - Vercel API temporarily unavailable
+          - Invalid project name or credentials
+
+          **Next Steps:**
+          - Check Vercel dashboard manually
+          - Verify VERCEL_TOKEN secret is configured
+          - Monitor will retry on next scheduled run
+
+          EOF
+          fi
+
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ---
+
+          ## Configuration
+
+          **Monitor Schedule:** Every 30 minutes
+          **Project Monitored:** ${{ env.PROJECT_NAME }}
+          **Auto-Issue Creation:** ✅ Enabled
+
+          ## Manual Trigger
+
+          To manually check deployment status:
+          - Go to Actions → Vercel Deployment Monitor
+          - Click "Run workflow"
+          - Select branch and click "Run"
+
+          ---
+          *Monitoring powered by GitHub Actions*
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF
+
+      - name: ⚠️ Notify on Persistent Failures
+        if: steps.monitor.outputs.deployment_status == 'failed'
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "⚠️  Deployment Failure Detected"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "An issue has been automatically created with:"
+          echo "  • Detailed error logs"
+          echo "  • Possible solutions"
+          echo "  • Links to Vercel dashboard"
+          echo ""
+          echo "Please check the Issues tab for details."
+          echo ""
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Check for Duplicate Issues (Cleanup)
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  cleanup-duplicate-issues:
+    name: 🧹 Cleanup Duplicate Issues
+    runs-on: ubuntu-latest
+    needs: monitor-deployment
+    if: always()
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔍 Find and Close Duplicate Issues
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "🧹 Checking for duplicate deployment issues..."
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+
+          # Get all open deployment issues
+          ISSUES=$(curl -s \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/issues?labels=deployment,automated&state=open&per_page=100")
+
+          # Count issues
+          ISSUE_COUNT=$(echo "$ISSUES" | grep -c '"number":' || echo 0)
+
+          echo "Found ${ISSUE_COUNT} open deployment issues"
+
+          if [ "$ISSUE_COUNT" -gt 3 ]; then
+            echo "⚠️  Multiple deployment failure issues detected"
+            echo "Consider reviewing and consolidating these issues"
+            echo ""
+            echo "To manually close duplicate issues:"
+            echo "  1. Go to Issues tab"
+            echo "  2. Filter by label: deployment, automated"
+            echo "  3. Close resolved or duplicate issues"
+          else
+            echo "✓ Issue count is within normal range"
+          fi
+
+      - name: 📊 Generate Cleanup Summary
+        if: always()
+        run: |
+          cat > $GITHUB_STEP_SUMMARY << 'EOF'
+          # 🧹 Issue Cleanup Report
+
+          ## Summary
+
+          Checked for duplicate deployment failure issues.
+
+          **Actions:**
+          - ✅ Scanned open issues with 'deployment' label
+          - ✅ Counted active deployment alerts
+
+          **Recommendations:**
+          - Close issues once deployments are fixed
+          - Keep only the most recent failure issue open
+          - Use issue comments for updates instead of creating new issues
+
+          ---
+          *Report generated at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          EOF
