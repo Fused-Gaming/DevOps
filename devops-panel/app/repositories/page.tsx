@@ -1,16 +1,14 @@
-import { Metadata } from 'next'
-import RepositoryList from '@/components/devops/repository-list'
-import { GitBranch } from 'lucide-react'
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Repository Management - DevOps Panel',
-  description: 'Manage and track all Fused-Gaming repositories',
-}
+import RepositoryList from '@/components/devops/repository-list'
+import NavShell from '@/components/layout/nav-shell'
+import { GitBranch } from 'lucide-react'
 
 export default function RepositoriesPage() {
   return (
-    <div className="min-h-screen bg-vln-bg text-vln-white p-6">
-      <div className="max-w-7xl mx-auto">
+    <NavShell>
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -50,6 +48,7 @@ export default function RepositoriesPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </NavShell>
   )
 }

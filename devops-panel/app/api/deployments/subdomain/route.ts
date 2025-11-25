@@ -136,7 +136,7 @@ export async function GET() {
     const data = await response.json();
 
     // Group deployments by project/subdomain
-    const groupedDeployments = {
+    const groupedDeployments: Record<string, any[]> = {
       "devops-panel": [],
       "design-standards": [],
     };

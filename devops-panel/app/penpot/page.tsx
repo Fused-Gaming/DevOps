@@ -1,17 +1,15 @@
-import { Metadata } from "next";
+"use client";
+
 import PenpotProjects from "@/components/penpot/penpot-projects";
 import DesignFiles from "@/components/penpot/design-files";
 import PenpotStatus from "@/components/penpot/penpot-status";
-
-export const metadata: Metadata = {
-  title: "Penpot | VLN DevOps",
-  description: "Manage design files and projects with Penpot integration",
-};
+import NavShell from "@/components/layout/nav-shell";
 
 export default function PenpotPage() {
   return (
-    <div className="min-h-screen bg-vln-bg p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <NavShell>
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-white mb-2">
@@ -81,7 +79,8 @@ export default function PenpotPage() {
             </p>
           </a>
         </div>
+        </div>
       </div>
-    </div>
+    </NavShell>
   );
 }
