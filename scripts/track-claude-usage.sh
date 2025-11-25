@@ -49,8 +49,8 @@ INPUT_COST_MICRO=$((INPUT_TOKENS * 3000 / 1000000))
 OUTPUT_COST_MICRO=$((OUTPUT_TOKENS * 15000 / 1000000))
 TOTAL_COST_MICRO=$((INPUT_COST_MICRO + OUTPUT_COST_MICRO))
 
-# Format cost in dollars
-ESTIMATED_COST=$(printf "%.4f" $(echo "scale=4; $TOTAL_COST_MICRO / 1000" | bc))
+# Format cost in dollars (using awk instead of bc for better compatibility)
+ESTIMATED_COST=$(awk "BEGIN {printf \"%.4f\", $TOTAL_COST_MICRO / 1000}")
 
 # Generate session ID (short hash)
 SESSION_ID=$(date +%s | sha256sum | head -c 8)
@@ -84,7 +84,7 @@ CURRENT_SESSIONS=$(grep "Sessions:" "$USAGE_FILE" | grep -oP '\d+' || echo 0)
 
 # Calculate new totals
 NEW_TOTAL_TOKENS=$((CURRENT_TOTAL_TOKENS + ESTIMATED_TOKENS))
-NEW_TOTAL_COST=$(echo "scale=4; $CURRENT_TOTAL_COST + $ESTIMATED_COST" | bc)
+NEW_TOTAL_COST=$(awk "BEGIN {printf \"%.4f\", $CURRENT_TOTAL_COST + $ESTIMATED_COST}")
 NEW_SESSIONS=$((CURRENT_SESSIONS + 1))
 
 # Create new entry for the table
