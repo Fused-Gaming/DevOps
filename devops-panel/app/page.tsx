@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Button from "@/components/ui/button";
+import NavShell from "@/components/layout/nav-shell";
 import StatusCard from "@/components/devops/status-card";
 import MilestoneCard from "@/components/devops/milestone-card";
 import DeploymentList from "@/components/devops/deployment-list";
@@ -12,8 +12,7 @@ import {
   Activity,
   GitBranch,
   Rocket,
-  CheckCircle,
-  LogOut
+  CheckCircle
 } from "lucide-react";
 
 export default function DashboardPage() {
@@ -57,11 +56,11 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
+    <NavShell user={user} onLogout={handleLogout}>
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
             <h1 className="text-4xl font-bold text-gradient-sage mb-2">
               DevOps Control Panel
             </h1>
@@ -69,14 +68,6 @@ export default function DashboardPage() {
               Welcome back, {user?.username || "Admin"}
             </p>
           </div>
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            icon={<LogOut />}
-          >
-            Logout
-          </Button>
-        </div>
 
         {/* Status Overview */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -135,7 +126,8 @@ export default function DashboardPage() {
           <QuickActions />
           <PenpotQuickAccess />
         </div>
+        </div>
       </div>
-    </div>
+    </NavShell>
   );
 }

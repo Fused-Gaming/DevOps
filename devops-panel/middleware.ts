@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getIronSession } from 'iron-session';
 
+export interface SessionData {
+  userId?: string;
+  username?: string;
+  isLoggedIn: boolean;
+}
+
 // Session configuration
 const sessionOptions = {
   password: process.env.SESSION_SECRET || 'complex_password_at_least_32_characters_long_change_this_in_production',
@@ -43,7 +49,7 @@ export async function middleware(request: NextRequest) {
   try {
     // Get session from cookie
     const response = NextResponse.next();
-    const session = await getIronSession(request, response, sessionOptions);
+    const session = await getIronSession<SessionData>(request, response, sessionOptions);
 
     // Check if user is logged in
     if (!session.isLoggedIn) {
