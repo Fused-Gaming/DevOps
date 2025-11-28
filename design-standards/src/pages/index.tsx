@@ -5,6 +5,7 @@ import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
+import ClaudiaWidget from '@site/src/components/ClaudiaWidget';
 
 import styles from './index.module.css';
 
@@ -39,6 +40,7 @@ export default function Home(): ReactNode {
       <main>
         <HomepageFeatures />
       </main>
+      <ClaudiaWidget />
     </Layout>
   );
 }
