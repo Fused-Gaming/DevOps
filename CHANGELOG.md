@@ -14,17 +14,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-## [Unreleased] - 2025-11-26
+## [Unreleased] - 2025-11-28
 
 ### Added
-- add Claudia AI Widget to VLN design standards site (@)
-- add Claudia's model selection & value tracking system (@)
+- add Zammad live chat widget integration for real-time support (@)
 - implement comprehensive brute force protection for login (@)
 - add navigation shell and improve devops panel UX (@)
+
+### Changed
+- replace Claudia AI Widget with Zammad live chat for better customer support (@)
 
 ### Fixed
 - prevent SSRF vulnerability in GitHub API endpoint (@)
 - replace bc with awk for better compatibility in usage tracking (@)
+
+---
+
+## [Unreleased] - 2025-11-26
+
+### Added
+- add Claudia's model selection & value tracking system (@)
 
 ---
 
