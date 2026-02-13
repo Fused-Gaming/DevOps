@@ -13,6 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2026-02-13
+
+### Changed
+- feat(design.vln.gg): replace Docusaurus default OG branding with VLN OG API endpoints (@)
+
+### Fixed
+- prevent SSRF vulnerability in GitHub API endpoint (@)
+
+---
+
 ## [Unreleased] - 2025-11-25
 
 ### Added
