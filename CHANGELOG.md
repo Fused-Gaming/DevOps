@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2026-02-14
+
+### Changed
+- chore(deps): bump webpack from 5.103.0 to 5.105.2 in /design-standards (@)
+
+---
+
 ## [Unreleased] - 2026-02-13
 
 ### Added
