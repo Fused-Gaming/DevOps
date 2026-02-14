@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2026-02-14
+
+### Changed
+- chore(deps): bump lodash from 4.17.21 to 4.17.23 in /design-standards (@)
+
+---
+
 ## [Unreleased] - 2026-02-13
 
 ### Added
