@@ -39,18 +39,28 @@ jobs:
 
           # Get file stats
           STATS=$(git diff --shortstat origin/$BASE_BRANCH...HEAD)
-          FILES_CHANGED=$(echo "$STATS" | grep -oP '\d+(?= files? changed)' || echo 0)
-          INSERTIONS=$(echo "$STATS" | grep -oP '\d+(?= insertions?)' || echo 0)
-          DELETIONS=$(echo "$STATS" | grep -oP '\d+(?= deletions?)' || echo 0)
+          FILES_CHANGED=$(echo "$STATS" | grep -oP '\d+(?= files? changed)' || echo "")
+          INSERTIONS=$(echo "$STATS" | grep -oP '\d+(?= insertions?)' || echo "")
+          DELETIONS=$(echo "$STATS" | grep -oP '\d+(?= deletions?)' || echo "")
+
+          # Ensure we have valid numbers (default to 0 if empty)
+          FILES_CHANGED=${FILES_CHANGED:-0}
+          INSERTIONS=${INSERTIONS:-0}
+          DELETIONS=${DELETIONS:-0}
 
           echo "files_changed=$FILES_CHANGED" >> $GITHUB_OUTPUT
           echo "insertions=$INSERTIONS" >> $GITHUB_OUTPUT
           echo "deletions=$DELETIONS" >> $GITHUB_OUTPUT
 
-          # Categorize commits
-          FEAT_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "feat:" || echo 0)
-          FIX_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "fix:" || echo 0)
-          DOCS_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "docs:" || echo 0)
+          # Categorize commits (grep -c returns 0 if no matches, not an error)
+          FEAT_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "feat:" || echo "0")
+          FIX_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "fix:" || echo "0")
+          DOCS_COUNT=$(git log --oneline origin/$BASE_BRANCH..HEAD | grep -c "docs:" || echo "0")
+
+          # Ensure valid numbers
+          FEAT_COUNT=${FEAT_COUNT:-0}
+          FIX_COUNT=${FIX_COUNT:-0}
+          DOCS_COUNT=${DOCS_COUNT:-0}
 
           echo "feat_count=$FEAT_COUNT" >> $GITHUB_OUTPUT
           echo "fix_count=$FIX_COUNT" >> $GITHUB_OUTPUT
