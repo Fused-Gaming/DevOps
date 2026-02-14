@@ -55,16 +55,6 @@ jobs:
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
-          output: sarif-results
-          upload: true
-
-      - name: 📊 Upload SARIF results
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: sarif-results/${{ matrix.language }}.sarif
-          category: "/language:${{ matrix.language }}"
-        continue-on-error: true
 
       - name: ✅ CodeQL Summary
         if: always()
