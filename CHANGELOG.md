@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2026-02-13
+
+### Added
+- implement comprehensive brute force protection for login (@)
+- add navigation shell and improve devops panel UX (@)
+
+### Fixed
+- Fix React Server Components CVE vulnerabilities (@)
+- prevent SSRF vulnerability in GitHub API endpoint (@)
+- replace bc with awk for better compatibility in usage tracking (@)
+
+---
+
 ## [Unreleased] - 2025-11-25
 
 ### Added
