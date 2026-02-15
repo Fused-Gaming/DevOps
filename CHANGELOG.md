@@ -24,9 +24,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2026-02-13
 
+### Changed
+- feat(design.vln.gg): replace Docusaurus default OG branding with VLN OG API endpoints (@)
+
+### Fixed
+- prevent SSRF vulnerability in GitHub API endpoint (@)
+
+## [Unreleased] - 2026-02-15
+
+### Changed
+- chore(deps): bump webpack from 5.103.0 to 5.105.2 in /design-standards (@)
+- feat(design.vln.gg): replace Docusaurus default OG branding with VLN OG API endpoints (@)
+
+### Fixed
+- fix(ci): remove duplicate SARIF upload in CodeQL workflow (@)
+
+---
+
+## [Unreleased] - 2026-02-14
+
 ### Added
 - implement comprehensive brute force protection for login (@)
 - add navigation shell and improve devops panel UX (@)
+
+### Changed
+- chore(deps): bump next from 15.5.6 to 15.5.10 in /devops-panel (@)
+
+### Fixed
+- chore(deps): bump requests from 2.31.0 to 2.32.4 (@)
+
+### Fixed
+- chore(deps): bump webpack from 5.103.0 to 5.105.2 in /design-standards (@)
+- feat(design.vln.gg): replace Docusaurus default OG branding with VLN OG API endpoints (@)
 
 ### Fixed
 - Fix React Server Components CVE vulnerabilities (@)
