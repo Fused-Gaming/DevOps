@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add navigation shell and improve devops panel UX (@)
 
 ### Changed
+- chore(deps): bump next from 15.5.6 to 15.5.10 in /devops-panel (@)
+
+### Fixed
 - chore(deps): bump requests from 2.31.0 to 2.32.4 (@)
 
 ### Fixed
