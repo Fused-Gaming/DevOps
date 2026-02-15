@@ -2,7 +2,6 @@
 <!--
   Sitemap generated automatically
   Author: Unknown <unknown@example.com>
-  Generated: 2026-02-14
   Generated: 2026-02-15
   Code sign-off: Unknown
 -->
@@ -14,7 +13,6 @@
   <!-- Homepage -->
   <url>
     <loc>https://example.com/</loc>
-    <lastmod>2026-02-14</lastmod>
     <lastmod>2026-02-15</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -23,7 +21,6 @@
   <!-- Documentation -->
   <url>
     <loc>https://example.com/docs</loc>
-    <lastmod>2026-02-14</lastmod>
     <lastmod>2026-02-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -32,7 +29,6 @@
   <!-- Quick Access -->
   <url>
     <loc>https://example.com/quick-access</loc>
-    <lastmod>2026-02-14</lastmod>
     <lastmod>2026-02-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -41,7 +37,6 @@
   <!-- Cheat Sheet -->
   <url>
     <loc>https://example.com/cheatsheet</loc>
-    <lastmod>2026-02-14</lastmod>
     <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -50,7 +45,6 @@
   <!-- Security Guide -->
   <url>
     <loc>https://example.com/security</loc>
-    <lastmod>2026-02-14</lastmod>
     <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -59,7 +53,6 @@
   <!-- GitHub Actions -->
   <url>
     <loc>https://example.com/github-actions</loc>
-    <lastmod>2026-02-14</lastmod>
     <lastmod>2026-02-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
