@@ -184,13 +184,19 @@ jobs:
           EXISTING_COMMENT=$(gh pr view "$PR_NUMBER" --json comments --jq ".comments[] | select(.body | contains(\"Workflow Summary: $WORKFLOW_NAME\")) | .id" | head -1 || echo "")
 
           if [ -n "$EXISTING_COMMENT" ]; then
-            # Update existing comment
+            # Try to update existing comment
             echo "→ Updating existing comment ID: $EXISTING_COMMENT"
-            gh api \
+            if gh api \
               -X PATCH \
               "/repos/${{ github.repository }}/issues/comments/$EXISTING_COMMENT" \
-              -f body="$(cat /tmp/report.md)"
-            echo "✓ Comment updated"
+              -f body="$(cat /tmp/report.md)" 2>/dev/null; then
+              echo "✓ Comment updated"
+            else
+              # Comment doesn't exist anymore, create new one
+              echo "⚠️ Comment not found (may have been deleted), creating new comment"
+              gh pr comment "$PR_NUMBER" --body-file /tmp/report.md
+              echo "✓ New comment posted"
+            fi
           else
             # Create new comment
             echo "→ Creating new comment"

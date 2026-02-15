@@ -48,6 +48,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - implement comprehensive brute force protection for login (@)
 - add navigation shell and improve devops panel UX (@)
 
+### Fixed
+- fix(ci): handle deleted comments in workflow summary reporter (@)
 ### Changed
 - chore(deps): bump next from 15.5.6 to 15.5.10 in /devops-panel (@)
 
