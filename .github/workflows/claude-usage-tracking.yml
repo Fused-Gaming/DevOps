@@ -272,7 +272,6 @@ jobs:
     name: 🧪 Run Tests with Troubleshooting
     runs-on: ubuntu-latest
     needs: track-usage
-    if: hashFiles('package.json') != '' || hashFiles('requirements.txt') != ''
 
     steps:
       - name: 📥 Checkout code

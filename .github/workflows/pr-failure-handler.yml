@@ -209,55 +209,55 @@ jobs:
 
           # Create detailed comment
           cat > /tmp/close_comment.md << 'COMMENT_EOF'
-## 🚨 PR Automatically Closed - Critical Failures Detected
+          ## 🚨 PR Automatically Closed - Critical Failures Detected
 
-This PR has been automatically closed due to critical failures in the CI/CD pipeline that make it **unsafe to merge**.
+          This PR has been automatically closed due to critical failures in the CI/CD pipeline that make it **unsafe to merge**.
 
-### ❌ Failure Summary
+          ### ❌ Failure Summary
 
-**Critical Failures:** ${{ steps.analyze.outputs.critical_failures }}
-**Security Issues:** ${{ steps.analyze.outputs.security_failures }}
-**Build Failures:** ${{ steps.analyze.outputs.build_failures }}
-**Test Failures:** ${{ steps.analyze.outputs.test_failures }}
+          **Critical Failures:** ${{ steps.analyze.outputs.critical_failures }}
+          **Security Issues:** ${{ steps.analyze.outputs.security_failures }}
+          **Build Failures:** ${{ steps.analyze.outputs.build_failures }}
+          **Test Failures:** ${{ steps.analyze.outputs.test_failures }}
 
-### 📋 Failure Details
+          ### 📋 Failure Details
 
-${{ steps.analyze.outputs.failure_details }}
+          ${{ steps.analyze.outputs.failure_details }}
 
-### 🔧 What to Do Next
+          ### 🔧 What to Do Next
 
-1. **Review the CI/CD logs** to understand the specific failures
-2. **Fix the issues** in your local branch
-3. **Test locally** to ensure the fixes work
-4. **Push your fixes** to reopen or create a new PR
-5. **Ensure all checks pass** before requesting review
+          1. **Review the CI/CD logs** to understand the specific failures
+          2. **Fix the issues** in your local branch
+          3. **Test locally** to ensure the fixes work
+          4. **Push your fixes** to reopen or create a new PR
+          5. **Ensure all checks pass** before requesting review
 
-### 📚 Resources
+          ### 📚 Resources
 
-- [CI/CD Pipeline Documentation](https://github.com/${{ github.repository }}/blob/main/.github/workflows/ci-cd-enhanced.yml)
-- [Security Best Practices](https://github.com/${{ github.repository }}/blob/main/docs/)
-- [Troubleshooting Guide](https://github.com/${{ github.repository }}/blob/main/docs/)
+          - [CI/CD Pipeline Documentation](https://github.com/${{ github.repository }}/blob/main/.github/workflows/ci-cd-enhanced.yml)
+          - [Security Best Practices](https://github.com/${{ github.repository }}/blob/main/docs/)
+          - [Troubleshooting Guide](https://github.com/${{ github.repository }}/blob/main/docs/)
 
-COMMENT_EOF
+          COMMENT_EOF
 
           # Add issue reference if documented bug
           if [ "${{ steps.check_bugs.outputs.is_documented_bug }}" == "true" ]; then
             cat >> /tmp/close_comment.md << 'ISSUE_REF'
 
-### 🐛 Related Issue
+            ### 🐛 Related Issue
 
-This failure matches a documented bug pattern. An issue has been created to track this problem:
-- **Category:** ${{ steps.check_bugs.outputs.bug_category }}
+            This failure matches a documented bug pattern. An issue has been created to track this problem:
+            - **Category:** ${{ steps.check_bugs.outputs.bug_category }}
 
-ISSUE_REF
+            ISSUE_REF
           fi
 
           cat >> /tmp/close_comment.md << 'FOOTER'
 
----
-*This PR was automatically closed by the [PR Failure Handler](.github/workflows/pr-failure-handler.yml) workflow.*
-*Once the issues are resolved, you can reopen this PR or create a new one.*
-FOOTER
+          ---
+          *This PR was automatically closed by the [PR Failure Handler](.github/workflows/pr-failure-handler.yml) workflow.*
+          *Once the issues are resolved, you can reopen this PR or create a new one.*
+          FOOTER
 
           # Post comment and close PR
           gh pr comment "$PR_NUMBER" --body-file /tmp/close_comment.md
@@ -285,75 +285,75 @@ FOOTER
             echo "   Adding comment to existing issue instead"
 
             cat > /tmp/issue_comment.md << COMMENT_EOF
-## 🔄 Another PR Affected by This Bug
+            ## 🔄 Another PR Affected by This Bug
 
-**PR:** #$PR_NUMBER
-**Branch:** \`${{ github.head_ref || github.ref_name }}\`
-**Triggered by:** @${{ github.actor }}
-**Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+            **PR:** #$PR_NUMBER
+            **Branch:** \`${{ github.head_ref || github.ref_name }}\`
+            **Triggered by:** @${{ github.actor }}
+            **Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 
-### Failure Details
+            ### Failure Details
 
-${{ steps.analyze.outputs.failure_details }}
+            ${{ steps.analyze.outputs.failure_details }}
 
-This PR has been automatically closed due to this bug.
-COMMENT_EOF
+            This PR has been automatically closed due to this bug.
+            COMMENT_EOF
 
             gh issue comment "$EXISTING_ISSUE" --body-file /tmp/issue_comment.md
             echo "✓ Updated issue #$EXISTING_ISSUE"
           else
             # Create new issue
             cat > /tmp/new_issue.md << 'ISSUE_EOF'
-## 🐛 Bug Description
+            ## 🐛 Bug Description
 
-${{ steps.check_bugs.outputs.bug_description }}
+            ${{ steps.check_bugs.outputs.bug_description }}
 
-## 📊 Details
+            ## 📊 Details
 
-- **Category:** ${{ steps.check_bugs.outputs.bug_category }}
-- **First detected in PR:** #${{ steps.get_pr.outputs.pr_number }}
-- **Branch:** `${{ github.head_ref || github.ref_name }}`
-- **Workflow:** Enhanced CI/CD Pipeline
-- **Detection date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+            - **Category:** ${{ steps.check_bugs.outputs.bug_category }}
+            - **First detected in PR:** #${{ steps.get_pr.outputs.pr_number }}
+            - **Branch:** `${{ github.head_ref || github.ref_name }}`
+            - **Workflow:** Enhanced CI/CD Pipeline
+            - **Detection date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 
-## 🔍 Failure Information
+            ## 🔍 Failure Information
 
-${{ steps.analyze.outputs.failure_details }}
+            ${{ steps.analyze.outputs.failure_details }}
 
-## 🔧 Recommended Actions
+            ## 🔧 Recommended Actions
 
-### For GitHub Actions Permission Errors:
-1. Check repository settings under Settings > Actions > General
-2. Enable "Allow GitHub Actions to create and approve pull requests"
-3. Or use a Personal Access Token (PAT) with appropriate permissions
+            ### For GitHub Actions Permission Errors:
+            1. Check repository settings under Settings > Actions > General
+            2. Enable "Allow GitHub Actions to create and approve pull requests"
+            3. Or use a Personal Access Token (PAT) with appropriate permissions
 
-### For Security Vulnerabilities:
-1. Run `npm audit` locally to see detailed vulnerability report
-2. Run `npm audit fix` to automatically fix compatible issues
-3. For remaining issues, manually update packages or find alternatives
-4. Consider using Dependabot for automated security updates
+            ### For Security Vulnerabilities:
+            1. Run `npm audit` locally to see detailed vulnerability report
+            2. Run `npm audit fix` to automatically fix compatible issues
+            3. For remaining issues, manually update packages or find alternatives
+            4. Consider using Dependabot for automated security updates
 
-### For Exposed Secrets:
-1. Remove any hardcoded credentials from the codebase
-2. Use environment variables or GitHub Secrets instead
-3. Rotate any exposed credentials immediately
-4. Add patterns to `.gitignore` to prevent future exposure
+            ### For Exposed Secrets:
+            1. Remove any hardcoded credentials from the codebase
+            2. Use environment variables or GitHub Secrets instead
+            3. Rotate any exposed credentials immediately
+            4. Add patterns to `.gitignore` to prevent future exposure
 
-### For Build Failures:
-1. Review the build logs for specific error messages
-2. Ensure all dependencies are properly installed
-3. Check for syntax errors or type issues
-4. Test the build locally before pushing
+            ### For Build Failures:
+            1. Review the build logs for specific error messages
+            2. Ensure all dependencies are properly installed
+            3. Check for syntax errors or type issues
+            4. Test the build locally before pushing
 
-## 📚 Related Documentation
+            ## 📚 Related Documentation
 
-- [CI/CD Pipeline](.github/workflows/ci-cd-enhanced.yml)
-- [Security Guidelines](docs/)
-- [Contributing Guide](CONTRIBUTING.md)
+            - [CI/CD Pipeline](.github/workflows/ci-cd-enhanced.yml)
+            - [Security Guidelines](docs/)
+            - [Contributing Guide](CONTRIBUTING.md)
 
----
-*This issue was automatically created by the [PR Failure Handler](.github/workflows/pr-failure-handler.yml) workflow.*
-ISSUE_EOF
+            ---
+            *This issue was automatically created by the [PR Failure Handler](.github/workflows/pr-failure-handler.yml) workflow.*
+            ISSUE_EOF
 
             # Create the issue
             ISSUE_URL=$(gh issue create \

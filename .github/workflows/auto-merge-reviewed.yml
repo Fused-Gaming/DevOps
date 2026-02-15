@@ -94,21 +94,21 @@ jobs:
 
           # Approve the PR
           cat > /tmp/approve_body.md << 'APPROVE_EOF'
-## ✅ Auto-Approval
+          ## ✅ Auto-Approval
 
-All checks have passed successfully!
+          All checks have passed successfully!
 
-**Validation Results:**
-- ✅ All CI/CD checks passed
-- ✅ No merge conflicts
-- ✅ Branch is up to date
-- ✅ Ready for merge
+          **Validation Results:**
+          - ✅ All CI/CD checks passed
+          - ✅ No merge conflicts
+          - ✅ Branch is up to date
+          - ✅ Ready for merge
 
-This PR will be automatically merged.
+          This PR will be automatically merged.
 
----
-*Auto-approved by auto-merge-reviewed workflow*
-APPROVE_EOF
+          ---
+          *Auto-approved by auto-merge-reviewed workflow*
+          APPROVE_EOF
 
           gh pr review "$PR_NUMBER" --approve --body-file /tmp/approve_body.md
 
@@ -193,12 +193,12 @@ PR status checked. Waiting for conditions to enable auto-merge."
           fi
 
           cat > /tmp/status_comment.md <<STATUS_EOF
-$STATUS_MESSAGE
+          $STATUS_MESSAGE
 
----
-*Status checked at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
-*Workflow: auto-merge-reviewed*
-STATUS_EOF
+          ---
+          *Status checked at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          *Workflow: auto-merge-reviewed*
+          STATUS_EOF
 
           gh pr comment "$PR_NUMBER" --body-file /tmp/status_comment.md || true
 
