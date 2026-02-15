@@ -178,19 +178,19 @@ jobs:
             echo "   Updating existing issue..."
 
             cat > /tmp/issue_update.md << UPDATE_EOF
-## 🔄 New Failure Detected
+            ## 🔄 New Failure Detected
 
-**Commit:** \`$COMMIT_SHA\`
-**Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-**Workflow Run:** [View Logs](https://github.com/${{ github.repository }}/actions/runs/$RUN_ID)
+            **Commit:** \`$COMMIT_SHA\`
+            **Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+            **Workflow Run:** [View Logs](https://github.com/${{ github.repository }}/actions/runs/$RUN_ID)
 
-### Failure Details
+            ### Failure Details
 
-${{ steps.analyze_failures.outputs.failure_summary }}
+            ${{ steps.analyze_failures.outputs.failure_summary }}
 
----
-*Updated automatically by CI/CD Failure Monitor*
-UPDATE_EOF
+            ---
+            *Updated automatically by CI/CD Failure Monitor*
+            UPDATE_EOF
 
             gh issue comment "$EXISTING_ISSUE" --body-file /tmp/issue_update.md
             echo "issue_number=$EXISTING_ISSUE" >> $GITHUB_OUTPUT
@@ -206,63 +206,63 @@ UPDATE_EOF
             fi
 
             cat > /tmp/new_issue.md << ISSUE_EOF
-## $SEVERITY CI/CD Pipeline Failure
+            ## $SEVERITY CI/CD Pipeline Failure
 
-The CI/CD pipeline failed for branch \`$BRANCH_NAME\`.
+            The CI/CD pipeline failed for branch \`$BRANCH_NAME\`.
 
-### 📊 Failure Information
+            ### 📊 Failure Information
 
-**Branch:** \`$BRANCH_NAME\`
-**Commit:** \`$COMMIT_SHA\`
-**Author:** @${{ github.actor }}
-**Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-**Workflow Run:** [View Detailed Logs](https://github.com/${{ github.repository }}/actions/runs/$RUN_ID)
+            **Branch:** \`$BRANCH_NAME\`
+            **Commit:** \`$COMMIT_SHA\`
+            **Author:** @${{ github.actor }}
+            **Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+            **Workflow Run:** [View Detailed Logs](https://github.com/${{ github.repository }}/actions/runs/$RUN_ID)
 
-### ❌ What Failed
+            ### ❌ What Failed
 
-${{ steps.analyze_failures.outputs.failure_summary }}
+            ${{ steps.analyze_failures.outputs.failure_summary }}
 
-### 🔧 Troubleshooting Steps
+            ### 🔧 Troubleshooting Steps
 
-#### For Security Failures:
-1. Run \`npm audit\` locally to see all vulnerabilities
-2. Run \`npm audit fix\` to automatically fix issues
-3. For remaining issues, manually update packages
-4. Check for exposed secrets with \`git grep -E "(api[_-]?key|secret|password)"\`
-5. Remove any .env files from git tracking
+            #### For Security Failures:
+            1. Run \`npm audit\` locally to see all vulnerabilities
+            2. Run \`npm audit fix\` to automatically fix issues
+            3. For remaining issues, manually update packages
+            4. Check for exposed secrets with \`git grep -E "(api[_-]?key|secret|password)"\`
+            5. Remove any .env files from git tracking
 
-#### For Build Failures:
-1. Pull the latest changes: \`git pull origin $BRANCH_NAME\`
-2. Clean install dependencies: \`rm -rf node_modules && npm install\`
-3. Try building locally: \`npm run build\`
-4. Check for syntax errors in modified files
-5. Verify all imports and dependencies are correct
+            #### For Build Failures:
+            1. Pull the latest changes: \`git pull origin $BRANCH_NAME\`
+            2. Clean install dependencies: \`rm -rf node_modules && npm install\`
+            3. Try building locally: \`npm run build\`
+            4. Check for syntax errors in modified files
+            5. Verify all imports and dependencies are correct
 
-#### For Test Failures:
-1. Run tests locally: \`npm test\`
-2. Review failing test output
-3. Update tests if behavior changed intentionally
-4. Fix code if tests caught a bug
+            #### For Test Failures:
+            1. Run tests locally: \`npm test\`
+            2. Review failing test output
+            3. Update tests if behavior changed intentionally
+            4. Fix code if tests caught a bug
 
-### 📋 Next Steps
+            ### 📋 Next Steps
 
-- [ ] Review the workflow logs linked above
-- [ ] Reproduce the failure locally
-- [ ] Fix the underlying issue
-- [ ] Push fixes to the branch
-- [ ] Verify CI/CD passes
-- [ ] Close this issue once resolved
+            - [ ] Review the workflow logs linked above
+            - [ ] Reproduce the failure locally
+            - [ ] Fix the underlying issue
+            - [ ] Push fixes to the branch
+            - [ ] Verify CI/CD passes
+            - [ ] Close this issue once resolved
 
-### 🔗 Related Links
+            ### 🔗 Related Links
 
-- **Branch:** [\`$BRANCH_NAME\`](https://github.com/${{ github.repository }}/tree/$BRANCH_NAME)
-- **Commit:** [\`${COMMIT_SHA:0:7}\`](https://github.com/${{ github.repository }}/commit/$COMMIT_SHA)
-- **Workflow:** [Enhanced CI/CD Pipeline](https://github.com/${{ github.repository }}/actions/runs/$RUN_ID)
+            - **Branch:** [\`$BRANCH_NAME\`](https://github.com/${{ github.repository }}/tree/$BRANCH_NAME)
+            - **Commit:** [\`${COMMIT_SHA:0:7}\`](https://github.com/${{ github.repository }}/commit/$COMMIT_SHA)
+            - **Workflow:** [Enhanced CI/CD Pipeline](https://github.com/${{ github.repository }}/actions/runs/$RUN_ID)
 
----
-*This issue was automatically created by the [CI/CD Failure Monitor](.github/workflows/auto-draft-pr.yml) workflow.*
-*To prevent automatic issue creation, fix the CI/CD failures before pushing.*
-ISSUE_EOF
+            ---
+            *This issue was automatically created by the [CI/CD Failure Monitor](.github/workflows/auto-draft-pr.yml) workflow.*
+            *To prevent automatic issue creation, fix the CI/CD failures before pushing.*
+            ISSUE_EOF
 
             ISSUE_URL=$(gh issue create \
               --title "CI/CD Failure: $BRANCH_NAME" \

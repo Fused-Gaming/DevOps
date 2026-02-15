@@ -35,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - chore(deps): bump webpack from 5.103.0 to 5.105.2 in /design-standards (@)
+
+### Fixed
+- fix(ci): resolve YAML syntax errors in 4 workflow files (@)
 - feat(design.vln.gg): replace Docusaurus default OG branding with VLN OG API endpoints (@)
 
 ### Fixed

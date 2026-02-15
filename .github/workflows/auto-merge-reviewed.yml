@@ -94,21 +94,21 @@ jobs:
 
           # Approve the PR
           cat > /tmp/approve_body.md << 'APPROVE_EOF'
-## ✅ Auto-Approval
+          ## ✅ Auto-Approval
 
-All checks have passed successfully!
+          All checks have passed successfully!
 
-**Validation Results:**
-- ✅ All CI/CD checks passed
-- ✅ No merge conflicts
-- ✅ Branch is up to date
-- ✅ Ready for merge
+          **Validation Results:**
+          - ✅ All CI/CD checks passed
+          - ✅ No merge conflicts
+          - ✅ Branch is up to date
+          - ✅ Ready for merge
 
-This PR will be automatically merged.
+          This PR will be automatically merged.
 
----
-*Auto-approved by auto-merge-reviewed workflow*
-APPROVE_EOF
+          ---
+          *Auto-approved by auto-merge-reviewed workflow*
+          APPROVE_EOF
 
           gh pr review "$PR_NUMBER" --approve --body-file /tmp/approve_body.md
 
@@ -156,49 +156,64 @@ APPROVE_EOF
           PR_NUMBER="${{ github.event.pull_request.number }}"
 
           if [ "${{ steps.pr_status.outputs.can_merge }}" == "true" ]; then
-            STATUS_MESSAGE="## ✅ Ready to Merge
+            STATUS_MESSAGE=$(cat << 'MSG'
+            ## ✅ Ready to Merge
 
-All conditions met for auto-merge:
-- ✅ All checks passed
-- ✅ No conflicts
-- ✅ PR approved
-- 🔄 Auto-merge enabled
+            All conditions met for auto-merge:
+            - ✅ All checks passed
+            - ✅ No conflicts
+            - ✅ PR approved
+            - 🔄 Auto-merge enabled
 
-The PR will merge automatically."
+            The PR will merge automatically.
+            MSG
+            )
           elif [ "${{ steps.pr_status.outputs.pending_checks }}" -gt 0 ]; then
-            STATUS_MESSAGE="## ⏳ Waiting for Checks
+            STATUS_MESSAGE=$(cat << 'MSG'
+            ## ⏳ Waiting for Checks
 
-Some checks are still running. Will auto-merge when:
-- All checks pass
-- No merge conflicts remain
-- PR is approved"
+            Some checks are still running. Will auto-merge when:
+            - All checks pass
+            - No merge conflicts remain
+            - PR is approved
+            MSG
+            )
           elif [ "${{ steps.pr_status.outputs.failed_checks }}" -gt 0 ]; then
-            STATUS_MESSAGE="## ❌ Checks Failed
+            STATUS_MESSAGE=$(cat << 'MSG'
+            ## ❌ Checks Failed
 
-Some CI/CD checks failed. Please review and fix:
-- Review failed check logs
-- Push fixes to this branch
-- Checks will re-run automatically"
+            Some CI/CD checks failed. Please review and fix:
+            - Review failed check logs
+            - Push fixes to this branch
+            - Checks will re-run automatically
+            MSG
+            )
           elif [ "${{ steps.pr_status.outputs.is_draft }}" == "true" ]; then
-            STATUS_MESSAGE="## 📝 Draft PR
+            STATUS_MESSAGE=$(cat << 'MSG'
+            ## 📝 Draft PR
 
-This PR is still a draft. To enable auto-merge:
-1. Click 'Ready for review' button
-2. Wait for checks to complete
-3. PR will auto-approve and merge"
+            This PR is still a draft. To enable auto-merge:
+            1. Click 'Ready for review' button
+            2. Wait for checks to complete
+            3. PR will auto-approve and merge
+            MSG
+            )
           else
-            STATUS_MESSAGE="## ℹ️ Status Update
+            STATUS_MESSAGE=$(cat << 'MSG'
+            ## ℹ️ Status Update
 
-PR status checked. Waiting for conditions to enable auto-merge."
+            PR status checked. Waiting for conditions to enable auto-merge.
+            MSG
+            )
           fi
 
           cat > /tmp/status_comment.md <<STATUS_EOF
-$STATUS_MESSAGE
+          $STATUS_MESSAGE
 
----
-*Status checked at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
-*Workflow: auto-merge-reviewed*
-STATUS_EOF
+          ---
+          *Status checked at: $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+          *Workflow: auto-merge-reviewed*
+          STATUS_EOF
 
           gh pr comment "$PR_NUMBER" --body-file /tmp/status_comment.md || true
 
