@@ -40,6 +40,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - add navigation shell and improve devops panel UX (@)
 
 ### Changed
+- chore(deps): bump requests from 2.31.0 to 2.32.4 (@)
+
+### Fixed
 - chore(deps): bump webpack from 5.103.0 to 5.105.2 in /design-standards (@)
 - feat(design.vln.gg): replace Docusaurus default OG branding with VLN OG API endpoints (@)
 
