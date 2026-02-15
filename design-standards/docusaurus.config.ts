@@ -35,6 +35,23 @@ const config: Config = {
     locales: ['en'],
   },
 
+  headTags: [
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'preconnect',
+        href: 'https://fonts.googleapis.com',
+      },
+    },
+    {
+      tagName: 'link',
+      attributes: {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;700&display=swap',
+      },
+    },
+  ],
+
   presets: [
     [
       'classic',
@@ -54,8 +71,18 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'https://vln.gg/api/og/design',
+    metadata: [
+      { name: 'og:image',         content: 'https://vln.gg/api/og/design' },
+      { name: 'og:image:width',   content: '1200' },
+      { name: 'og:image:height',  content: '630' },
+      { name: 'og:image:type',    content: 'image/png' },
+      { name: 'og:type',          content: 'website' },
+      { name: 'og:site_name',     content: 'VLN Design System' },
+      { name: 'twitter:card',     content: 'summary_large_image' },
+      { name: 'twitter:image',    content: 'https://vln.gg/api/og/design' },
+      { name: 'twitter:site',     content: '@vlnsecurity' },
+    ],
     colorMode: {
       respectPrefersColorScheme: true,
     },
