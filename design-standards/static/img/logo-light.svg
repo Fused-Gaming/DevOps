@@ -1,9 +1,7 @@
 <svg width="120" height="125" viewBox="0 0 100 125" xmlns="http://www.w3.org/2000/svg">
-  <!-- VLN Shield Mark — Dark Mode (Primary) -->
+  <!-- VLN Shield Mark — Light Mode -->
   <path d="M50 0 L100 20 L100 70 C100 95 75 115 50 125 C25 115 0 95 0 70 L0 20 Z"
-        fill="#0a0e0f"
-        stroke="#86d993"
-        stroke-width="3"/>
+        fill="#151a1c"/>
   <!-- Inner Accent Chevron -->
   <path d="M20 40 L50 25 L80 40"
         stroke="#86d993"
@@ -16,7 +14,7 @@
         font-family="Inter, system-ui, -apple-system, sans-serif"
         font-size="32"
         font-weight="700"
-        fill="#86d993"
+        fill="#f8f9fa"
         letter-spacing="2">
     VLN
   </text>

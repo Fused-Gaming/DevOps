@@ -1,0 +1,49 @@
+<svg width="480" height="140" viewBox="0 0 480 140" xmlns="http://www.w3.org/2000/svg">
+  <!-- VLN Full Logo Lockup — Dark Mode -->
+
+  <!-- Shield Icon -->
+  <g transform="translate(20,20)">
+    <path d="M50 0 L100 20 L100 70 C100 95 75 115 50 125 C25 115 0 95 0 70 L0 20 Z"
+          fill="#0a0e0f"
+          stroke="#86d993"
+          stroke-width="3"/>
+
+    <!-- Inner Accent Chevron -->
+    <path d="M20 40 L50 25 L80 40"
+          stroke="#86d993"
+          stroke-width="4"
+          fill="none"
+          stroke-linecap="round"/>
+
+    <!-- VLN Integrated -->
+    <text x="50" y="78"
+          text-anchor="middle"
+          font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="32"
+          font-weight="700"
+          fill="#86d993"
+          letter-spacing="2">
+      VLN
+    </text>
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(160,55)">
+    <text font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="42"
+          font-weight="700"
+          fill="#f8f9fa"
+          letter-spacing="4">
+      VLN
+    </text>
+
+    <text y="32"
+          font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="14"
+          fill="#cbd5e1"
+          letter-spacing="2">
+      SMART CONTRACT SECURITY LAB
+    </text>
+  </g>
+
+</svg>
