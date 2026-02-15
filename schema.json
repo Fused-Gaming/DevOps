@@ -6,7 +6,6 @@
   "metadata": {
     "author": "Unknown",
     "email": "unknown@example.com",
-    "generated": "2026-02-13",
     "generated": "2026-02-15",
     "version": "1.0.0",
     "repository": "https://github.com/Fused-Gaming/DevOps",
@@ -22,8 +21,6 @@
       "name": "Unknown",
       "email": "unknown@example.com"
     },
-    "dateCreated": "2026-02-13",
-    "dateModified": "2026-02-13",
     "dateCreated": "2026-02-15",
     "dateModified": "2026-02-15",
     "codeRepository": "https://github.com/Fused-Gaming/DevOps",
