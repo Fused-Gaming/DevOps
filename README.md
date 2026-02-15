@@ -1027,3 +1027,79 @@ npm publish @yourcompany/devops-cli
 **Happy DevOps-ing! 🚀**
 
 _Making professional DevOps practices accessible to everyone, one command at a time._
+
+---
+
+## Design System (design.vln.gg)
+
+The `design-standards/` directory contains the VLN Design System — a Docusaurus v3 site deployed at **https://design.vln.gg**.
+
+### Design Documentation
+
+| Document | Description |
+|----------|-------------|
+| [VLN Logo Standards](design-standards/docs/branding/logo.md) | Comprehensive logo usage guidelines (colors, sizing, clear space, placement, WCAG AAA) |
+| [Brand Assets](design-standards/docs/branding/assets.md) | Complete asset library |
+| [Voice & Tone](design-standards/docs/branding/voice-tone.md) | Brand communication style |
+| [Color System](design-standards/docs/design-system/colors.md) | WCAG AAA accessible color palette |
+| [Typography](design-standards/docs/design-system/typography.md) | Font system (Inter + JetBrains Mono) |
+| [Components](design-standards/docs/design-system/components.md) | Reusable UI components |
+
+### VLN Brand Tokens (Quick Reference)
+
+```css
+--vln-bg:      #0a0e0f   /* Matte Charcoal — page background */
+--vln-sage:    #86d993   /* Primary brand — CTAs, success */
+--vln-blue:    #7dd3fc   /* Docs/API — technical content */
+--vln-purple:  #c084fc   /* Design system, premium */
+--vln-white:   #f8f9fa   /* Primary text */
+```
+
+---
+
+## Repository Documentation Index
+
+### Root-Level Reference Documents
+
+| File | Category | Description |
+|------|----------|-------------|
+| [CHANGELOG.md](CHANGELOG.md) | Release | Version history and release notes |
+| [CLAUDE.md](CLAUDE.md) | Agent Config | Claude Code directives and project context |
+| [CLAUDE_USAGE.md](CLAUDE_USAGE.md) | Agent Config | Claude Code usage tracking guide |
+| [DEPLOYMENT.md](DEPLOYMENT.md) | Infrastructure | Deployment procedures and configuration |
+| [DEVOPS-CHEATSHEET.txt](DEVOPS-CHEATSHEET.txt) | Reference | Quick command reference cheatsheet |
+| [DEVOPS-PANEL-INTEGRATION.md](DEVOPS-PANEL-INTEGRATION.md) | Infrastructure | DevOps control panel integration guide |
+| [KICKSTARTER_CLAUDE.md](KICKSTARTER_CLAUDE.md) | Agent Config | Claude agent kickstarter prompts |
+| [MILESTONE-AUTOMATION-RECOMMENDATIONS.md](MILESTONE-AUTOMATION-RECOMMENDATIONS.md) | CI/CD | Milestone automation recommendations |
+| [NEW-FEATURES-GUIDE.md](NEW-FEATURES-GUIDE.md) | Reference | Guide to new features (v2.0+) |
+| [PERMISSIONS_FIX.md](PERMISSIONS_FIX.md) | Troubleshooting | GitHub permissions troubleshooting |
+| [PR_SUMMARY.md](PR_SUMMARY.md) | CI/CD | PR summary template and guide |
+| [SETUP_NEXT_STEPS.md](SETUP_NEXT_STEPS.md) | Setup | Post-setup next steps guide |
+| [STOP_HOOK_RESOLUTION.md](STOP_HOOK_RESOLUTION.md) | Troubleshooting | Stop hook issue resolution guide |
+
+### docs/ Directory
+
+| File | Category | Description |
+|------|----------|-------------|
+| [docs/AUTO-PR-COMMIT-GUIDE.md](docs/AUTO-PR-COMMIT-GUIDE.md) | CI/CD | Automated PR and commit message guide |
+| [docs/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS.md](docs/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS.md) | Documentation | Feature docs implementation guide |
+| [docs/FEATURE-DOCS-README.md](docs/FEATURE-DOCS-README.md) | Documentation | Feature documentation README |
+| [docs/FEATURE-DOCUMENTATION-GUIDE.md](docs/FEATURE-DOCUMENTATION-GUIDE.md) | Documentation | Complete feature documentation guide |
+| [docs/FLOW-REFERENCE.md](docs/FLOW-REFERENCE.md) | Reference | Workflow flow reference |
+| [docs/HYBRID-SETUP-GUIDE.md](docs/HYBRID-SETUP-GUIDE.md) | Setup | Hybrid setup guide |
+| [docs/MILESTONE-FIX-GUIDE.md](docs/MILESTONE-FIX-GUIDE.md) | Troubleshooting | Milestone fix guide |
+| [docs/MILESTONE-TRACKING.md](docs/MILESTONE-TRACKING.md) | CI/CD | Milestone tracking usage guide |
+| [docs/MVP-STATUS.md](docs/MVP-STATUS.md) | Planning | MVP status tracking |
+| [docs/MVP-SUMMARY.md](docs/MVP-SUMMARY.md) | Planning | MVP feature summary |
+| [docs/MVP.md](docs/MVP.md) | Planning | MVP definition and requirements |
+| [docs/PR-COMMIT-QUICKREF.md](docs/PR-COMMIT-QUICKREF.md) | Reference | PR and commit quick reference |
+| [docs/REPOSITORY-INVENTORY.md](docs/REPOSITORY-INVENTORY.md) | Reference | Full repository inventory |
+| [docs/ROLLOUT-PLAN.md](docs/ROLLOUT-PLAN.md) | Planning | Feature rollout plan |
+| [docs/SUBDOMAIN-ARCHITECTURE.md](docs/SUBDOMAIN-ARCHITECTURE.md) | Infrastructure | vln.gg subdomain architecture |
+| [docs/TIERED-FEATURE-WORKFLOW.md](docs/TIERED-FEATURE-WORKFLOW.md) | CI/CD | Tiered feature workflow guide |
+| [docs/USAGE-TRACKING-GUIDE.md](docs/USAGE-TRACKING-GUIDE.md) | Reference | Claude usage tracking guide |
+| [docs/VERCEL-DEPLOYMENT-MONITORING.md](docs/VERCEL-DEPLOYMENT-MONITORING.md) | Infrastructure | Vercel deployment monitoring |
+
+---
+
+**Last Updated**: 2026-02-15 | **Maintainer**: VLN DevOps Team / Fused Gaming
