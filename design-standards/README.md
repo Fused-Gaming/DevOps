@@ -18,7 +18,20 @@ npm run build   # Production build
 - **Tools**: Open source design tools (Penpot, Inkscape, GIMP)
 - **Workflows**: ASCII design, mockup workflow, prototyping
 - **Responsive**: Breakpoints, layouts, testing strategies
-- **Branding**: Logo, voice/tone, assets
+- **Branding**: Comprehensive logo standards, voice/tone, brand assets
+
+### Featured Documentation
+
+- **[VLN Logo Standards](docs/branding/logo.md)** - Complete guidelines for logo usage including:
+  - Color variants and approved combinations (VLN sage #86d993, white, dark)
+  - Clear space requirements (logo height ÷ 2 on all sides)
+  - Minimum sizing (32px web, 0.25" print)
+  - Placement guidelines for web, print, and social media
+  - Accessibility compliance (WCAG AAA)
+  - Do's and don'ts with visual examples
+- **[Color System](docs/design-system/colors.md)** - WCAG AAA accessible palette with VLN brand colors
+- **[Typography](docs/design-system/typography.md)** - Font system and pairing guidelines
+- **[Components](docs/design-system/components.md)** - Reusable UI components
 
 ## Key Features
 
