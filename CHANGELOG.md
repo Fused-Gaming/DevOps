@@ -14,6 +14,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2026-02-15
+
+### Changed
+- chore(deps): bump webpack from 5.103.0 to 5.105.2 in /design-standards (@)
+- feat(design.vln.gg): replace Docusaurus default OG branding with VLN OG API endpoints (@)
+
+### Fixed
+- fix(ci): remove duplicate SARIF upload in CodeQL workflow (@)
+
+---
+
 ## [Unreleased] - 2026-02-14
 
 ### Added
