@@ -3,74 +3,258 @@ id: logo
 title: VLN Logo Standards
 sidebar_position: 1
 description: Comprehensive guidelines for using the VLN logo with proper spacing, sizing, colors, and placement rules
+image: https://vln.gg/api/og?title=Logo%20Standards&subtitle=VLN%20Brand%20Identity&accent=purple&subdomain=design
 ---
 
 # VLN Logo Standards
 
-Official guidelines for using the VLN logo across all products, platforms, and marketing materials.
+Official guidelines for using the VLN logo across all products, platforms, and marketing materials. The VLN logo is a shield mark with an integrated chevron accent and wordmark — representing security, structure, and technical precision. All variants use VLN design tokens; never substitute colors or fonts.
 
-## Overview
+---
 
-The VLN logo is our primary brand identifier. Consistent usage ensures brand recognition and professionalism across all touchpoints. These standards apply to all VLN products, documentation, marketing materials, and third-party partnerships.
+## Logo Anatomy
+
+The logo consists of two primary elements:
+
+1. **Shield Mark** — the standalone icon used for compact contexts (navbar, favicon, app icons)
+2. **Full Lockup** — shield mark paired with the wordmark and tagline
+
+### Shield Mark Structure
+
+```
+┌─────────────────────────┐
+│      ╱ chevron ╲        │  ← Accent chevron (#86d993)
+│     ╱           ╲       │
+│                         │
+│        V L N            │  ← Brand text, Inter 700
+│                         │
+│     ╲           ╱       │
+│      ╲─────────╱        │  ← Shield base
+└─────────────────────────┘
+```
+
+- **Shield path**: Geometric shield with straight top edges tapering to a pointed base
+- **Chevron**: Open upward-facing accent line above the wordmark (`stroke-linecap: round`)
+- **VLN text**: Centered, Inter bold, `letter-spacing: 2`
+
+---
 
 ## Logo Variants
 
-### Primary Logo
+### Dark Mode (Primary)
 
-The primary VLN logo consists of:
-- **Wordmark**: "VLN" in custom typography
-- **Icon**: Signature brand mark (if applicable)
-- **Lockup**: Combined wordmark + icon
+The dark mode logo is the **primary** variant. VLN defaults to dark mode.
 
-### Available Formats
+| Element | Color | Token |
+|---------|-------|-------|
+| Shield fill | `#0a0e0f` | `--vln-bg` |
+| Shield stroke | `#86d993` | `--vln-sage` |
+| Chevron accent | `#86d993` | `--vln-sage` |
+| VLN shield text | `#86d993` | `--vln-sage` |
+| Wordmark | `#f8f9fa` | `--vln-white` |
+| Tagline | `#cbd5e1` | `--vln-gray` |
 
-| Format | Use Case | File |
-|--------|----------|------|
-| **SVG** | Web, scalable graphics | `logo.svg` |
-| **PNG (512×512)** | High-resolution, transparency | `logo.png` |
-| **PNG (180×180)** | iOS app icon | `apple-touch-icon.png` |
-| **ICO** | Browser favicon | `favicon.ico` |
-| **WebP** | Modern web format | `logo.webp` |
+**Dark mode shield mark:**
 
-### Color Variants
+<div style={{background: '#0a0e0f', padding: '32px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(134, 217, 147, 0.2)'}}>
+  <img src="/img/logo.svg" alt="VLN Shield — Dark Mode" width="100" />
+</div>
 
-The logo is available in multiple color configurations:
+**Dark mode full lockup:**
 
-#### On Dark Backgrounds (Primary)
-- **Full Color**: Sage green (#86d993) accent with white text
-- **Monochrome White**: All white (#f8f9fa) for maximum contrast
-- **Sage Variant**: All sage green (#86d993)
+<div style={{background: '#0a0e0f', padding: '32px', borderRadius: '12px', textAlign: 'center', border: '1px solid rgba(134, 217, 147, 0.2)'}}>
+  <img src="/img/vln-logo-full-dark.svg" alt="VLN Full Logo — Dark Mode" width="480" />
+</div>
 
-```css
-/* Primary logo on dark backgrounds */
-.logo-primary {
-  color: var(--vln-sage); /* #86d993 */
-  background: var(--vln-bg); /* #0a0e0f */
-}
+### Light Mode
 
-.logo-white {
-  color: var(--vln-white); /* #f8f9fa */
-  background: var(--vln-bg); /* #0a0e0f */
-}
+The light mode variant uses a dark shield fill without an outline stroke, maintaining brand presence on light backgrounds.
+
+| Element | Color | Token |
+|---------|-------|-------|
+| Shield fill | `#151a1c` | `--vln-bg-light` |
+| Shield stroke | none | — |
+| Chevron accent | `#86d993` | `--vln-sage` |
+| VLN shield text | `#f8f9fa` | `--vln-white` |
+| Wordmark | `#0a0e0f` | `--vln-bg` |
+| Tagline | `#94a3b8` | `--vln-gray-dark` |
+
+**Light mode shield mark:**
+
+<div style={{background: '#ffffff', padding: '32px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e2e8f0'}}>
+  <img src="/img/logo-light.svg" alt="VLN Shield — Light Mode" width="100" />
+</div>
+
+**Light mode full lockup:**
+
+<div style={{background: '#ffffff', padding: '32px', borderRadius: '12px', textAlign: 'center', border: '1px solid #e2e8f0'}}>
+  <img src="/img/vln-logo-full-light.svg" alt="VLN Full Logo — Light Mode" width="480" />
+</div>
+
+---
+
+## Logo Files
+
+All logo assets live in `static/img/`:
+
+| File | Variant | Use Case |
+|------|---------|----------|
+| `logo.svg` | Shield, dark mode | Navbar (dark theme), primary mark |
+| `logo-light.svg` | Shield, light mode | Navbar (light theme) |
+| `vln-logo-full-dark.svg` | Full lockup, dark mode | Hero sections, docs headers, presentations |
+| `vln-logo-full-light.svg` | Full lockup, light mode | Print, light-background contexts |
+| `favicon.svg` | Shield, compact | Browser favicon (SVG) |
+| `favicon.ico` | Shield, raster | Browser favicon (legacy) |
+
+**CDN access**: `https://design.vln.gg/img/logo.svg`
+
+---
+
+## SVG Source — Dark Mode Shield
+
+```xml
+<svg width="120" height="125" viewBox="0 0 100 125"
+     xmlns="http://www.w3.org/2000/svg">
+  <path d="M50 0 L100 20 L100 70 C100 95 75 115 50 125
+           C25 115 0 95 0 70 L0 20 Z"
+        fill="#0a0e0f"
+        stroke="#86d993"
+        stroke-width="3"/>
+  <path d="M20 40 L50 25 L80 40"
+        stroke="#86d993"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+  <text x="50" y="78"
+        text-anchor="middle"
+        font-family="Inter, system-ui, -apple-system, sans-serif"
+        font-size="32"
+        font-weight="700"
+        fill="#86d993"
+        letter-spacing="2">
+    VLN
+  </text>
+</svg>
 ```
 
-#### On Light Backgrounds (Secondary)
-- **Full Color**: Sage green accent with dark text
-- **Monochrome Dark**: All dark (#0a0e0f) for contrast
+## SVG Source — Dark Mode Full Lockup
 
-```css
-/* Logo on light backgrounds (use sparingly) */
-.logo-dark {
-  color: var(--vln-bg); /* #0a0e0f */
-  background: #ffffff;
-}
+```xml
+<svg width="480" height="140" viewBox="0 0 480 140"
+     xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(20,20)">
+    <path d="M50 0 L100 20 L100 70 C100 95 75 115 50 125
+             C25 115 0 95 0 70 L0 20 Z"
+          fill="#0a0e0f"
+          stroke="#86d993"
+          stroke-width="3"/>
+    <path d="M20 40 L50 25 L80 40"
+          stroke="#86d993"
+          stroke-width="4"
+          fill="none"
+          stroke-linecap="round"/>
+    <text x="50" y="78"
+          text-anchor="middle"
+          font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="32"
+          font-weight="700"
+          fill="#86d993"
+          letter-spacing="2">
+      VLN
+    </text>
+  </g>
+  <g transform="translate(160,55)">
+    <text font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="42"
+          font-weight="700"
+          fill="#f8f9fa"
+          letter-spacing="4">
+      VLN
+    </text>
+    <text y="32"
+          font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="14"
+          fill="#cbd5e1"
+          letter-spacing="2">
+      SMART CONTRACT SECURITY LAB
+    </text>
+  </g>
+</svg>
 ```
+
+## SVG Source — Light Mode Shield
+
+```xml
+<svg width="120" height="125" viewBox="0 0 100 125"
+     xmlns="http://www.w3.org/2000/svg">
+  <path d="M50 0 L100 20 L100 70 C100 95 75 115 50 125
+           C25 115 0 95 0 70 L0 20 Z"
+        fill="#151a1c"/>
+  <path d="M20 40 L50 25 L80 40"
+        stroke="#86d993"
+        stroke-width="4"
+        fill="none"
+        stroke-linecap="round"/>
+  <text x="50" y="78"
+        text-anchor="middle"
+        font-family="Inter, system-ui, -apple-system, sans-serif"
+        font-size="32"
+        font-weight="700"
+        fill="#f8f9fa"
+        letter-spacing="2">
+    VLN
+  </text>
+</svg>
+```
+
+## SVG Source — Light Mode Full Lockup
+
+```xml
+<svg width="480" height="140" viewBox="0 0 480 140"
+     xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(20,20)">
+    <path d="M50 0 L100 20 L100 70 C100 95 75 115 50 125
+             C25 115 0 95 0 70 L0 20 Z"
+          fill="#151a1c"/>
+    <path d="M20 40 L50 25 L80 40"
+          stroke="#86d993"
+          stroke-width="4"
+          fill="none"
+          stroke-linecap="round"/>
+    <text x="50" y="78"
+          text-anchor="middle"
+          font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="32"
+          font-weight="700"
+          fill="#f8f9fa"
+          letter-spacing="2">
+      VLN
+    </text>
+  </g>
+  <g transform="translate(160,55)">
+    <text font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="42"
+          font-weight="700"
+          fill="#0a0e0f"
+          letter-spacing="4">
+      VLN
+    </text>
+    <text y="32"
+          font-family="Inter, system-ui, -apple-system, sans-serif"
+          font-size="14"
+          fill="#94a3b8"
+          letter-spacing="2">
+      SMART CONTRACT SECURITY LAB
+    </text>
+  </g>
+</svg>
+```
+
+---
 
 ## Clear Space
 
 Maintain minimum clear space around the logo to ensure visibility and impact.
-
-### Clear Space Rules
 
 **Minimum clear space = X**
 - X = Height of the logo ÷ 2
@@ -83,16 +267,14 @@ Maintain minimum clear space around the logo to ensure visibility and impact.
 │         ← X →                  │
 │    ┌─────────────────┐    ↑    │
 │  ↑ │                 │    X    │
-│  X │   VLN LOGO      │    ↓    │
+│  X │   SHIELD MARK   │    ↓    │
 │  ↓ │                 │         │
 │    └─────────────────┘         │
 │         ← X →                  │
 └────────────────────────────────┘
 ```
 
-### Examples
-
-✅ **Correct**: Adequate breathing room
+✅ **Correct** — adequate breathing room:
 ```
 
      ╔═══════════════╗
@@ -101,162 +283,98 @@ Maintain minimum clear space around the logo to ensure visibility and impact.
 
 ```
 
-❌ **Incorrect**: Too cramped
+❌ **Incorrect** — too cramped:
 ```
 Text ╔═══════════╗ Other
 Here ║ VLN LOGO  ║ Content
      ╚═══════════╝
 ```
 
+---
+
 ## Sizing Guidelines
 
 ### Minimum Sizes
 
-To maintain legibility and brand integrity:
+| Format | Minimum Width | Notes |
+|--------|---------------|-------|
+| Shield mark | 32px | Favicon, app icons |
+| Shield mark | 48px | Inline UI, navigation |
+| Full lockup | 200px | Headers, hero sections |
+| Full lockup | 320px | Print, presentations |
+| Digital/Web | 120px wide | Ensure readability on mobile |
+| Print | 0.75 inches | —  |
+| Mobile App Icons | 180px | Square variants |
 
-| Format | Minimum Width | Minimum Height |
-|--------|---------------|----------------|
-| **Digital/Web** | 120px | 32px |
-| **Print** | 0.75 inches | 0.25 inches |
-| **Mobile App Icons** | 180px | 180px |
-| **Favicon** | 32px | 32px |
+### Recommended Sizes by Context
 
-### Recommended Sizes
+| Context | Recommended Size |
+|---------|-----------------|
+| Website header | 160–200px wide |
+| Email signature | 120–150px wide |
+| Social media profile | 400×400px minimum |
+| Print letterhead | 1.5–2 inches wide |
+| Business card | 1–1.25 inches wide |
+| Presentation slide | 200–300px wide |
 
-| Context | Size | Notes |
-|---------|------|-------|
-| **Website Header** | 160-200px wide | Ensure readability on mobile |
-| **Email Signature** | 120-150px wide | Balance with text |
-| **Social Media Profile** | 400×400px min | Platform specific |
-| **Print Letterhead** | 1.5-2 inches wide | Top left or center |
-| **Business Cards** | 1-1.25 inches wide | Proportional to card size |
-| **Presentations** | 200-300px wide | Slide corners |
+✅ **Always scale proportionally** — lock aspect ratio, use SVG where possible.
 
-### Scaling
-
-✅ **Always scale proportionally**
-- Lock aspect ratio when resizing
-- Use vector formats (SVG) when possible
-- Never stretch or compress
-
-❌ **Never distort**
+❌ **Never distort:**
 ```
 Correct:  ╔═══╗    Wrong:  ╔═════════╗
-          ║ V ║            ║    V    ║
-          ║ L ║            ║    L    ║  ← Stretched
-          ║ N ║            ║    N    ║
-          ╚═══╝            ╚═════════╝
-
-Correct:  ╔═══╗    Wrong:  ╔═╗
-          ║ V ║            ║V║
-          ║ L ║            ║L║  ← Compressed
-          ║ N ║            ║N║
-          ╚═══╝            ╚═╝
+          ║ V ║            ║    V    ║  ← Stretched
+          ║ L ║            ╚═════════╝
+          ║ N ║
+          ╚═══╝
 ```
+
+---
 
 ## Color Usage
 
-### Approved Color Combinations
+### Approved Combinations
 
-#### Dark Backgrounds (Recommended)
+| Logo Color | Background | Contrast | Grade |
+|------------|------------|----------|-------|
+| Sage `#86d993` | VLN Dark `#0a0e0f` | 8.2:1 | AAA ✅ |
+| White `#f8f9fa` | VLN Dark `#0a0e0f` | 19.2:1 | AAA ✅ |
+| Sky Blue `#7dd3fc` | VLN Dark `#0a0e0f` | 9.5:1 | AAA ✅ |
+| Purple `#c084fc` | VLN Dark `#0a0e0f` | 7.8:1 | AAA ✅ |
+| VLN Dark `#0a0e0f` | White `#ffffff` | 19.2:1 | AAA ✅ |
 
-| Logo Color | Background | Contrast Ratio | Grade |
-|------------|------------|----------------|-------|
-| Sage (#86d993) | VLN Dark (#0a0e0f) | 8.2:1 | AAA ✅ |
-| White (#f8f9fa) | VLN Dark (#0a0e0f) | 19.2:1 | AAA ✅ |
-| Sky Blue (#7dd3fc) | VLN Dark (#0a0e0f) | 9.5:1 | AAA ✅ |
-| Purple (#c084fc) | VLN Dark (#0a0e0f) | 7.8:1 | AAA ✅ |
+### Background Compatibility
 
-#### Light Backgrounds (Use Sparingly)
+| Background | Logo Variant | Notes |
+|------------|-------------|-------|
+| `#0a0e0f` (`--vln-bg`) | Dark mode | Primary usage |
+| `#151a1c` (`--vln-bg-light`) | Dark mode | Cards, panels |
+| `#1f2527` (`--vln-bg-lighter`) | Dark mode | Hover states |
+| `#ffffff` (white) | Light mode | Print, light UI |
+| `#f9fafb` (light gray) | Light mode | Light surfaces |
 
-| Logo Color | Background | Contrast Ratio | Grade |
-|------------|------------|----------------|-------|
-| VLN Dark (#0a0e0f) | White (#ffffff) | 19.2:1 | AAA ✅ |
-| VLN Dark (#0a0e0f) | Light Gray (#f1f5f9) | 17.1:1 | AAA ✅ |
+❌ **Never use**: arbitrary colors, gradients on the logo itself, neon colors, or the original `#00CFFF` cyan — always use `#86d993` sage.
 
-### Color Don'ts
-
-❌ **Never use**:
-- Arbitrary colors outside VLN palette
-- Low-contrast combinations (< 4.5:1)
-- Gradients on the logo itself
-- Neon or fluorescent colors
-- Multiple accent colors simultaneously
-
-### VLN Brand Colors Reference
-
-```css
-/* Copy these exact values */
---vln-bg:           #0a0e0f   /* Matte Charcoal - primary background */
---vln-bg-light:     #151a1c   /* Cards, sections */
---vln-bg-lighter:   #1f2527   /* Hover states */
---vln-sage:         #86d993   /* Primary brand - CTAs, success */
---vln-blue:         #7dd3fc   /* Docs/API - technical content */
---vln-amber:        #fbbf24   /* Alerts, urgency */
---vln-purple:       #c084fc   /* Design system, premium */
---vln-white:        #f8f9fa   /* Primary text */
---vln-gray:         #cbd5e1   /* Secondary text */
-```
-
-See [Color System](/design-system/colors) for complete palette.
+---
 
 ## Placement Guidelines
 
 ### Website Headers
 
-**Recommended placement:**
-- Top left (standard web convention)
-- Centered (landing pages, marketing)
-- Size: 160-200px wide, adjust for mobile
-
 ```html
-<!-- Responsive header logo -->
-<header className="bg-vln-bg border-b border-vln-bg-lighter">
-  <img
-    src="/logo.svg"
-    alt="VLN Logo"
-    className="h-12 w-auto"
-  />
-</header>
+<!-- Responsive header logo — HTML -->
+<img src="/img/logo.svg" alt="VLN Shield Logo" width="160" height="auto" loading="eager" />
 ```
 
-### Marketing Materials
-
-**Print placement:**
-- Top left corner or centered header
-- Bottom right for subtle branding
-- Consistent placement across material series
-
-**Digital placement:**
-- Hero sections: Large, centered
-- Cards/thumbnails: Top left, 40-60px
-- Footers: 100-120px wide
-
-### Social Media
-
-| Platform | Specs | Notes |
-|----------|-------|-------|
-| **Twitter/X Profile** | 400×400px | Use square logo variant |
-| **LinkedIn Profile** | 400×400px | Minimum 300×300px |
-| **Facebook Profile** | 180×180px | Displays at 170×170px |
-| **Instagram Profile** | 320×320px | Minimum 110×110px |
-| **YouTube Channel** | 800×800px | Displays at 98×98px |
-| **Discord Server** | 512×512px | Minimum 128×128px |
-
-## Usage Examples
-
-### Web Implementation
-
 ```tsx
-// Next.js Image component (recommended)
+// Next.js — theme-aware
 import Image from 'next/image';
 
-function Header() {
+function Header({ isDark }) {
   return (
     <header className="bg-vln-bg p-4">
       <Image
-        src="/logo.svg"
-        alt="VLN Logo"
+        src={isDark ? '/img/logo.svg' : '/img/logo-light.svg'}
+        alt="VLN Shield Logo"
         width={160}
         height={40}
         priority
@@ -266,36 +384,31 @@ function Header() {
 }
 ```
 
-```html
-<!-- Standard HTML -->
-<img
-  src="/logo.svg"
-  alt="VLN Logo"
-  width="160"
-  height="40"
-  loading="eager"
-/>
+### Docusaurus Integration
+
+```ts
+// docusaurus.config.ts — theme-aware navbar logo
+navbar: {
+  title: 'VLN Design',
+  logo: {
+    alt: 'VLN Shield Logo',
+    src: 'img/logo-light.svg',     // Light theme
+    srcDark: 'img/logo.svg',       // Dark theme (primary)
+  },
+},
 ```
 
-### Email Signatures
+### Social Media Specs
 
-```html
-<table>
-  <tr>
-    <td>
-      <img
-        src="https://vln.gg/logo.png"
-        alt="VLN"
-        width="120"
-        height="30"
-        style="display:block;"
-      />
-    </td>
-  </tr>
-</table>
-```
+| Platform | Specs | Notes |
+|----------|-------|-------|
+| Twitter/X Profile | 400×400px | Use square shield variant |
+| LinkedIn Profile | 400×400px | Minimum 300×300px |
+| Facebook Profile | 180×180px | Displays at 170×170px |
+| Instagram Profile | 320×320px | Minimum 110×110px |
+| Discord Server | 512×512px | Minimum 128×128px |
 
-### Print (CSS)
+### Print
 
 ```css
 @media print {
@@ -306,31 +419,21 @@ function Header() {
 }
 ```
 
+---
+
 ## Accessibility
 
 ### Alt Text
 
 Always include descriptive alt text:
 
-✅ **Good alt text:**
-- `alt="VLN Logo"`
-- `alt="VLN - Vulnerability Lifecycle Network"`
-- `alt="VLN Security Platform"`
+✅ `alt="VLN Shield Logo"` | `alt="VLN — Smart Contract Security Lab"` | `alt="VLN Security Platform"`
 
-❌ **Poor alt text:**
-- `alt="logo"`
-- `alt="image"`
-- `alt=""` (unless purely decorative)
-
-### Contrast Requirements
-
-- Logo must meet WCAG AA minimum (4.5:1) for text
-- Recommended: WCAG AAA (7:1) for enhanced accessibility
-- All VLN logo variants meet AAA standards on dark backgrounds
+❌ `alt="logo"` | `alt="image"` | `alt=""` (unless purely decorative)
 
 ### Focus Indicators
 
-When logo is clickable (e.g., links to homepage):
+When the logo is a link:
 
 ```css
 .logo-link:focus {
@@ -340,154 +443,84 @@ When logo is clickable (e.g., links to homepage):
 }
 ```
 
-## Best Practices
+---
+
+## Do's and Don'ts
 
 ### Do's ✅
 
-- **Use official logo files** from approved repository
-- **Maintain aspect ratio** when scaling
-- **Provide adequate clear space** (minimum = logo height ÷ 2)
-- **Use high-contrast backgrounds** (WCAG AAA compliant)
-- **Use vector formats (SVG)** for scalability
-- **Include alt text** for accessibility
-- **Test on multiple devices** before publishing
-- **Follow VLN color palette** exactly (#86d993 sage, etc.)
+- Use the dark mode shield on dark backgrounds (`#0a0e0f`, `#151a1c`)
+- Use the light mode shield on white or light gray backgrounds
+- Maintain the aspect ratio — never stretch or distort
+- Use SVG format whenever possible for crisp rendering at all sizes
+- Reference the `--vln-sage` token (`#86d993`) for the accent color
+- Provide adequate clear space (minimum = logo height ÷ 2)
+- Include descriptive alt text for accessibility
+- Use official logo files from this repository
 
 ### Don'ts ❌
 
-- **Don't distort or skew** the logo
-- **Don't rotate** to angles other than 0°, 90°, 180°, 270°
-- **Don't add effects** (shadows, outlines, glows) unless specified
-- **Don't place on busy backgrounds** (photos, complex patterns)
-- **Don't use unapproved colors** outside VLN palette
-- **Don't recreate or modify** logo elements
-- **Don't place inside shapes** (circles, squares) unless lockup variant
-- **Don't use low-resolution raster** images when vector available
-- **Don't animate** without brand team approval
-- **Don't use old versions** of the logo
+- Don't change the shield fill, stroke, or text colors
+- Don't remove the chevron accent — it's part of the mark
+- Don't add drop shadows, outer glows, or other effects to the logo
+- Don't place the dark mode logo on light backgrounds (or vice versa)
+- Don't rotate, skew, or apply perspective transforms
+- Don't substitute Montserrat, Arial, or other fonts — use Inter only
+- Don't use the original `#00CFFF` cyan — always use `#86d993` sage
+- Don't use unapproved colors outside the VLN palette
+- Don't use old versions of the logo
 
-### Common Mistakes
+---
 
-❌ **Incorrect:**
-```
-1. Logo on complex photo background (poor contrast)
-2. Stretched logo (wrong aspect ratio)
-3. Logo in unapproved color (#00ff00)
-4. Text too close to logo (no clear space)
-5. Tiny logo (below 32px minimum)
-6. Drop shadow added to logo
+## Favicon Config
+
+```ts
+favicon: 'img/favicon.ico',
 ```
 
-✅ **Correct:**
-```
-1. Logo on solid VLN dark background (#0a0e0f)
-2. Proportionally scaled logo
-3. Logo in VLN sage (#86d993) or white (#f8f9fa)
-4. Adequate clear space (logo height ÷ 2)
-5. Logo meets minimum 32px height
-6. Clean logo without effects
-```
+The SVG favicon at `img/favicon.svg` uses the shield mark with VLN text at 8px for browser tab rendering.
 
-## Download & Access
+---
 
-### Official Repository
+## Design Token Reference
 
-All logo files available at:
-- **GitHub**: [Fused-Gaming/DevOps/design-standards/static/img/](https://github.com/Fused-Gaming/DevOps/tree/main/design-standards/static/img/)
-- **CDN**: `https://design.vln.gg/img/logo.svg`
-- **NPM Package**: `@vln/design-assets` (coming soon)
+All logo colors map directly to the VLN design token system. See [Colors](/design-system/colors) for the complete token reference.
 
-### File Structure
+| Token | Hex | Logo Usage |
+|-------|-----|------------|
+| `--vln-bg` | `#0a0e0f` | Dark shield fill |
+| `--vln-bg-light` | `#151a1c` | Light-mode shield fill |
+| `--vln-sage` | `#86d993` | Accent stroke, chevron, dark-mode text |
+| `--vln-white` | `#f8f9fa` | Light-mode shield text, dark wordmark |
+| `--vln-gray` | `#cbd5e1` | Dark-mode tagline |
+| `--vln-gray-dark` | `#94a3b8` | Light-mode tagline |
 
-```
-design-standards/static/img/
-├── logo.svg           # Primary vector logo
-├── logo.png           # 512×512px raster
-├── logo-white.svg     # White variant
-├── logo-dark.svg      # Dark variant (for light backgrounds)
-├── favicon.ico        # Browser favicon
-├── apple-touch-icon.png  # iOS icon (180×180)
-└── logo-square.svg    # Square variant (social media)
-```
-
-### Quick Links
-
-- 📦 [Download all logo files (ZIP)](https://github.com/Fused-Gaming/DevOps/archive/refs/heads/main.zip)
-- 🎨 [View in Figma](https://figma.com/vln-design-system) *(coming soon)*
-- 🖼️ [View in Penpot](https://penpot.vln.gg) *(coming soon)*
+---
 
 ## Third-Party Usage
 
-### Partner/Affiliate Guidelines
-
 When using the VLN logo in partnership materials:
 
-1. **Get approval**: Contact brand@vln.gg for usage approval
-2. **Follow these standards**: All guidelines apply
-3. **Provide attribution**: "VLN is a trademark of Fused Gaming"
-4. **Avoid implications**: Don't imply endorsement without agreement
-5. **Use current logo**: Always use latest version from repository
+1. **Get approval** — contact brand@vln.gg for usage approval
+2. **Follow these standards** — all guidelines apply
+3. **Provide attribution** — "VLN is a trademark of Fused Gaming"
+4. **Use current logo** — always use latest version from repository
 
-### Press & Media
+❌ **Never**: use logo to suggest VLN endorsement without permission, sell or distribute logo files, or incorporate logo into another company's name or mark.
 
-Media outlets may use the VLN logo in coverage:
-- Editorial use permitted without prior approval
-- Commercial use requires written permission
-- Must follow sizing and clear space guidelines
-- Download from official repository only
-
-### Prohibited Uses
-
-❌ **Never**:
-- Use logo to suggest VLN endorsement without permission
-- Sell or distribute logo files
-- Incorporate logo into your company name or logo
-- Use logo in misleading or illegal context
-- Claim trademark or ownership of VLN logo
-
-## Brand Compliance
-
-### Review Process
-
-Before publishing materials with VLN logo:
-
-1. **Self-review** against this checklist:
-   - [ ] Using official logo file from repository
-   - [ ] Logo sized at or above minimum (32px height)
-   - [ ] Clear space maintained (logo height ÷ 2)
-   - [ ] Correct colors from VLN palette
-   - [ ] High contrast background (WCAG AAA)
-   - [ ] Aspect ratio locked, no distortion
-   - [ ] Alt text included (for web)
-
-2. **Request review** (for major campaigns):
-   - Email: brand@vln.gg
-   - Include: Mockups, usage context, distribution plan
-
-### Reporting Violations
-
-If you encounter misuse of the VLN logo:
-- Report to: brand@vln.gg
-- Include: Screenshots, URL, context
-- We'll address promptly to protect brand integrity
+---
 
 ## Related Resources
 
-- **[Brand Assets](/branding/assets)** - Complete asset library
-- **[Color System](/design-system/colors)** - VLN color palette & tokens
-- **[Typography](/design-system/typography)** - Font pairing with logo
-- **[Voice & Tone](/branding/voice-tone)** - Brand communication style
-- **[Design Tools](/tools/design-tools)** - Tools for working with assets
+- **[Brand Assets](/branding/assets)** — Complete asset library
+- **[Color System](/design-system/colors)** — VLN color palette & tokens
+- **[Typography](/design-system/typography)** — Font pairing with logo
+- **[Voice & Tone](/branding/voice-tone)** — Brand communication style
 
-## Questions?
-
-**Need help?**
-- 📧 Email: brand@vln.gg
-- 💬 Discord: [VLN Community](https://discord.gg/vln)
-- 📚 Docs: [design.vln.gg](https://design.vln.gg)
+**Questions?** Email brand@vln.gg or join [VLN Discord](https://discord.gg/vln)
 
 ---
 
 **Last Updated**: 2026-02-15
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Maintained by**: VLN Design Team / Fused Gaming
