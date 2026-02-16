@@ -89,8 +89,9 @@ const config: Config = {
     navbar: {
       title: 'VLN Design',
       logo: {
-        alt: 'VLN Logo',
-        src: 'img/logo.svg',
+        alt: 'VLN Shield Logo',
+        src: 'img/logo-light.svg',
+        srcDark: 'img/logo.svg',
       },
       items: [
         {

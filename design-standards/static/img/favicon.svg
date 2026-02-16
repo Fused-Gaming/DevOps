@@ -1,6 +1,23 @@
 <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="32" height="32" rx="6" fill="#0a0e0f"/>
-  <text x="16" y="22" font-family="Inter, sans-serif" font-size="14" font-weight="700" text-anchor="middle" fill="#86d993">
+  <!-- VLN Shield Favicon -->
+  <path d="M16 2 L30 8 L30 20 C30 28 23 33 16 36 C9 33 2 28 2 20 L2 8 Z"
+        fill="#0a0e0f"
+        stroke="#86d993"
+        stroke-width="1.5"
+        transform="scale(0.85) translate(2.8, 0)"/>
+  <!-- Accent Chevron -->
+  <path d="M9 13 L16 9 L23 13"
+        stroke="#86d993"
+        stroke-width="1.5"
+        fill="none"
+        stroke-linecap="round"/>
+  <!-- VLN Text -->
+  <text x="16" y="23"
+        text-anchor="middle"
+        font-family="Inter, system-ui, sans-serif"
+        font-size="8"
+        font-weight="700"
+        fill="#86d993">
     VLN
   </text>
 </svg>
