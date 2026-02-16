@@ -39,7 +39,7 @@ jobs:
           fetch-depth: 0
 
       - name: 🔧 Initialize CodeQL
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: ${{ matrix.language }}
           # Override automatic language detection if needed
@@ -49,22 +49,14 @@ jobs:
       # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, Swift)
       # If autobuild fails, replace with custom build steps
       - name: 🏗️ Autobuild
-        uses: github/codeql-action/autobuild@v3
+        uses: github/codeql-action/autobuild@v4
 
       - name: 🔍 Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
-          output: sarif-results
-          upload: true
-
-      - name: 📊 Upload SARIF results
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: sarif-results/${{ matrix.language }}.sarif
-          category: "/language:${{ matrix.language }}"
-        continue-on-error: true
+          # Note: analyze action handles SARIF upload automatically
+          # No need for separate upload-sarif step
 
       - name: ✅ CodeQL Summary
         if: always()
