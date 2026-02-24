@@ -2,7 +2,7 @@
 <!--
   Sitemap generated automatically
   Author: Unknown <unknown@example.com>
-  Generated: 2026-02-15
+  Generated: 2026-02-24
   Code sign-off: Unknown
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -13,7 +13,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://example.com/</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2026-02-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -21,7 +21,7 @@
   <!-- Documentation -->
   <url>
     <loc>https://example.com/docs</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2026-02-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -29,7 +29,7 @@
   <!-- Quick Access -->
   <url>
     <loc>https://example.com/quick-access</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2026-02-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -37,7 +37,7 @@
   <!-- Cheat Sheet -->
   <url>
     <loc>https://example.com/cheatsheet</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2026-02-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -45,7 +45,7 @@
   <!-- Security Guide -->
   <url>
     <loc>https://example.com/security</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2026-02-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -53,25 +53,97 @@
   <!-- GitHub Actions -->
   <url>
     <loc>https://example.com/github-actions</loc>
-    <lastmod>2026-02-15</lastmod>
+    <lastmod>2026-02-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Add more URLs dynamically from markdown files -->
 
-  <!-- docs/MVP-STATUS.md -->
+  <!-- docs/SUBDOMAIN-ARCHITECTURE.md -->
   <url>
-    <loc>https://example.com/MVP-STATUS</loc>
+    <loc>https://example.com/SUBDOMAIN-ARCHITECTURE</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/MILESTONE-FIX-GUIDE.md -->
+  <url>
+    <loc>https://example.com/MILESTONE-FIX-GUIDE</loc>
     <lastmod>2025-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- docs/templates/FEATURE_TEMPLATE.md -->
+  <!-- docs/FEATURE-DOCS-README.md -->
   <url>
-    <loc>https://example.com/templates/FEATURE_TEMPLATE</loc>
+    <loc>https://example.com/FEATURE-DOCS-README</loc>
     <lastmod>2025-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/MILESTONE-TRACKING.md -->
+  <url>
+    <loc>https://example.com/MILESTONE-TRACKING</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/VERCEL-DEPLOYMENT-MONITORING.md -->
+  <url>
+    <loc>https://example.com/VERCEL-DEPLOYMENT-MONITORING</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/FEATURE-DOCUMENTATION-GUIDE.md -->
+  <url>
+    <loc>https://example.com/FEATURE-DOCUMENTATION-GUIDE</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/FLOW-REFERENCE.md -->
+  <url>
+    <loc>https://example.com/FLOW-REFERENCE</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/MVP.md -->
+  <url>
+    <loc>https://example.com/MVP</loc>
+    <lastmod>2025-11-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/AUTO-PR-COMMIT-GUIDE.md -->
+  <url>
+    <loc>https://example.com/AUTO-PR-COMMIT-GUIDE</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/MVP-SUMMARY.md -->
+  <url>
+    <loc>https://example.com/MVP-SUMMARY</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- docs/USAGE-TRACKING-GUIDE.md -->
+  <url>
+    <loc>https://example.com/USAGE-TRACKING-GUIDE</loc>
+    <lastmod>2025-11-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -92,49 +164,17 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- docs/MILESTONE-TRACKING.md -->
+  <!-- docs/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS.md -->
   <url>
-    <loc>https://example.com/MILESTONE-TRACKING</loc>
-    <lastmod>2025-11-19</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/PR-COMMIT-QUICKREF.md -->
-  <url>
-    <loc>https://example.com/PR-COMMIT-QUICKREF</loc>
-    <lastmod>2025-11-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/MVP.md -->
-  <url>
-    <loc>https://example.com/MVP</loc>
-    <lastmod>2025-11-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/FEATURE-DOCUMENTATION-GUIDE.md -->
-  <url>
-    <loc>https://example.com/FEATURE-DOCUMENTATION-GUIDE</loc>
+    <loc>https://example.com/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- docs/SUBDOMAIN-ARCHITECTURE.md -->
+  <!-- docs/HYBRID-SETUP-GUIDE.md -->
   <url>
-    <loc>https://example.com/SUBDOMAIN-ARCHITECTURE</loc>
-    <lastmod>2025-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS.md -->
-  <url>
-    <loc>https://example.com/FEATURE-DOCS-IMPLEMENTATION-RECOMMENDATIONS</loc>
+    <loc>https://example.com/HYBRID-SETUP-GUIDE</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -148,65 +188,25 @@
     <priority>0.6</priority>
   </url>
 
-  <!-- docs/AUTO-PR-COMMIT-GUIDE.md -->
+  <!-- docs/templates/FEATURE_TEMPLATE.md -->
   <url>
-    <loc>https://example.com/AUTO-PR-COMMIT-GUIDE</loc>
-    <lastmod>2025-11-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/VERCEL-DEPLOYMENT-MONITORING.md -->
-  <url>
-    <loc>https://example.com/VERCEL-DEPLOYMENT-MONITORING</loc>
-    <lastmod>2025-11-21</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/FEATURE-DOCS-README.md -->
-  <url>
-    <loc>https://example.com/FEATURE-DOCS-README</loc>
+    <loc>https://example.com/templates/FEATURE_TEMPLATE</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- docs/FLOW-REFERENCE.md -->
+  <!-- docs/PR-COMMIT-QUICKREF.md -->
   <url>
-    <loc>https://example.com/FLOW-REFERENCE</loc>
+    <loc>https://example.com/PR-COMMIT-QUICKREF</loc>
     <lastmod>2025-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- docs/HYBRID-SETUP-GUIDE.md -->
+  <!-- docs/MVP-STATUS.md -->
   <url>
-    <loc>https://example.com/HYBRID-SETUP-GUIDE</loc>
-    <lastmod>2025-11-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/USAGE-TRACKING-GUIDE.md -->
-  <url>
-    <loc>https://example.com/USAGE-TRACKING-GUIDE</loc>
-    <lastmod>2025-11-20</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/MVP-SUMMARY.md -->
-  <url>
-    <loc>https://example.com/MVP-SUMMARY</loc>
-    <lastmod>2025-11-17</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- docs/MILESTONE-FIX-GUIDE.md -->
-  <url>
-    <loc>https://example.com/MILESTONE-FIX-GUIDE</loc>
+    <loc>https://example.com/MVP-STATUS</loc>
     <lastmod>2025-11-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
