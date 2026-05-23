@@ -15,6 +15,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
+## [Unreleased] - 2026-05-23
+
+### Changed
+- chore(deps): bump qs and express in /design-standards (@)
+- docs(design.vln.gg): create comprehensive VLN logo standards (@)
+- chore(deps): bump node-forge from 1.3.1 to 1.3.3 in /design-standards (@)
+- chore(deps): bump mdast-util-to-hast in /design-standards (@)
+- chore(deps): bump webpack from 5.103.0 to 5.105.2 in /design-standards (@)
+- chore(deps): bump lodash from 4.17.21 to 4.17.23 in /design-standards (@)
+- chore(deps): bump qs and express in /design-standards (@)
+
+### Fixed
+- fix(ci): fix remaining YAML break in auto-merge-reviewed.yml (@)
+- fix(ci): resolve YAML syntax errors in 4 workflow files (@)
+- fix(ci): handle empty grep results in auto-pr-description workflow (@)
+- fix(ci): handle deleted comments in workflow summary reporter (@)
+
+---
+
 ## [Unreleased] - 2026-02-14
 
 ### Changed
